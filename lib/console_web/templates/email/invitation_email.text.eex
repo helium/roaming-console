@@ -1,0 +1,9 @@
+Hi there,
+
+<%= @inviter_email %> at <%= @organization_name %> organization has added you as <%= if @role == "admin" do "an" else "a" end %> <%= @role %> to the Helium Roaming Console.
+
+Visit the link below to complete registration of your account.
+
+After you complete registration you will receive a confirmation email. If you cannot locate the email, please check Spam or Promotion folders or perform a search for an email from the address: <%= System.get_env("MAIL_REPLY_TO") || "roaming-console@helium.com"%>.
+
+ <%= @url <> "/invitations/accept/" <> @token %>

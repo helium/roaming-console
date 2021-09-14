@@ -1,0 +1,7 @@
+<html>
+  <head>
+  </head>
+  <body style="background-color: #EFEFEF;">
+    <%= @inner_content %>
+  </body>
+</html>

@@ -1,0 +1,482 @@
+@import "~mapbox-gl/dist/mapbox-gl.css";
+@import "~antd/dist/antd.min.css";
+@import url("https://use.typekit.net/qfu3tzp.css");
+
+/* This file is for your main application css. */
+body {
+  overscroll-behavior: none;
+  height: 100%;
+  font-family: proxima-nova, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  font-weight: 300;
+}
+
+.ant-select-selection--single {
+  height: 36px;
+}
+
+.ant-select-selection__rendered {
+  line-height: 34px;
+}
+
+.ant-table-cell {
+  white-space: nowrap;
+}
+
+#RoleTable > div > div > table > tbody > tr > td.ant-table-cell {
+  white-space: normal;
+}
+
+.ant-input,
+.ant-select {
+  font-size: 16px;
+  height: 36px;
+}
+
+.ant-input-affix-wrapper {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+p {
+  font-size: 15px;
+}
+
+.ant-modal-title {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 34px;
+}
+
+.ant-btn {
+  transition: all 0.1s cubic-bezier(0.645, 0.045, 0.355, 1);
+  height: 36px;
+  font-size: 16px;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.ant-btn-sm {
+  height: 26px;
+}
+
+.ant-btn-circle,
+.ant-btn-circle-outline {
+  min-width: 36px;
+}
+
+.ant-btn-lg {
+  height: 47px;
+  padding: 0px 25px;
+  font-size: 17px;
+  border-radius: 8px;
+}
+
+.mainContainer {
+  height: 100%;
+}
+
+.dull {
+  opacity: 50%;
+}
+
+.dull:hover {
+  opacity: 1;
+}
+
+main {
+  height: 100%;
+}
+
+h1 {
+  letter-spacing: -1px;
+  font-weight: 500;
+}
+
+#react-root {
+  height: 100%;
+}
+
+.ant-layout-sider {
+  background: #ffffff;
+}
+
+:focus {
+  outline: none;
+}
+
+.ant-table-thead > tr > th {
+  font-weight: 600;
+}
+
+#RoleTable td {
+  border-bottom: 0px;
+}
+
+.ant-card {
+  border-radius: 6px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  font-size: 16px;
+}
+
+.ant-menu-inline {
+  margin-top: 40px;
+}
+
+.ant-layout-header {
+  background: #24292e;
+  height: 55px;
+  line-height: 55px;
+  padding: 0 25px;
+}
+
+.ant-layout-footer {
+  background: #f5f7f9;
+}
+
+.ant-card-body button.ant-btn {
+  margin-right: 16px;
+  margin-bottom: 0px;
+}
+
+.ant-card-head {
+  font-size: 14px;
+  border-bottom: 1px solid #e1e4e8;
+  padding: 0px 12px;
+  background: #f6f8fa;
+  font-weight: 600;
+  text-transform: uppercase;
+  height: 65px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.ant-card-head-title {
+  padding: 8px 0px;
+}
+
+.ant-card-bordered {
+  border: 1px solid #e1e4e8;
+}
+
+.ant-table-tbody button.ant-btn {
+  margin: 0;
+}
+
+.ant-page-header {
+  padding-left: 3px;
+}
+
+.ant-page-header-heading-title {
+  font-size: 30px;
+}
+
+.ant-page-header-heading {
+  overflow: initial;
+}
+
+.ant-empty-image {
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+.ant-pagination {
+  margin-top: 20px;
+  margin-right: 20px;
+}
+
+.ant-message {
+  top: 30px;
+}
+
+.ant-table-tbody > tr > td {
+  transition: all 0s;
+}
+
+.ant-select-dropdown-menu-item {
+  padding: 7px 12px;
+  font-size: 16px;
+}
+
+.ant-tag-lime {
+  color: #7ed43a;
+
+  background: rgba(126, 212, 58, 0.15);
+  border: 1px solid #7ade2b;
+}
+
+.ant-tag {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotate {
+  animation: rotate 1.5s linear infinite;
+}
+
+.integrationcard {
+  flex-grow: 1;
+}
+
+.ant-modal-mask {
+  background: rgba(20, 20, 20, 0.9);
+}
+
+.ant-modal-content {
+  border-radius: 14px;
+}
+
+.ant-modal-footer {
+  padding: 20px 50px 50px;
+  border-top: none;
+  text-align: center;
+}
+
+.ant-modal-header {
+  border-radius: 20px 20px 0 0;
+  border-bottom: none;
+  text-align: center;
+  padding: 56px 50px 24px;
+}
+
+.ant-layout {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  background: #fff;
+}
+
+tr.ant-table-expanded-row,
+tr.ant-table-expanded-row:hover {
+  background: #f6f8fa;
+}
+
+.ant-table {
+  font-size: 15px;
+}
+
+.ant-table a {
+  font-weight: 400;
+}
+
+.ant-table-thead
+  > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+  > td,
+.ant-table-tbody
+  > tr.ant-table-row-hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+  > td,
+.ant-table-thead
+  > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+  > td,
+.ant-table-tbody
+  > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+  > td {
+  background: #fafafa;
+}
+
+.ant-table-thead > tr > th {
+  background: none;
+}
+
+.ant-modal-body {
+  font-size: 17px;
+  padding: 20px 50px 20px;
+}
+
+.ant-layout::-webkit-scrollbar {
+  /* WebKit */
+  width: 0;
+  height: 0;
+}
+
+.no-scroll-bar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+.no-scroll-bar::-webkit-scrollbar {
+  /* WebKit */
+  width: 0;
+  height: 0;
+}
+
+.menu-link {
+  color: #242528;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.menu-link:hover,
+.menu-link.is-active {
+  color: #9d9d9d;
+}
+
+.ant-select-dropdown-menu-item {
+  font-weight: 300;
+}
+
+.ant-typography code {
+  color: #4091f7;
+  background: rgba(64, 145, 247, 0.1);
+  border-color: rgba(64, 145, 247, 0.2);
+  padding: 0.4em 0.6em 0.3em;
+}
+
+.ant-typography {
+  color: rgba(0, 0, 0, 0.75);
+  font-weight: 300;
+}
+
+.ant-typography strong {
+  font-weight: 400;
+  color: rgba(0, 0, 0, 1);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+a.version-link {
+  background: #d9e2ef;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #1b1f23;
+  padding: 6px 12px;
+}
+
+.blankstateWrapper {
+  width: 100%;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.ant-slider-track {
+  background-color: #4091f7 !important;
+}
+
+.ant-slider-handle {
+  border-color: #4091f7 !important;
+}
+
+.ant-select-selection__rendered {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+@-webkit-keyframes bounce {
+  0%,
+  25%,
+  50%,
+  75%,
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  40% {
+    -webkit-transform: translateY(-18px);
+    transform: translateY(-18px);
+  }
+  60% {
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  25%,
+  50%,
+  75%,
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  40% {
+    -webkit-transform: translateY(-18px);
+    transform: translateY(-18px);
+  }
+  60% {
+    -webkit-transform: translateY(-10px);
+    transform: translateY(-10px);
+  }
+}
+
+.help-link {
+  font-size: 16px;
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+.ant-tabs-nav-operations {
+  display: none !important;
+}
+
+.ant-tabs-nav-wrap:before {
+  box-shadow: none !important;
+}
+
+.ant-tabs-nav-wrap:after {
+  box-shadow: none !important;
+}
+
+.mapboxgl-popup-content {
+  background: black;
+  color: white;
+  border-radius: 10px;
+}
+
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip {
+  border-bottom-color: black;
+  padding-top: 10px;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip,
+.mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip {
+  border-top-color: black;
+  padding-bottom: 10px;
+}
+
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: black;
+  padding-left: 10px;
+}
+
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: black;
+  padding-right: 10px;
+}
