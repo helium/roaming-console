@@ -41,9 +41,6 @@ defmodule ConsoleWeb.Router do
     pipe_through ConsoleWeb.AuthApiPipeline
 
     post "/users", InvitationController, :accept, as: "user_join_from_invitation"
-    resources "/alerts", AlertController, only: [:create, :delete, :update]
-    post "/alerts/add_to_node", AlertController, :add_alert_to_node
-    post "/alerts/remove_from_node", AlertController, :remove_alert_from_node
     resources "/organizations", OrganizationController, except: [:new, :edit]
     get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
     post "/mfa_enrollments", Auth0Controller, :enroll_in_mfa
@@ -85,9 +82,6 @@ defmodule ConsoleWeb.Router do
     pipe_through ConsoleWeb.V1ApiPipeline
 
     get "/organization", OrganizationController, :show
-    resources "/alerts", AlertController, only: [:create, :update, :delete]
-    post "/alerts/add_to_node", AlertController, :add_alert_to_node
-    post "/alerts/remove_from_node", AlertController, :remove_alert_from_node
   end
 
   if Mix.env == :dev do

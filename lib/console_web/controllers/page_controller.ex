@@ -13,7 +13,7 @@ defmodule ConsoleWeb.PageController do
         "organizations",
         "users",
         "datacredits",
-        "alerts",
+        "notifications",
         "profile"
       ]
 

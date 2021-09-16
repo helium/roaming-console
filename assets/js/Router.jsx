@@ -19,7 +19,6 @@ import Profile from "./components/profile/Profile.jsx";
 import UserIndex from "./components/organizations/UserIndex";
 import OrganizationIndex from "./components/organizations/OrganizationIndex";
 import DataCreditsIndex from "./components/billing/DataCreditsIndex";
-import AlertsIndex from "./components/alerts/AlertsIndex";
 import NoOrganization from "./components/organizations/NoOrganization";
 import ConfirmEmailPrompt from "./components/auth/ConfirmEmailPrompt";
 
@@ -131,27 +130,6 @@ const Router = (props) => {
                               path="/datacredits"
                               component={(props) => (
                                 <DataCreditsIndex user={user} {...props} />
-                              )}
-                            />
-                            <Route
-                              exact
-                              path="/alerts"
-                              component={(props) => (
-                                <AlertsIndex user={user} {...props} />
-                              )}
-                            />
-                            <Route
-                              exact
-                              path="/alerts/new"
-                              component={(props) => (
-                                <AlertsIndex user={user} {...props} />
-                              )}
-                            />
-                            <Route
-                              exact
-                              path="/alerts/:id"
-                              component={(props) => (
-                                <AlertsIndex user={user} {...props} />
                               )}
                             />
                             <Route

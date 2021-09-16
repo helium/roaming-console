@@ -14,15 +14,6 @@ defmodule ConsoleWeb.Schema do
     serialize &Poison.encode!/1
   end
 
-  object :alert do
-    field :id, :id
-    field :name, :string
-    field :last_triggered_at, :string
-    field :node_type, :string
-    field :config, :json
-    field :organization_id, :id
-  end
-
   paginated object :membership do
     field :id, :id
     field :email, :string
@@ -102,15 +93,6 @@ defmodule ConsoleWeb.Schema do
 
     field :api_keys, list_of(:api_key) do
       resolve &Console.ApiKeys.ApiKeyResolver.all/2
-    end
-
-    field :all_alerts, list_of(:alert) do
-      resolve &Console.Alerts.AlertResolver.all/2
-    end
-
-    field :alert, :alert do
-      arg :id, non_null(:id)
-      resolve &Console.Alerts.AlertResolver.find/2
     end
 
     paginated field :dc_purchases, :paginated_dc_purchases do

@@ -11,8 +11,6 @@ defmodule Console.Factory do
   alias Console.Devices.Device
   alias Console.Functions.Function
   alias Console.Organizations.Membership
-  alias Console.Alerts.Alert
-  alias Console.Alerts.AlertNode
   alias Console.Flows.Flow
 
   def authenticate_user(%{conn: conn}) do
@@ -45,13 +43,5 @@ defmodule Console.Factory do
       key: "key",
       user_id: "me"
     }
-  end
-
-  def alert_factory do
-    %Alert{}
-  end
-
-  def alert_node_factory do
-    %AlertNode{}
   end
 end
