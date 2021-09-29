@@ -19,6 +19,7 @@ import Profile from "./components/profile/Profile.jsx";
 import UserIndex from "./components/organizations/UserIndex";
 import OrganizationIndex from "./components/organizations/OrganizationIndex";
 import DataCreditsIndex from "./components/billing/DataCreditsIndex";
+import DashboardIndex from "./components/dashboard/DashboardIndex";
 import NoOrganization from "./components/organizations/NoOrganization";
 import ConfirmEmailPrompt from "./components/auth/ConfirmEmailPrompt";
 
@@ -88,7 +89,7 @@ const Router = (props) => {
       </div>
     );
   }
-  const redirectPath = "datacredits"
+  const redirectPath = "dashboard"
 
   return (
     <PersistGate loading={null} persistor={persistor}>
@@ -118,6 +119,13 @@ const Router = (props) => {
                       (apolloClient && (
                         <ApolloProvider client={apolloClient}>
                           <Switch>
+                            <Route
+                              exact
+                              path="/dashboard"
+                              component={(props) => (
+                                <DashboardIndex user={user} {...props} />
+                              )}
+                            />
                             <Route
                               exact
                               path="/users"

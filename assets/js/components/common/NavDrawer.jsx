@@ -22,6 +22,23 @@ class NavDrawer extends Component {
         <div style={{ position: "relative" }}>
           <NavLink
             draggable="false"
+            to={"/dashboard"}
+            activeClassName="is-active"
+            className="menu-link"
+          >
+            Dashboard
+          </NavLink>
+          {history.location.pathname === "/dashboard" && (
+            <img
+              draggable="false"
+              src={Caret}
+              style={{ right: -16, position: "absolute", top: 8, height: 12 }}
+            />
+          )}
+        </div>
+        <div style={{ position: "relative" }}>
+          <NavLink
+            draggable="false"
             to={"/datacredits"}
             activeClassName="is-active"
             className="menu-link"
@@ -39,13 +56,13 @@ class NavDrawer extends Component {
         <div style={{ position: "relative" }}>
           <NavLink
             draggable="false"
-            to={"/users"}
+            to={"/organizations"}
             activeClassName="is-active"
             className="menu-link"
           >
-            Users
+            Organizations
           </NavLink>
-          {history.location.pathname === "/users" && (
+          {history.location.pathname === "/organizations" && (
             <img
               draggable="false"
               src={Caret}
@@ -56,13 +73,13 @@ class NavDrawer extends Component {
         <div style={{ position: "relative" }}>
           <NavLink
             draggable="false"
-            to={"/organizations"}
+            to={"/users"}
             activeClassName="is-active"
             className="menu-link"
           >
-            Organizations
+            Users
           </NavLink>
-          {history.location.pathname === "/organizations" && (
+          {history.location.pathname === "/users" && (
             <img
               draggable="false"
               src={Caret}

@@ -47,49 +47,6 @@ module.exports = function (env) {
     optimization: {
       minimize: true,
       runtimeChunk: "single",
-      splitChunks: {
-        chunks: "all",
-        maxInitialRequests: Infinity,
-        minSize: 0,
-        cacheGroups: {
-          antdVendor: {
-            test: /[\\/]node_modules[\\/](antd)[\\/]/,
-            name: "antd",
-          },
-          apolloVendor: {
-            test: /[\\/]node_modules[\\/](@apollo)[\\/]/,
-            name: "apollo",
-          },
-          amplitudeVendor: {
-            test: /[\\/]node_modules[\\/](amplitude-js)[\\/]/,
-            name: "amplitude",
-          },
-          antDesignVendor: {
-            test: /[\\/]node_modules[\\/](@ant-design)[\\/]/,
-            name: "antdesign",
-          },
-          auth0Vendor: {
-            test: /[\\/]node_modules[\\/](@auth0)[\\/]/,
-            name: "auth0",
-          },
-          utilityVendor: {
-            test: /[\\/]node_modules[\\/](lodash|moment)[\\/]/,
-            name: "utility",
-          },
-          sanitizeVendor: {
-            test: /[\\/]node_modules[\\/](sanitize-html)[\\/]/,
-            name: "sanitize",
-          },
-          reactReduxVendor: {
-            test: /[\\/]node_modules[\\/](react|react-dom|react-redux|redux)[\\/]/,
-            name: "reactredux",
-          },
-          vendor: {
-            test: /[\\/]node_modules[\\/](!antd)(!@apollo)(!amplitude-js)(!@ant-design)(!@auth0)(!lodash)(!moment)(!sanitize-html)(!react)(!react-dom)(!react-redux)(!redux)[\\/]/,
-            name: "vendor",
-          },
-        },
-      },
     },
     plugins: [
       new webpack.EnvironmentPlugin([

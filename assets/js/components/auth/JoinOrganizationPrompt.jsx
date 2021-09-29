@@ -68,7 +68,7 @@ class JoinOrganizationPrompt extends Component {
               <Col sm={12}>
                 <Button
                   disabled={!invite}
-                  onClick={() => this.props.history.push("/datacredits")}
+                  onClick={() => this.props.history.push("/dashboard")}
                   style={{ width: "100%" }}
                 >
                   Reject Invitation

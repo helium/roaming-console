@@ -14,7 +14,8 @@ defmodule ConsoleWeb.PageController do
         "users",
         "datacredits",
         "notifications",
-        "profile"
+        "profile",
+        "dashboard"
       ]
 
     if conn.request_path == "/" or Enum.member?(valid_page_paths, main_path) do
