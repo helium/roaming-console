@@ -2,7 +2,6 @@ defmodule ConsoleWeb.InvitationController do
   use ConsoleWeb, :controller
 
   alias Console.Organizations
-  alias Console.Organizations
   alias Console.Organizations.Invitation
   alias Console.Email
   alias Console.Mailer

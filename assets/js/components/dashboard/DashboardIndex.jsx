@@ -2,6 +2,7 @@ import React from "react";
 import numeral from "numeral";
 import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
+import NetIdInput from "./NetIdInput";
 import analyticsLogger from "../../util/analyticsLogger";
 import { Link } from "react-router-dom";
 import { Typography, Card, Row, Col, Popover, Button } from "antd";
@@ -74,6 +75,8 @@ export default (props) => {
             </Card>
           </Col>
         </Row>
+
+        <NetIdInput />
       </div>
     </DashboardLayout>
   )
