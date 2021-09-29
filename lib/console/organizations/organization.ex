@@ -22,6 +22,7 @@ defmodule Console.Organizations.Organization do
     has_many :invitations, Console.Organizations.Invitation, on_delete: :delete_all
     has_many :api_keys, Console.ApiKeys.ApiKey, on_delete: :delete_all
     has_many :memos, Console.Memos.Memo, on_delete: :delete_all
+    has_many :net_ids, Console.NetIds.NetId, on_delete: :delete_all
 
     timestamps()
   end

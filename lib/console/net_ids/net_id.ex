@@ -6,7 +6,7 @@ defmodule Console.NetIds.NetId do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "dc_purchases" do
+  schema "net_ids" do
     field :value, :string
 
     belongs_to :organization, Organization

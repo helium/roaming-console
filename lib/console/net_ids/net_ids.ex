@@ -7,6 +7,8 @@ defmodule Console.NetIds do
   alias Console.Organizations
 
   def create_net_id!(attrs \\ %{}, %Organization{} = organization) do
+    attrs = Map.merge(attrs, %{"organization_id" => organization.id})
+
     %NetId{}
     |> NetId.changeset(attrs)
     |> Repo.insert!()
