@@ -4,17 +4,17 @@ import { Typography, Switch, Button, Menu, Dropdown } from "antd";
 const { Text } = Typography;
 import { userCan } from "../common/UserCan";
 
-export default ({ notificationType, notificationSettings, updateNotificationSettings }) => {
+export default ({ notificationType, notificationsSetting, updateNotificationsSetting }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
 
   const recipientMenu = () => (
     <Menu
       onClick={(e) => {
-        updateNotificationSettings(
+        updateNotificationsSetting(
           Object.assign(
             {},
-            notificationSettings,
-            { [notificationType.key]: {email: { recipient: e.key, active: notificationSettings[notificationType.key].email.active }}})
+            notificationsSetting,
+            { [notificationType.key]: {email: { recipient: e.key, active: notificationsSetting[notificationType.key].email.active }}})
         )
       }}
     >
@@ -45,8 +45,8 @@ export default ({ notificationType, notificationSettings, updateNotificationSett
               fontSize: "16px",
             }}
           >
-            {notificationSettings[notificationType.key].email.recipient === 'read' ?
-              "read-Only" : notificationSettings[notificationType.key].email.recipient
+            {notificationsSetting[notificationType.key].email.recipient === 'read' ?
+              "read-Only" : notificationsSetting[notificationType.key].email.recipient
             }
           </a>
         </Dropdown>
@@ -58,13 +58,13 @@ export default ({ notificationType, notificationSettings, updateNotificationSett
       <Switch
         style={{ marginLeft: 10 }}
         disabled={!userCan({ role: currentRole })}
-        checked={notificationSettings[notificationType.key].email.active}
+        checked={notificationsSetting[notificationType.key].email.active}
         onChange={(checked) => {
-          updateNotificationSettings(
+          updateNotificationsSetting(
             Object.assign(
               {},
-              notificationSettings,
-              { [notificationType.key]: {email: { recipient: notificationSettings[notificationType.key].email.recipient, active: checked }}})
+              notificationsSetting,
+              { [notificationType.key]: {email: { recipient: notificationsSetting[notificationType.key].email.recipient, active: checked }}})
           )
         }}
       />

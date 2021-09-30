@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { useQuery } from "@apollo/client";
 import DashboardLayout from "../common/DashboardLayout";
+import { NOTIFICATIONS_SETTING } from "../../graphql/notifications";
 import analyticsLogger from "../../util/analyticsLogger";
 import { setNotifications } from '../../actions/notifications'
 import NotificationSetting from "./NotificationSetting"
@@ -33,7 +35,16 @@ export default (props) => {
     users_updated: { email: { recipient: "admin", active: false } },
     payments_updated: { email: { recipient: "admin", active: false } },
   }
-  const [notificationSettings, updateNotificationSettings] = useState(defaultSettings)
+  const [notificationsSetting, updateNotificationsSetting] = useState(defaultSettings)
+
+  const {
+    loading: queryLoading,
+    error: queryError,
+    data: queryData,
+    refetch: queryRefetch,
+  } = useQuery(NOTIFICATIONS_SETTING, {
+    fetchPolicy: "cache-first",
+  });
 
   return (
     <DashboardLayout title="Notifications" user={props.user}>
@@ -75,12 +86,12 @@ export default (props) => {
                   <NotificationSetting
                     key={notification.key}
                     notificationType={notification}
-                    updateNotificationSettings={updateNotificationSettings}
-                    notificationSettings={notificationSettings}
+                    updateNotificationsSetting={updateNotificationsSetting}
+                    notificationsSetting={notificationsSetting}
                   />
                 ))
               }
-              <Button type="primary" onClick={() => setNotifications(notificationSettings)} style={{ marginTop: 20 }}>
+              <Button type="primary" onClick={() => setNotifications(notificationsSetting)} style={{ marginTop: 20 }}>
                 Save Notifications
               </Button>
             </div>

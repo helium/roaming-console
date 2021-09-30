@@ -65,6 +65,10 @@ defmodule ConsoleWeb.Schema do
     field :to_organization, :string
   end
 
+  object :notifications_setting do
+    field :config, :json
+  end
+
   query do
     paginated field :memberships, :paginated_memberships do
       resolve(&Console.Organizations.MembershipResolver.paginate/2)
@@ -97,6 +101,10 @@ defmodule ConsoleWeb.Schema do
 
     paginated field :dc_purchases, :paginated_dc_purchases do
       resolve(&Console.DcPurchases.DcPurchaseResolver.paginate/2)
+    end
+
+    field :notifications_setting, :notifications_setting do
+      resolve(&Console.Notifications.NotificationResolver.find/2)
     end
   end
 end
