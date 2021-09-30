@@ -20,6 +20,7 @@ import UserIndex from "./components/organizations/UserIndex";
 import OrganizationIndex from "./components/organizations/OrganizationIndex";
 import DataCreditsIndex from "./components/billing/DataCreditsIndex";
 import DashboardIndex from "./components/dashboard/DashboardIndex";
+import NotificationsIndex from "./components/notifications/NotificationsIndex";
 import NoOrganization from "./components/organizations/NoOrganization";
 import ConfirmEmailPrompt from "./components/auth/ConfirmEmailPrompt";
 
@@ -145,6 +146,13 @@ const Router = (props) => {
                               path="/organizations"
                               component={(props) => (
                                 <OrganizationIndex user={user} {...props} />
+                              )}
+                            />
+                            <Route
+                              exact
+                              path="/notifications"
+                              component={(props) => (
+                                <NotificationsIndex user={user} {...props} />
                               )}
                             />
                             <Route
