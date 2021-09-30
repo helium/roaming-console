@@ -4,7 +4,6 @@ defmodule Console.NetIds do
 
   alias Console.NetIds.NetId
   alias Console.Organizations.Organization
-  alias Console.Organizations
 
   def create_net_id!(attrs \\ %{}, %Organization{} = organization) do
     attrs = Map.merge(attrs, %{"organization_id" => organization.id})
