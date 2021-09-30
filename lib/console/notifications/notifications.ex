@@ -5,6 +5,10 @@ defmodule Console.Notifications do
   alias Console.Notifications.Notification
   alias Console.Organizations.Organization
 
+  def get_notification(organization) do
+     Repo.get_by(Notification, [organization_id: organization.id])
+  end
+
   def create_notification(attrs \\ %{}, %Organization{} = organization) do
     attrs = Map.merge(attrs, %{"organization_id" => organization.id})
 

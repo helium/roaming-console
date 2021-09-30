@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DashboardLayout from "../common/DashboardLayout";
 import analyticsLogger from "../../util/analyticsLogger";
+import { setNotifications } from '../../actions/notifications'
 import NotificationSetting from "./NotificationSetting"
 import { Link } from "react-router-dom";
 import { Typography, Row, Col, Button } from "antd";
@@ -79,7 +80,7 @@ export default (props) => {
                   />
                 ))
               }
-              <Button type="primary" onClick={() => {}} style={{ marginTop: 20 }}>
+              <Button type="primary" onClick={() => setNotifications(notificationSettings)} style={{ marginTop: 20 }}>
                 Save Notifications
               </Button>
             </div>
