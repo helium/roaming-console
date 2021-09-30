@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
+import { useSelector } from "react-redux";
 import DashboardLayout from "../common/DashboardLayout";
 import { NOTIFICATIONS_SETTING } from "../../graphql/notifications";
 import analyticsLogger from "../../util/analyticsLogger";
@@ -28,15 +29,16 @@ const NOTIFICATION_TYPES = [
   }
 ]
 
-export default (props) => {
-  const defaultSettings = {
-    dc_low: { email: { recipient: "admin", active: false } },
-    dc_purchased: { email: { recipient: "admin", active: false } },
-    users_updated: { email: { recipient: "admin", active: false } },
-    payments_updated: { email: { recipient: "admin", active: false } },
-  }
-  const [notificationsSetting, updateNotificationsSetting] = useState(defaultSettings)
+const defaultSettings = {
+  dc_low: { email: { recipient: "admin", active: false } },
+  dc_purchased: { email: { recipient: "admin", active: false } },
+  users_updated: { email: { recipient: "admin", active: false } },
+  payments_updated: { email: { recipient: "admin", active: false } },
+}
 
+export default (props) => {
+  const [notificationsSetting, updateNotificationsSetting] = useState(null)
+  const [hasChanges, setChangesState] = useState(false)
   const {
     loading: queryLoading,
     error: queryError,
@@ -45,6 +47,38 @@ export default (props) => {
   } = useQuery(NOTIFICATIONS_SETTING, {
     fetchPolicy: "cache-first",
   });
+
+  const socket = useSelector((state) => state.apollo.socket);
+  const currentOrganizationId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
+  const channel = socket.channel("graphql:notifications_index", {});
+
+  useEffect(() => {
+    channel.join();
+    channel.on(
+      `graphql:notifications_index:${currentOrganizationId}:notifications_update`,
+      (_message) => {
+        setChangesState(false)
+        queryRefetch();
+      }
+    );
+
+    return () => {
+      channel.leave();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (queryData) {
+      if (queryData.notificationsSetting) {
+        const config = JSON.parse(queryData.notificationsSetting.config)
+        updateNotificationsSetting(config)
+      } else {
+        updateNotificationsSetting(defaultSettings)
+      }
+    }
+  }, [queryData]);
 
   return (
     <DashboardLayout title="Notifications" user={props.user}>
@@ -80,21 +114,31 @@ export default (props) => {
             </div>
           </Col>
           <Col span={14}>
-            <div style={{ padding: 20 }}>
-              {
-                NOTIFICATION_TYPES.map(notification => (
-                  <NotificationSetting
-                    key={notification.key}
-                    notificationType={notification}
-                    updateNotificationsSetting={updateNotificationsSetting}
-                    notificationsSetting={notificationsSetting}
-                  />
-                ))
-              }
-              <Button type="primary" onClick={() => setNotifications(notificationsSetting)} style={{ marginTop: 20 }}>
-                Save Notifications
-              </Button>
-            </div>
+            {
+              notificationsSetting && (
+                <div style={{ padding: 20 }}>
+                  {
+                    NOTIFICATION_TYPES.map(notification => (
+                      <NotificationSetting
+                        key={notification.key}
+                        notificationType={notification}
+                        updateNotificationsSetting={updateNotificationsSetting}
+                        notificationsSetting={notificationsSetting}
+                        setChangesState={setChangesState}
+                      />
+                    ))
+                  }
+                  <Button
+                    type="primary"
+                    onClick={() => setNotifications(notificationsSetting)}
+                    style={{ marginTop: 20 }}
+                    disabled={!hasChanges}
+                  >
+                    Save Notifications
+                  </Button>
+                </div>
+              )
+            }
           </Col>
         </Row>
       </div>

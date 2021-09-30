@@ -4,7 +4,7 @@ import { Typography, Switch, Button, Menu, Dropdown } from "antd";
 const { Text } = Typography;
 import { userCan } from "../common/UserCan";
 
-export default ({ notificationType, notificationsSetting, updateNotificationsSetting }) => {
+export default ({ notificationType, notificationsSetting, updateNotificationsSetting, setChangesState }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
 
   const recipientMenu = () => (
@@ -16,6 +16,7 @@ export default ({ notificationType, notificationsSetting, updateNotificationsSet
             notificationsSetting,
             { [notificationType.key]: {email: { recipient: e.key, active: notificationsSetting[notificationType.key].email.active }}})
         )
+        setChangesState(true)
       }}
     >
       <Menu.Item key="admin">Admin</Menu.Item>
@@ -66,6 +67,7 @@ export default ({ notificationType, notificationsSetting, updateNotificationsSet
               notificationsSetting,
               { [notificationType.key]: {email: { recipient: notificationsSetting[notificationType.key].email.recipient, active: checked }}})
           )
+          setChangesState(true)
         }}
       />
     </div>
