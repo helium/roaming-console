@@ -37,7 +37,7 @@ class TopBar extends Component {
   }
 
   render() {
-    const { logOut, currentOrganizationName, user, orgShowQuery, toggleNav } = this.props;
+    const { currentOrganizationName, user, orgShowQuery, toggleNav } = this.props;
     const organization = orgShowQuery.organization || null
 
     return (

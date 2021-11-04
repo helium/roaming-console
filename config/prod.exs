@@ -28,10 +28,7 @@ config :console,
   router_secrets: String.split(System.get_env("ROUTER_SECRETS"), ",")
 
 config :console,
-  auth0_baseurl: System.get_env("AUTH0_BASE_URL")
-
-config :console,
-  auth0_mfa_baseurl: System.get_env("AUTH0_MFA_BASE_URL")
+  magic_secret_key: System.get_env("MAGIC_SECRET_KEY")
 
 config :appsignal, :config,
   active: true,
