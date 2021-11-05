@@ -1,8 +1,5 @@
 const path = require("path");
 const webpack = require("webpack");
-const dotenv = require("dotenv").config({
-  path: path.join(__dirname, ".env"),
-});
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = function (env) {

@@ -16,7 +16,7 @@ const styles = {
     backgroundSize: 'cover',
   },
   main: {
-    maxWidth: 500,
+    maxWidth: 600,
     position: 'absolute',
     top: '47%',
     left: '50%',

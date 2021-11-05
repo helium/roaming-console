@@ -42,7 +42,7 @@ const MagicAuthenticate = () => {
         <img src={Logo} style={{width: 70, display: "block", margin:'0 auto', marginBottom: 20}} />
         <div style={{textAlign: 'center', marginBottom: 30}}>
           <Title>
-            Helium Console
+            Helium Roaming Console
           </Title>
           <Text style={{color:'#38A2FF'}}>Submit your email address to receive a login link</Text>
         </div>
