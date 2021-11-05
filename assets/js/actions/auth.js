@@ -1,37 +1,31 @@
 import * as rest from '../util/rest';
-import { logout } from '../components/auth/Auth0Provider';
+import { logoutUser } from './magic'
 import analyticsLogger from '../util/analyticsLogger';
 
-export const LOGGED_OUT = 'LOGGED_OUT';
-
-export const getMfaStatus = () => {
-  return (dispatch) => {
-    return rest.get('/api/mfa_enrollments');
-  }
-}
-
-export const enrollInMfa = () => {
-  return (dispatch) => {
-    return rest.post('/api/mfa_enrollments');
-  }
-}
-
-export const disableMfa = () => {
-  return (dispatch) => {
-    return rest.destroy('/api/mfa_enrollments');
-  }
-}
+export const SET_MAGIC_USER = 'SET_MAGIC_USER';
+export const CLEAR_MAGIC_USER = 'CLEAR_MAGIC_USER';
 
 export const logOut = () => {
   analyticsLogger.setUserId(null)
+
   return async (dispatch) => {
-    await logout({returnTo: window.location.origin});
-    dispatch(loggedOut())
+    localStorage.removeItem("organization");
+
+    await logoutUser()
+    dispatch(clearMagicUser())
+    window.location.replace("/")
   }
 }
 
-const loggedOut = () => {
+export const magicLogIn = (user) => {
   return {
-    type: LOGGED_OUT
+    type: SET_MAGIC_USER,
+    payload: user
+  }
+}
+
+export const clearMagicUser = () => {
+  return {
+    type: CLEAR_MAGIC_USER,
   }
 }

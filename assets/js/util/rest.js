@@ -1,7 +1,8 @@
 import { store } from "../store/configureStore";
 import axios from "../config/axios.js";
 import { displayError } from "./messages";
-import { getIdTokenClaims, logout } from "../components/auth/Auth0Provider";
+import { getMagicSessionToken } from "../actions/magic"
+import { logOut } from '../actions/auth'
 
 export const get = async (path, params = {}, extraHeaders = {}) => {
   return axios({
@@ -59,10 +60,11 @@ const headers = async () => {
   }
 
   let tokenClaims = store.getState().apollo.tokenClaims;
+
   if (!tokenClaims) {
-    tokenClaims = await getIdTokenClaims();
+    tokenClaims = await getMagicSessionToken()
   } else if (Math.ceil(Date.now() / 1000) > tokenClaims.exp) {
-    return logout();
+    return store.dispatch(logOut());
   }
 
   const apikey = tokenClaims.__raw;

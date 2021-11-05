@@ -37,18 +37,6 @@ config :console,
   self_hosted: true
 
 config :console,
-  auth0_baseurl: System.get_env("AUTH0_BASE_URL")
-
-config :console,
-  auth0_mfa_baseurl: System.get_env("AUTH0_MFA_BASE_URL")
-
-config :console,
-  auth0_domain: System.get_env("AUTH_0_DOMAIN")
-
-config :console,
-  auth0_client_id: System.get_env("AUTH_0_CLIENT_ID")
-
-config :console,
   mapbox_pk: System.get_env("MAPBOX_PRIVATE_KEY")
 
 config :console,

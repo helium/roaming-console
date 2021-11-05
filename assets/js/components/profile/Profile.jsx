@@ -3,12 +3,11 @@ import withGql from "../../graphql/withGql";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import moment from "moment";
-import { logOut, getMfaStatus, enrollInMfa, disableMfa } from "../../actions/auth";
+import { logOut } from "../../actions/auth";
 import { generateKey } from "../../actions/apiKeys";
 import DashboardLayout from "../common/DashboardLayout";
 import UserCan from "../common/UserCan";
 import ProfileNewKeyModal from "./ProfileNewKeyModal";
-import DisableMFAModal from "./DisableMFAModal";
 import RoleName from "../common/RoleName";
 import analyticsLogger from "../../util/analyticsLogger";
 import { displayInfo, displayError } from "../../util/messages";
@@ -33,8 +32,6 @@ class Profile extends Component {
     name: "",
     role: null,
     newKey: null,
-    enrolledIn2FA: null,
-    showDisableMFAModal: false,
     showDeleteApiKeyModal: false,
     selectedKey: null,
   };
@@ -50,10 +47,6 @@ class Profile extends Component {
         this.props.apiKeysQuery.refetch();
       }
     );
-
-    this.props.getMfaStatus().then(({ data }) => {
-      this.setState({ enrolledIn2FA: data.enrollment_status });
-    });
   }
 
   componentWillUnmount() {
@@ -84,26 +77,6 @@ class Profile extends Component {
     this.setState({ newKey: null, name: "", role: null });
   };
 
-  handleEnrollInMfa = () => {
-    this.props.enrollInMfa().then((response) => {
-      if (response.status === 200)
-        displayInfo("Please check your email for a Two-Factor sign up link");
-    });
-  };
-
-  handleDisableMfa = () => {
-    this.props.disableMfa()
-      .then((response) => {
-        if (response.status === 200) {
-          this.setState({ enrolledIn2FA: false, showDisableMFAModal: false });
-          displayInfo("Two-Factor has been disabled for this account");
-        }
-      })
-      .catch(() => {
-        displayError()
-      })
-  };
-
   openDeleteApiKeyModal = (key) => {
     this.setState({ selectedKey: key, showDeleteApiKeyModal: true });
   };
@@ -112,16 +85,12 @@ class Profile extends Component {
     this.setState({ showDeleteApiKeyModal: false, selectedKey: null });
   };
 
-  closeDisableMFAModal = () => {
-    this.setState({ showDisableMFAModal: false });
-  };
-
   render() {
     const { email } = this.props.user;
     const { role } = this.props;
     const { logOut } = this.props;
     const { apiKeys } = this.props.apiKeysQuery;
-    const { newKey, showDeleteApiKeyModal, selectedKey, showDisableMFAModal } = this.state;
+    const { newKey, showDeleteApiKeyModal, selectedKey } = this.state;
 
     const columns = [
       {
@@ -196,33 +165,6 @@ class Profile extends Component {
                     marginTop: 10,
                   }}
                 >
-                  {this.state.enrolledIn2FA === false && (
-                    <UserCan noManager>
-                      <Button
-                        type="primary"
-                        onClick={this.handleEnrollInMfa}
-                        style={{ marginRight: 10 }}
-                      >
-                        Enroll In 2FA
-                      </Button>
-                    </UserCan>
-                  )}
-                  {this.state.enrolledIn2FA === true && (
-                    <Button type="primary" style={{ marginRight: 10 }} disabled>
-                      Enrolled In 2FA
-                    </Button>
-                  )}
-                  {this.state.enrolledIn2FA === true && (
-                    <Button
-                      type="danger"
-                      style={{ marginRight: 10 }}
-                      onClick={() => {
-                        this.setState({ showDisableMFAModal: true })
-                      }}
-                    >
-                      Disable 2FA
-                    </Button>
-                  )}
                   <Button
                     type="danger"
                     onClick={() => {
@@ -292,12 +234,6 @@ class Profile extends Component {
           open={showDeleteApiKeyModal}
           close={this.closeDeleteApiKeyModal}
         />
-
-        <DisableMFAModal
-          open={showDisableMFAModal}
-          close={this.closeDisableMFAModal}
-          handleSubmit={this.handleDisableMfa}
-        />
       </DashboardLayout>
     );
   }
@@ -313,7 +249,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { logOut, generateKey, getMfaStatus, enrollInMfa, disableMfa },
+    { logOut, generateKey },
     dispatch
   );
 }

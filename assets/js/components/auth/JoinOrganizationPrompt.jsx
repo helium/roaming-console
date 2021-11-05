@@ -12,13 +12,19 @@ const { Title } = Typography
 @connect(mapStateToProps, mapDispatchToProps)
 class JoinOrganizationPrompt extends Component {
   state = {
-    invite: null,
+    organizationName: "",
     email: "",
+    firstRender: true
   }
 
-  componentDidUpdate(prevProps) {
-    const { invitationToken, getInvitation } = this.props
-    if (!prevProps.loaded && this.props.loaded && invitationToken) {
+  componentDidMount() {
+    this.setState({ firstRender: false })
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.firstRender && !this.state.firstRender) {
+      const { invitationToken, getInvitation } = this.props
+
       getInvitation(invitationToken)
       .then(invite => this.setState({ email: invite.email, invite }))
     }
@@ -68,7 +74,7 @@ class JoinOrganizationPrompt extends Component {
               <Col sm={12}>
                 <Button
                   disabled={!invite}
-                  onClick={() => this.props.history.push("/dashboard")}
+                  onClick={() => this.props.history.push("/devices")}
                   style={{ width: "100%" }}
                 >
                   Reject Invitation

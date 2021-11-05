@@ -35,6 +35,8 @@ defmodule ConsoleWeb.Router do
     pipe_through :api
 
     get "/invitations/:token", InvitationController, :get_by_token
+    post "/sessions", SessionController, :create
+    post "/sessions/check_user", SessionController, :check_user
   end
 
   scope "/api", ConsoleWeb do
@@ -42,9 +44,6 @@ defmodule ConsoleWeb.Router do
 
     post "/users", InvitationController, :accept, as: "user_join_from_invitation"
     resources "/organizations", OrganizationController, except: [:new, :edit]
-    get "/mfa_enrollments", Auth0Controller, :get_enrolled_mfa
-    post "/mfa_enrollments", Auth0Controller, :enroll_in_mfa
-    delete "/mfa_enrollments", Auth0Controller, :disable_mfa
     resources "/invitations", InvitationController, only: [:create, :delete]
     resources "/memberships", MembershipController, only: [:update, :delete]
     resources "/api_keys", ApiKeyController, only: [:create, :delete]

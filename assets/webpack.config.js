@@ -1,12 +1,11 @@
 const path = require("path");
 const webpack = require("webpack");
-const dotenv = require("dotenv").config({
-  path: path.join(__dirname, ".env"),
-});
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = function (env) {
   const production = process.env.NODE_ENV === "production";
   return {
+    mode: production ? "production" : "development",
     devtool: production ? "source-maps" : "eval",
     entry: "./js/app.js",
     output: {
@@ -50,13 +49,13 @@ module.exports = function (env) {
     },
     plugins: [
       new webpack.EnvironmentPlugin([
-        "AUTH_0_DOMAIN",
-        "AUTH_0_CLIENT_ID",
         "STRIPE_PUBLIC_KEY",
-        "SELF_HOSTED",
         "MAPBOX_PRIVATE_KEY",
         "MAPBOX_STYLE_URL",
+        "MAGIC_PUBLIC_KEY",
+        "USER_INVITE_ONLY"
       ]),
+      new NodePolyfillPlugin()
     ],
   };
 };
