@@ -68,7 +68,7 @@ config :console, Console.Mailer,
 config :console, env: Mix.env
 
 config :console,
-  magic_secret_key: "sk_live_2EA0025F88821B36"
+  magic_secret_key: "sk_live_22E51B6F77F4897C"
 
 config :console,
   stripe_secret_key: "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"

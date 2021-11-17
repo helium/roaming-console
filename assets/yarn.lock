@@ -1152,13 +1152,12 @@
   resolved "https://registry.yarnpkg.com/@isaacs/string-locale-compare/-/string-locale-compare-1.1.0.tgz#291c227e93fd407a96ecd59879a35809120e432b"
   integrity sha512-SQ7Kzhh9+D+ZW9MA0zkYv3VXhIDNx+LzM6EJ+/65I3QY+enU6Itte7E5XX7EWrqLW2FN4n06GWzBnPoC3th2aQ==
 
-"@magic-ext/oauth@^0.10.0":
-  version "0.10.4"
-  resolved "https://registry.yarnpkg.com/@magic-ext/oauth/-/oauth-0.10.4.tgz#d68b00d29f8844fa0f12bc625faa5a1be9a467bb"
-  integrity sha512-Drgs8rE0rWcfPk1x0lUFIj2KjUch6mBWmlNqRXOmfxShSpdHsUiBnREgk6s1AzenBPLgive7keXfB3Sx+nrC/g==
+"@magic-ext/oauth@^0.11.2":
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/@magic-ext/oauth/-/oauth-0.11.2.tgz#27852188f43e233ecaa3dfd020003d384ae725c5"
+  integrity sha512-F6Gnz33Ps7vvrSvRYyDailHMGhPeNVtUjeDjdhv7rQ23nMGwOPrumIFZ4IW9+yuo8VHPQXg8KOiRmaQVNF/T6Q==
   dependencies:
-    "@magic-sdk/types" "^5.1.4"
-    crypto-js "^3.3.0"
+    "@magic-sdk/types" "^5.2.0"
 
 "@magic-sdk/commons@^2.2.0":
   version "2.2.0"
@@ -1174,7 +1173,7 @@
     eventemitter3 "^4.0.4"
     web3-core "1.5.2"
 
-"@magic-sdk/types@^5.1.4", "@magic-sdk/types@^5.2.0":
+"@magic-sdk/types@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@magic-sdk/types/-/types-5.2.0.tgz#99eb5562fa373689142317eff4a7d9f4fca3a445"
   integrity sha512-nIYAUmeNRBCw+EuvBfDnp+ZBBfim+4jFUlRfLm59aEd1AE0OYnyjEVxWNyvuXJkJxTX7sLxQsqzfhZMAb8RI6Q==
@@ -2618,11 +2617,6 @@ crypto-browserify@^3.12.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
     randomfill "^1.0.3"
-
-crypto-js@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.3.0.tgz#846dd1cce2f68aacfa156c8578f926a609b7976b"
-  integrity sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==
 
 css-loader@^6.3.0:
   version "6.5.1"
