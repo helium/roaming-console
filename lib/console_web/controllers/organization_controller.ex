@@ -69,6 +69,24 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
+  def update(conn, attrs = %{"id" => id, "address" => _, "port" => _, "join_credentials" => _, "multi_buy" => _}) do
+    organization = Organizations.get_organization!(conn.assigns.current_user, id)
+    membership = Organizations.get_membership!(conn.assigns.current_user, organization)
+
+    if membership.role != "admin" do
+      {:error, :forbidden, "You don't have access to do this"}
+    else
+      update_attrs = Map.take(attrs, ["address", "port", "join_credentials", "multi_buy"])
+      with {:ok, _} <- Organizations.update_organization(organization, update_attrs) do
+        ConsoleWeb.Endpoint.broadcast("graphql:dashboard_index", "graphql:dashboard_index:#{id}:settings_update", %{})
+
+        conn
+        |> put_resp_header("message", "Settings for organization #{organization.name} updated successfully")
+        |> send_resp(:no_content, "")
+      end
+    end
+  end
+
   def update(conn, %{"switch_org_id" => org_id}) do
     organization = Organizations.get_organization!(conn.assigns.current_user, org_id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)

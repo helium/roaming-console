@@ -73,6 +73,15 @@ export const updateOrganization = (id, active) => {
   }
 }
 
+export const updateOrganizationCreds = (id, address, port, join_credentials, multi_buy) => {
+  return rest.put(`/api/organizations/${id}`, {
+    address,
+    port,
+    join_credentials,
+    multi_buy
+  })
+}
+
 export const switchOrganization = (organization) => {
   return (dispatch) => {
     rest.put(`/api/organizations/${organization.id}`, {

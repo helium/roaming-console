@@ -16,6 +16,10 @@ defmodule Console.Organizations.Organization do
     field :pending_automatic_purchase, :boolean
     field :active, :boolean
     field :received_free_dc, :boolean
+    field :address, :string
+    field :join_credentials, :string
+    field :port, :integer
+    field :multi_buy, :integer
 
     has_many :memberships, Console.Organizations.Membership, on_delete: :delete_all
     many_to_many :users, Console.Auth.User, join_through: "memberships"
@@ -58,6 +62,10 @@ defmodule Console.Organizations.Organization do
       :pending_automatic_purchase,
       :active,
       :received_free_dc,
+      :address,
+      :port,
+      :multi_buy,
+      :join_credentials
     ])
   end
 

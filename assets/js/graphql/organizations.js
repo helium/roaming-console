@@ -9,6 +9,18 @@ export const ORGANIZATION_FRAGMENT = gql`
   }
 `
 
+export const ORGANIZATION_SHOW = gql`
+  query OrganizationShowSettingsQuery ($id: ID!) {
+    organization(id: $id) {
+      id,
+      address,
+      port,
+      join_credentials,
+      multi_buy
+    }
+  }
+`
+
 export const ORGANIZATION_SHOW_DC = gql`
   query OrganizationShowQuery ($id: ID!) {
     organization(id: $id) {

@@ -41,6 +41,10 @@ defmodule ConsoleWeb.Schema do
     field :automatic_charge_amount, :integer
     field :active, :boolean
     field :received_free_dc, :boolean
+    field :address, :string
+    field :port, :integer
+    field :join_credentials, :string
+    field :multi_buy, :integer
   end
 
   object :api_key do

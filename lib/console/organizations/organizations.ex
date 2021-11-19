@@ -276,4 +276,9 @@ defmodule Console.Organizations do
       {:ok, from_org_updated, to_org_updated}
     end)
   end
+
+  def get_all_for_router_websocket do
+    query = from o in Organization, preload: [:net_ids]
+    Repo.all(query)
+  end
 end

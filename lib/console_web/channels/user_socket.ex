@@ -7,8 +7,6 @@ defmodule ConsoleWeb.UserSocket do
 
   channel("graphql:*", ConsoleWeb.GraphqlChannel)
 
-  @access_token_decoder Application.get_env(:console, :access_token_decoder)
-
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
   # verification, you can put default assigns into
