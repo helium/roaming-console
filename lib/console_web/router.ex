@@ -47,7 +47,6 @@ defmodule ConsoleWeb.Router do
     resources "/invitations", InvitationController, only: [:create, :delete]
     resources "/memberships", MembershipController, only: [:update, :delete]
     resources "/api_keys", ApiKeyController, only: [:create, :delete]
-    resources "/net_ids", NetIdController, only: [:create]
     resources "/notifications", NotificationController, only: [:create]
 
     post "/data_credits/create_customer_and_charge", DataCreditController, :create_customer_id_and_charge
