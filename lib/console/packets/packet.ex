@@ -11,6 +11,7 @@ defmodule Console.Packets.Packet do
     field :packet_size, :integer
     field :reported_at_epoch, :integer
     field :packet_hash, :string
+    field :type, :string
     field :serial, :integer
 
     belongs_to :organization, Organization
@@ -25,7 +26,8 @@ defmodule Console.Packets.Packet do
       :packet_size,
       :organization_id,
       :reported_at_epoch,
-      :packet_hash
+      :packet_hash,
+      :type
     ])
   end
 end

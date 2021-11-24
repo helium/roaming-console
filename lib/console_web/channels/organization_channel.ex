@@ -14,17 +14,15 @@ defmodule ConsoleWeb.OrganizationChannel do
     {:reply, :ok, socket}
   end
 
-  def handle_in(
-    "router:new_packet",
-    %{
-      "dc_used" => _,
-      "packet_size" => _,
-      "organization_id" => _,
-      "reported_at_epoch" => _,
-      "packet_hash" => _
-    } = packet_attrs,
-    socket
-  ) do
+  def handle_in("router:new_packet", packet, socket) do
+    packet_attrs = %{
+      "dc_used" => packet["dc_used"]["used"],
+      "packet_size" => packet["packet_size"],
+      "organization_id" => packet["organization_id"],
+      "reported_at_epoch" => packet["reported_at_epoch"],
+      "packet_hash" => packet["packet_hash"],
+      "type" => packet["type"]
+    }
     {:ok, _} = Packets.create_packet(packet_attrs)
 
     # Respond with something else if fails?
