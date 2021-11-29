@@ -3,11 +3,11 @@ defmodule ConsoleWeb.Monitor do
     Agent.start_link(fn -> initial_state end, name: __MODULE__)
   end
 
-  def get_router_address do
+  def get_packet_purchaser_address do
     Agent.get(__MODULE__, fn state -> state end)
   end
 
-  def update_router_address(address) do
+  def update_packet_purchaser_address(address) do
     Agent.update(__MODULE__, fn _ -> address end)
   end
 end

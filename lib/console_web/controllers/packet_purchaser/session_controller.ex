@@ -1,9 +1,9 @@
-defmodule ConsoleWeb.Router.SessionController do
+defmodule ConsoleWeb.PacketPurchaser.SessionController do
   use ConsoleWeb, :controller
   import ConsoleWeb.AuthErrorHandler
 
   def create(conn, %{"secret" => given_secret}) do
-    valid_secrets = Application.fetch_env!(:console, :router_secrets)
+    valid_secrets = Application.fetch_env!(:console, :packet_purchaser_secrets)
 
     if Enum.member?(valid_secrets, given_secret) do
       # encode the secret version so that if it changes the token will be invalid
@@ -18,7 +18,7 @@ defmodule ConsoleWeb.Router.SessionController do
             id: secret_version,
           },
           %{
-            typ: "router",
+            typ: "packet_purchaser",
             ipa: remote_ip
           },
           ttl: {1, :day}

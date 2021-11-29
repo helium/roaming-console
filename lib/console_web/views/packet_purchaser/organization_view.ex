@@ -1,6 +1,6 @@
-defmodule ConsoleWeb.Router.OrganizationView do
+defmodule ConsoleWeb.PacketPurchaser.OrganizationView do
   use ConsoleWeb, :view
-  alias ConsoleWeb.Router.OrganizationView
+  alias ConsoleWeb.PacketPurchaser.OrganizationView
 
   def render("index.json", %{organizations: organizations}) do
     render_many(organizations, OrganizationView, "organization.json")

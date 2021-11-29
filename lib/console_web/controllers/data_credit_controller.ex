@@ -189,7 +189,7 @@ defmodule ConsoleWeb.DataCreditController do
 
             ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{current_organization.id}:update_dc_table", %{})
             ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
-            broadcast_router_refill_dc_balance(current_organization)
+            broadcast_packet_purchaser_refill_dc_balance(current_organization)
 
             # send transaction emails
             Organizations.get_administrators(current_organization)
@@ -265,8 +265,8 @@ defmodule ConsoleWeb.DataCreditController do
           end)
           ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{from_org_updated.id}:update_dc", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{to_org_updated.id}:update_dc", %{})
-          broadcast_router_refill_dc_balance(from_org_updated)
-          broadcast_router_refill_dc_balance(to_org_updated)
+          broadcast_packet_purchaser_refill_dc_balance(from_org_updated)
+          broadcast_packet_purchaser_refill_dc_balance(to_org_updated)
 
           attrs = %{
             "dc_purchased" => amount,
@@ -304,8 +304,8 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def get_router_address(conn, _) do
-    address = ConsoleWeb.Monitor.get_router_address()
+  def get_packet_purchaser_address(conn, _) do
+    address = ConsoleWeb.Monitor.get_packet_purchaser_address()
     conn |> send_resp(:ok, Poison.encode!(%{ address: address }))
   end
 
@@ -334,7 +334,7 @@ defmodule ConsoleWeb.DataCreditController do
     end
   end
 
-  def broadcast_router_refill_dc_balance(%Organization{} = organization) do
+  def broadcast_packet_purchaser_refill_dc_balance(%Organization{} = organization) do
     ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:refill:dc_balance", %{
       "id" => organization.id, "dc_balance_nonce" => organization.dc_balance_nonce, "dc_balance" => organization.dc_balance
     })

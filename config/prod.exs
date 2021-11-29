@@ -25,7 +25,7 @@ config :console, Console.Mailer,
   domain: "mg2.helium.com"
 
 config :console,
-  router_secrets: String.split(System.get_env("ROUTER_SECRETS"), ",")
+  packet_purchaser_secrets: String.split(System.get_env("PACKET_PURCHASER_SECRETS"), ",")
 
 config :console,
   magic_secret_key: System.get_env("MAGIC_SECRET_KEY")

@@ -125,8 +125,8 @@ defmodule ConsoleWeb.OrganizationController do
           {:ok, {:ok, from_org_updated, to_org_updated }} = Organizations.send_dc_to_org(balance_to_transfer, organization, destination_org)
           ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{from_org_updated.id}:update_dc", %{})
           ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{to_org_updated.id}:update_dc", %{})
-          ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(from_org_updated)
-          ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(to_org_updated)
+          ConsoleWeb.DataCreditController.broadcast_packet_purchaser_refill_dc_balance(from_org_updated)
+          ConsoleWeb.DataCreditController.broadcast_packet_purchaser_refill_dc_balance(to_org_updated)
 
           attrs = %{
             "dc_purchased" => balance_to_transfer,

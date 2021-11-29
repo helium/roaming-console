@@ -58,7 +58,7 @@ config :console, Console.Repo,
   pool_size: 10
 
 config :console,
-  router_secrets: [
+  packet_purchaser_secrets: [
     "1524243720:2JD3juUA9RGaOf3Fpj7fNOylAgZ/jAalgOe45X6+jW4sy9gyCy1ELJrIWKvrgMx/"
   ]
 

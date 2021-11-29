@@ -8,7 +8,7 @@
     "POOL_SIZE": {
       "required": true
     },
-    "ROUTER_SECRETS": {
+    "PACKET_PURCHASER_SECRETS": {
       "required": true
     },
     "SECRET_KEY_BASE": {

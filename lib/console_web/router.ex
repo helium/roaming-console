@@ -19,9 +19,9 @@ defmodule ConsoleWeb.Router do
     plug ConsoleWeb.Plug.VerifyRemoteIpRange
   end
 
-  pipeline :router_api do
+  pipeline :packet_purchaser_api do
     plug :accepts, ["json"]
-    plug ConsoleWeb.Plug.RateLimit, ["router_auth_actions", 10]
+    plug ConsoleWeb.Plug.RateLimit, ["packet_purchaser_auth_actions", 10]
     plug ConsoleWeb.Plug.VerifyRemoteIpRange
   end
 
@@ -59,23 +59,23 @@ defmodule ConsoleWeb.Router do
     post "/data_credits/set_automatic_payments", DataCreditController, :set_automatic_payments
     post "/data_credits/transfer_dc", DataCreditController, :transfer_dc
     get "/data_credits/generate_memo", DataCreditController, :generate_memo
-    get "/data_credits/router_address", DataCreditController, :get_router_address
+    get "/data_credits/packet_purchaser_address", DataCreditController, :get_packet_purchaser_address
     get "/data_credits/get_hnt_price", DataCreditController, :get_hnt_price
   end
 
-  scope "/api/router", ConsoleWeb.Router do
-    pipe_through :router_api
+  scope "/api/packet_purchaser", ConsoleWeb.PacketPurchaser do
+    pipe_through :packet_purchaser_api
 
     post "/sessions", SessionController, :create
     post "/sessions/refresh", SessionController, :refresh
   end
 
-  scope "/api/router", ConsoleWeb.Router do
-    pipe_through ConsoleWeb.RouterApiPipeline
+  scope "/api/packet_purchaser", ConsoleWeb.PacketPurchaser do
+    pipe_through ConsoleWeb.PacketPurchaserApiPipeline
 
     resources "/organizations", OrganizationController, only: [:index, :show]
     post "/organizations/burned", OrganizationController, :burned_dc
-    post "/organizations/manual_update_router_dc", OrganizationController, :manual_update_router_dc
+    post "/organizations/manual_update_packet_purchaser_dc", OrganizationController, :manual_update_packet_purchaser_dc
   end
 
   scope "/api/v1", ConsoleWeb.V1 do

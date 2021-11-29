@@ -1,4 +1,4 @@
-defmodule ConsoleWeb.Router.OrganizationController do
+defmodule ConsoleWeb.PacketPurchaser.OrganizationController do
   use ConsoleWeb, :controller
 
   alias Console.Organizations
@@ -44,7 +44,7 @@ defmodule ConsoleWeb.Router.OrganizationController do
 
               ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
               ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{organization.id}:update_dc_table", %{})
-              ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)
+              ConsoleWeb.DataCreditController.broadcast_packet_purchaser_refill_dc_balance(organization)
 
               conn |> send_resp(:no_content, "")
             end
@@ -57,13 +57,13 @@ defmodule ConsoleWeb.Router.OrganizationController do
     end
   end
 
-  def manual_update_router_dc(conn, %{"organization_id" => organization_id, "amount" => amount}) do
+  def manual_update_packet_purchaser_dc(conn, %{"organization_id" => organization_id, "amount" => amount}) do
     organization = Organizations.get_organization!(organization_id)
 
     attrs = %{ dc_balance: amount, dc_balance_nonce: organization.dc_balance_nonce + 1 }
 
     with {:ok, organization} <- Organizations.update_organization(organization, attrs) do
-      ConsoleWeb.DataCreditController.broadcast_router_refill_dc_balance(organization)
+      ConsoleWeb.DataCreditController.broadcast_packet_purchaser_refill_dc_balance(organization)
       conn |> send_resp(:no_content, "")
     end
   end

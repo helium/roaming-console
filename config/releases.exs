@@ -31,7 +31,7 @@ config :console, ConsoleWeb.Guardian,
   secret_key: System.get_env("GUARDIAN_SECRET_KEY")
 
 config :console,
-  router_secrets: String.split(System.get_env("ROUTER_SECRETS"), ",")
+  packet_purchaser_secrets: String.split(System.get_env("PACKET_PURCHASER_SECRETS"), ",")
 
 config :console,
   self_hosted: true

@@ -6,7 +6,7 @@ defmodule ConsoleWeb.Endpoint do
   socket "/socket", ConsoleWeb.UserSocket,
     websocket: [timeout: 45_000, check_origin: [System.get_env("SOCKET_CHECK_ORIGIN") || "//localhost"]]
 
-  socket "/socket/router", ConsoleWeb.RouterSocket,
+  socket "/socket/packet_purchaser", ConsoleWeb.PacketPurchaserSocket,
     websocket: [timeout: 45_000]
 
   # Serve at "/" the static files from "priv/static" directory.

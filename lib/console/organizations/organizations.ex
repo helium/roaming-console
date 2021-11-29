@@ -277,7 +277,7 @@ defmodule Console.Organizations do
     end)
   end
 
-  def get_all_for_router_websocket do
+  def get_all_for_packet_purchaser_websocket do
     query = from o in Organization, preload: [:net_ids]
     Repo.all(query)
   end

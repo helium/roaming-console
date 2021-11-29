@@ -20,7 +20,7 @@ import {
   createDCPurchase,
   setAutomaticPayments,
   generateMemo,
-  getRouterAddress,
+  getPacketPurchaserAddress,
 } from "../../actions/dataCredits";
 import { Modal, Button, Typography, Input, Popover } from "antd";
 import InfoCircleOutlined from "@ant-design/icons/InfoCircleOutlined";
@@ -77,7 +77,7 @@ class PurchaseCreditModal extends Component {
     hntToBurn: null,
     nextTimeStamp: null,
     manualQREntry: false,
-    routerAddress: "",
+    packetPurchaserAddress: "",
   };
 
   componentDidMount() {
@@ -96,9 +96,9 @@ class PurchaseCreditModal extends Component {
       });
     }
 
-    this.props.getRouterAddress().then(({ data }) => {
+    this.props.getPacketPurchaserAddress().then(({ data }) => {
       if (typeof data.address === "string") {
-        this.setState({ routerAddress: data.address });
+        this.setState({ packetPurchaserAddress: data.address });
       }
     });
   }
@@ -220,7 +220,7 @@ class PurchaseCreditModal extends Component {
     this.props.generateMemo().then(({ data }) => {
       const qr = {
         type: "dc_burn",
-        address: this.state.routerAddress,
+        address: this.state.packetPurchaserAddress,
         amount: this.state.hntToBurn,
         memo: data.memo,
       };
@@ -451,7 +451,7 @@ class PurchaseCreditModal extends Component {
             />
           )}
         </div>
-        {this.state.routerAddress === "" && (
+        {this.state.packetPurchaserAddress === "" && (
           <div>
             <Text
               style={{
@@ -460,7 +460,7 @@ class PurchaseCreditModal extends Component {
                 display: "block",
               }}
             >
-              Router address for burning HNT is not available
+              Packet Purchaser address for burning HNT is not available
             </Text>
             <Text
               style={{
@@ -470,12 +470,12 @@ class PurchaseCreditModal extends Component {
               }}
             >
               {process.env.SELF_HOSTED
-                ? "Please make sure your Router is connected to Console through websockets"
+                ? "Please make sure your Packet Purchaser is connected to Console through websockets"
                 : "Please contact support to enable burn"}
             </Text>
           </div>
         )}
-        {this.state.routerAddress !== "" &&
+        {this.state.packetPurchaserAddress !== "" &&
           this.state.qrContent &&
           !this.state.manualQREntry && (
             <QRCode value={this.state.qrContent} size={220} />
@@ -484,7 +484,7 @@ class PurchaseCreditModal extends Component {
           <BurnManualEntry
             hntToBurn={this.state.hntToBurn}
             memo={this.state.memo}
-            address={this.state.routerAddress}
+            address={this.state.packetPurchaserAddress}
           />
         )}
         <div style={{ marginTop: 20 }}>
@@ -641,7 +641,7 @@ function mapDispatchToProps(dispatch) {
       createDCPurchase,
       setAutomaticPayments,
       generateMemo,
-      getRouterAddress,
+      getPacketPurchaserAddress,
     },
     dispatch
   );

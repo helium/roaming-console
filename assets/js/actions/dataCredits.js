@@ -49,8 +49,8 @@ export const generateMemo = () => () => (
   rest.get('/api/data_credits/generate_memo')
 )
 
-export const getRouterAddress = () => () => (
-  rest.get('/api/data_credits/router_address')
+export const getPacketPurchaserAddress = () => () => (
+  rest.get('/api/data_credits/packet_purchaser_address')
 )
 
 const convertToString = (amount) => {

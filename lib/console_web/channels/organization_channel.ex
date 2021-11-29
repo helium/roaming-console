@@ -6,15 +6,15 @@ defmodule ConsoleWeb.OrganizationChannel do
     {:ok, socket}
   end
 
-  def handle_in("router:address", %{"address" => router_address}, socket) do
-    router_address
+  def handle_in("packet_purchaser:address", %{"address" => packet_purchaser_address}, socket) do
+    packet_purchaser_address
     |> to_string()
-    |> ConsoleWeb.Monitor.update_router_address()
+    |> ConsoleWeb.Monitor.update_packet_purchaser_address()
 
     {:reply, :ok, socket}
   end
 
-  def handle_in("router:new_packet", packet, socket) do
+  def handle_in("packet_purchaser:new_packet", packet, socket) do
     packet_attrs = %{
       "dc_used" => packet["dc_used"]["used"],
       "packet_size" => packet["packet_size"],
