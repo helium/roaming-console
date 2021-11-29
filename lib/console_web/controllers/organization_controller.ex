@@ -61,6 +61,7 @@ defmodule ConsoleWeb.OrganizationController do
     else
       Organizations.update_organization(organization, %{ "active" => active })
       ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
+      broadcast_packet_purchaser_all_org_config()
 
       render_org = %{id: organization.id, name: organization.name, role: membership.role}
       conn
@@ -79,6 +80,7 @@ defmodule ConsoleWeb.OrganizationController do
       update_attrs = Map.take(attrs, ["address", "port", "join_credentials", "multi_buy"])
       with {:ok, _} <- Organizations.update_organization(organization, update_attrs) do
         ConsoleWeb.Endpoint.broadcast("graphql:dashboard_index", "graphql:dashboard_index:#{id}:settings_update", %{})
+        broadcast_packet_purchaser_all_org_config()
 
         conn
         |> put_resp_header("message", "Settings for organization #{organization.name} updated successfully")
@@ -151,6 +153,7 @@ defmodule ConsoleWeb.OrganizationController do
           end)
 
           ConsoleWeb.Endpoint.broadcast("graphql:orgs_index_table", "graphql:orgs_index_table:#{conn.assigns.current_user.id}:organization_list_update", %{})
+          broadcast_packet_purchaser_all_org_config()
 
           render_org = %{id: organization.id, name: organization.name, role: membership.role}
           conn
@@ -159,5 +162,15 @@ defmodule ConsoleWeb.OrganizationController do
           |> render("show.json", organization: render_org)
         end
     end
+  end
+
+  def broadcast_packet_purchaser_all_org_balance() do
+    results = Organizations.get_all_org_dc_balance
+    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:dc_balance:list", results)
+  end
+
+  def broadcast_packet_purchaser_all_org_config() do
+    results = Organizations.get_all_org_config
+    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:config:list", results)
   end
 end

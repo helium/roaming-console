@@ -11,7 +11,19 @@ defmodule ConsoleWeb.OrganizationChannel do
     |> to_string()
     |> ConsoleWeb.Monitor.update_packet_purchaser_address()
 
-    {:reply, :ok, socket}
+    {:noreply, socket}
+  end
+
+  def handle_in("packet_purchaser:get_config", _message, socket) do
+    ConsoleWeb.OrganizationController.broadcast_packet_purchaser_all_org_balance()
+
+    {:noreply, socket}
+  end
+
+  def handle_in("packet_purchaser:get_org_balances", _message, socket) do
+    ConsoleWeb.OrganizationController.broadcast_packet_purchaser_all_org_config()
+
+    {:noreply, socket}
   end
 
   def handle_in("packet_purchaser:new_packet", packet, socket) do
@@ -23,9 +35,11 @@ defmodule ConsoleWeb.OrganizationChannel do
       "packet_hash" => packet["packet_hash"],
       "type" => packet["type"]
     }
-    {:ok, _} = Packets.create_packet(packet_attrs)
-
-    # Respond with something else if fails?
-    {:reply, :ok, socket}
+    case Packets.create_packet(packet_attrs) do
+      {:ok, _} ->
+        {:noreply, socket}
+      _ ->
+        {:reply, {:error, "Failed to add packet to database"}, socket}
+    end
   end
 end
