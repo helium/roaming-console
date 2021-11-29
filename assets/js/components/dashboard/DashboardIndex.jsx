@@ -5,7 +5,7 @@ import numeral from "numeral";
 import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
-import { updateOrganizationCreds } from "../../actions/organization";
+import { updateOrganizationCreds, getNetIds } from "../../actions/organization";
 import analyticsLogger from "../../util/analyticsLogger";
 import { Link } from "react-router-dom";
 import { Typography, Card, Row, Col, Popover, Button, Input } from "antd";
@@ -25,8 +25,10 @@ export default (props) => {
   const [join_credentials, setJoinCreds] = useState(null);
   const [multi_buy, setMultiBuy] = useState(null);
   const [hasChanges, setChanges] = useState(false)
+  const [netIds, setNetIds] = useState("")
 
   const currentOrganizationId = useSelector((state) => state.organization.currentOrganizationId);
+  const userEmail = useSelector((state) => state.magicUser.email);
   const socket = useSelector((state) => state.apollo.socket);
 
   const {
@@ -49,6 +51,11 @@ export default (props) => {
         queryRefetch();
       }
     );
+
+    if (userEmail === 'jeffrey@helium.com') {
+      getNetIds()
+      .then(data => setNetIds(data))
+    }
 
     return () => {
       channel.leave();
@@ -196,6 +203,13 @@ export default (props) => {
             )
           }
         </div>
+        {
+          userEmail === 'jeffrey@helium.com' && (
+            <pre>
+              {JSON.stringify(netIds, null, 2)}
+            </pre>
+          )
+        }
       </div>
     </DashboardLayout>
   )
