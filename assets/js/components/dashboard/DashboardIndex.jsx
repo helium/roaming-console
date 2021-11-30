@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import numeral from "numeral";
 import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
+import JoinCredentialsForm from "./JoinCredentialsForm";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
 import { updateOrganizationCreds, getNetIds } from "../../actions/organization";
 import analyticsLogger from "../../util/analyticsLogger";
@@ -66,8 +67,8 @@ export default (props) => {
     if (queryData && queryData.organization) {
       setAddress(queryData.organization.address)
       setPort(queryData.organization.port)
-      setJoinCreds(queryData.organization.join_credentials)
       setMultiBuy(queryData.organization.multi_buy)
+      setJoinCreds(JSON.parse(queryData.organization.join_credentials))
     }
   }, [queryData]);
 
@@ -129,7 +130,7 @@ export default (props) => {
             </Card>
           </Col>
         </Row>
-        <div style={{ width: 300 }}>
+        <div style={{ width: 350 }}>
           <Text>Address</Text>
           <Input
             placeholder={address || "Set Address"}
@@ -151,16 +152,6 @@ export default (props) => {
             type="number"
             style={{ marginBottom: 10 }}
           />
-          <Text>Join Credentials</Text>
-          <Input
-            placeholder={join_credentials || "Set Join Credentials"}
-            value={join_credentials}
-            onChange={e => {
-              setJoinCreds(e.target.value)
-              setChanges(true)
-            }}
-            style={{ marginBottom: 10 }}
-          />
           <Text>Multi Packet Purchase</Text>
           <Input
             placeholder={multi_buy || "Set Value"}
@@ -172,16 +163,22 @@ export default (props) => {
             type="number"
             style={{ marginBottom: 10 }}
           />
-
+          <Text>Join Credentials</Text>
+          <JoinCredentialsForm
+            join_credentials={join_credentials}
+            setJoinCreds={setJoinCreds}
+            setChanges={setChanges}
+            hasChanges={hasChanges}
+          />
           {
             hasChanges && (
-              <React.Fragment>
+              <div style={{ marginTop: 20, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
                 <Button
                   onClick={() => {
                     setAddress(queryData.organization.address)
                     setPort(queryData.organization.port)
-                    setJoinCreds(queryData.organization.join_credentials)
                     setMultiBuy(queryData.organization.multi_buy)
+                    setJoinCreds(JSON.parse(queryData.organization.join_credentials))
                     setChanges(false)
                   }}
                   style={{ marginRight: 10 }}
@@ -190,16 +187,20 @@ export default (props) => {
                 </Button>
                 <Button
                   onClick={() => {
-                    updateOrganizationCreds(currentOrganizationId, address, port, join_credentials, multi_buy)
+                    const parsedCreds = join_credentials.filter(c => c.dev_eui || c.app_eui)
+                    updateOrganizationCreds(currentOrganizationId, address, port, JSON.stringify(parsedCreds), multi_buy)
                     .then(res => {
-                      if (res.status == 204) setChanges(false)
+                      if (res.status == 204) {
+                        setJoinCreds(parsedCreds)
+                        setChanges(false)
+                      }
                     })
                   }}
                   type="primary"
                 >
                   Save
                 </Button>
-              </React.Fragment>
+              </div>
             )
           }
         </div>

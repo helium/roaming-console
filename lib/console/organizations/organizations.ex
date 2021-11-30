@@ -284,13 +284,23 @@ defmodule Console.Organizations do
     all_orgs
     |> Enum.map(fn org ->
       Enum.map(org.net_ids, fn net_id ->
+        joins =
+          case org.join_credentials do
+            nil -> nil
+            _ ->
+              case Poison.decode(org.join_credentials) do
+                {:ok, joins} -> joins
+                {:error, _} -> "Invalid Join Credential Format"
+              end
+          end
+
         %{
           id: org.id,
           name: org.name,
           net_id: net_id.value,
           address: org.address,
           port: org.port,
-          joins: org.join_credentials,
+          joins: joins,
           multi_buy: org.multi_buy,
           active: org.active
         }
