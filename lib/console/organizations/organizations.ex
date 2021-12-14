@@ -310,8 +310,21 @@ defmodule Console.Organizations do
   end
 
   def get_all_org_dc_balance do
-    query = from o in Organization,
-      select: %{id: o.id, name: o.name, dc_balance: o.dc_balance, dc_balance_nonce: o.dc_balance_nonce}
-    Repo.all(query)
+    query = from o in Organization, preload: [:net_ids]
+    all_orgs = Repo.all(query)
+
+    all_orgs
+    |> Enum.map(fn org ->
+      Enum.map(org.net_ids, fn net_id ->
+        %{
+          id: org.id,
+          name: org.name,
+          net_id: net_id.value,
+          dc_balance: org.dc_balance,
+          dc_balance_nonce: org.dc_balance_nonce
+        }
+      end)
+    end)
+    |> List.flatten()
   end
 end
