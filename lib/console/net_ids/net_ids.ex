@@ -5,6 +5,10 @@ defmodule Console.NetIds do
   alias Console.NetIds.NetId
   alias Console.Organizations.Organization
 
+  def get_net_id(id) do
+    Repo.get_by(NetId, [id: id])
+  end
+
   def create_net_id!(attrs \\ %{}, %Organization{} = organization) do
     attrs = Map.merge(attrs, %{"organization_id" => organization.id})
 

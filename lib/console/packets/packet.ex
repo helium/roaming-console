@@ -13,6 +13,7 @@ defmodule Console.Packets.Packet do
     field :packet_hash, :string
     field :type, :string
     field :serial, :integer
+    field :net_id, :string
 
     belongs_to :organization, Organization
     timestamps()
@@ -27,7 +28,8 @@ defmodule Console.Packets.Packet do
       :organization_id,
       :reported_at_epoch,
       :packet_hash,
-      :type
+      :type,
+      :net_id
     ])
   end
 end

@@ -1,6 +1,7 @@
 defmodule ConsoleWeb.OrganizationChannel do
   use Phoenix.Channel
   alias Console.Packets
+  alias Console.NetIds
 
   def join("organization:all", _message, socket) do
     {:ok, socket}
@@ -27,19 +28,27 @@ defmodule ConsoleWeb.OrganizationChannel do
   end
 
   def handle_in("packet_purchaser:new_packet", packet, socket) do
-    packet_attrs = %{
-      "dc_used" => packet["dc_used"]["used"],
-      "packet_size" => packet["packet_size"],
-      "organization_id" => packet["organization_id"],
-      "reported_at_epoch" => packet["reported_at_epoch"],
-      "packet_hash" => packet["packet_hash"],
-      "type" => packet["type"]
-    }
-    case Packets.create_packet(packet_attrs) do
-      {:ok, _} ->
-        {:noreply, socket}
-      _ ->
-        {:reply, {:error, "Failed to add packet to database"}, socket}
+    net_id = NetIds.get_net_id(packet["net_id"])
+
+    if net_id == nil do
+      {:reply, {:error, "Net Id does not associate with an organization"}, socket}
+    else
+      packet_attrs = %{
+        "dc_used" => packet["dc_used"]["used"],
+        "packet_size" => packet["packet_size"],
+        "organization_id" => net_id.organization_id,
+        "reported_at_epoch" => packet["reported_at_epoch"],
+        "packet_hash" => packet["packet_hash"],
+        "type" => packet["type"],
+        "net_id" => packet["net_id"],
+      }
+
+      case Packets.create_packet(packet_attrs) do
+        {:ok, _} ->
+          {:noreply, socket}
+        _ ->
+          {:reply, {:error, "Failed to add packet to database"}, socket}
+      end
     end
   end
 end
