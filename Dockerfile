@@ -1,4 +1,4 @@
-FROM elixir:1.9-alpine
+FROM elixir:1.12-alpine
 
 # install build dependencies
 RUN apk add --update git build-base nodejs npm yarn python3 bash openssl postgresql-client openssl-dev libsodium-dev
