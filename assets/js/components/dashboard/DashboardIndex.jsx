@@ -2,16 +2,33 @@ import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import numeral from "numeral";
-import find from "lodash/find";
 import DashboardLayout from "../common/DashboardLayout";
 import JoinCredentialsForm from "./JoinCredentialsForm";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
 import { updateOrganizationCreds, getNetIds } from "../../actions/organization";
 import analyticsLogger from "../../util/analyticsLogger";
-import { Link } from "react-router-dom";
-import { Typography, Card, Row, Col, Popover, Button, Input } from "antd";
+import { Typography, Card, Row, Col, Button, Input } from "antd";
 const { Text } = Typography;
 import { primaryBlue, tertiaryPurple } from "../../util/colors";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const styles = {
   numberCount: {
@@ -20,15 +37,56 @@ const styles = {
   },
 };
 
+const options = {
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false,
+    },
+    title: {
+      display: true,
+      text: "Packets Transferred",
+    },
+  },
+};
+
+// TODO replace w/ necessary labels
+const labels = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const data = {
+  labels,
+  datasets: [
+    {
+      data: [200, 300, 150, 40, 290, 100, 190, 240, 50, 270, 244, 102], // TODO replace w/ real data
+      backgroundColor: "rgba(53, 162, 235, 0.5)",
+    },
+  ],
+};
+
 export default (props) => {
   const [address, setAddress] = useState(null);
   const [port, setPort] = useState(null);
   const [join_credentials, setJoinCreds] = useState(null);
   const [multi_buy, setMultiBuy] = useState(null);
-  const [hasChanges, setChanges] = useState(false)
-  const [netIds, setNetIds] = useState("")
+  const [hasChanges, setChanges] = useState(false);
+  const [netIds, setNetIds] = useState("");
 
-  const currentOrganizationId = useSelector((state) => state.organization.currentOrganizationId);
+  const currentOrganizationId = useSelector(
+    (state) => state.organization.currentOrganizationId
+  );
   const userEmail = useSelector((state) => state.magicUser.email);
   const socket = useSelector((state) => state.apollo.socket);
 
@@ -53,9 +111,8 @@ export default (props) => {
       }
     );
 
-    if (userEmail === 'jeffrey@helium.com') {
-      getNetIds()
-      .then(data => setNetIds(data))
+    if (userEmail === "jeffrey@helium.com") {
+      getNetIds().then((data) => setNetIds(data));
     }
 
     return () => {
@@ -65,12 +122,16 @@ export default (props) => {
 
   useEffect(() => {
     if (queryData && queryData.organization) {
-      setAddress(queryData.organization.address)
-      setPort(queryData.organization.port)
-      setMultiBuy(queryData.organization.multi_buy)
-      setJoinCreds(JSON.parse(queryData.organization.join_credentials))
+      setAddress(queryData.organization.address);
+      setPort(queryData.organization.port);
+      setMultiBuy(queryData.organization.multi_buy);
+      setJoinCreds(JSON.parse(queryData.organization.join_credentials));
     }
   }, [queryData]);
+
+  const renderChart = () => {
+    return <Bar options={options} data={data} />;
+  };
 
   return (
     <DashboardLayout title="Dashboard" user={props.user}>
@@ -85,15 +146,20 @@ export default (props) => {
           boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
         }}
       >
-
         <Row gutter={16}>
           <Col span={8}>
             <Card
               title="Total Packets Sent"
               bodyStyle={{ height: 90, padding: 0 }}
             >
-              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-                <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
+              <div
+                style={{ overflowX: "scroll", padding: 24 }}
+                className="no-scroll-bar"
+              >
+                <Row
+                  type="flex"
+                  style={{ alignItems: "center", minWidth: 300 }}
+                >
                   <Text style={{ ...styles.numberCount, color: primaryBlue }}>
                     {numeral(100000).format("0,0")}
                   </Text>
@@ -102,16 +168,21 @@ export default (props) => {
             </Card>
           </Col>
           <Col span={8}>
-            <Card
-              title="Total DC Used"
-              bodyStyle={{ height: 90, padding: 0 }}
-            >
-              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
-                <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>
-                  {numeral(100000).format("0,0")}
-                </Text>
-              </Row>
+            <Card title="Total DC Used" bodyStyle={{ height: 90, padding: 0 }}>
+              <div
+                style={{ overflowX: "scroll", padding: 24 }}
+                className="no-scroll-bar"
+              >
+                <Row
+                  type="flex"
+                  style={{ alignItems: "center", minWidth: 300 }}
+                >
+                  <Text
+                    style={{ ...styles.numberCount, color: tertiaryPurple }}
+                  >
+                    {numeral(100000).format("0,0")}
+                  </Text>
+                </Row>
               </div>
             </Card>
           </Col>
@@ -120,24 +191,31 @@ export default (props) => {
               title="Remaining DC Balance"
               bodyStyle={{ height: 90, padding: 0 }}
             >
-              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
-                <Text style={{ ...styles.numberCount }}>
-                  {numeral(100000).format("0,0")}
-                </Text>
-              </Row>
+              <div
+                style={{ overflowX: "scroll", padding: 24 }}
+                className="no-scroll-bar"
+              >
+                <Row
+                  type="flex"
+                  style={{ alignItems: "center", minWidth: 300 }}
+                >
+                  <Text style={{ ...styles.numberCount }}>
+                    {numeral(100000).format("0,0")}
+                  </Text>
+                </Row>
               </div>
             </Card>
           </Col>
         </Row>
-        <div style={{ width: 350 }}>
+        <Row>{renderChart()}</Row>
+        <div style={{ marginTop: 25, width: 350 }}>
           <Text>Address</Text>
           <Input
             placeholder={address || "Set Address"}
             value={address}
-            onChange={e => {
-              setAddress(e.target.value)
-              setChanges(true)
+            onChange={(e) => {
+              setAddress(e.target.value);
+              setChanges(true);
             }}
             style={{ marginBottom: 10 }}
           />
@@ -145,9 +223,9 @@ export default (props) => {
           <Input
             placeholder={port || "Set Port"}
             value={port}
-            onChange={e => {
-              setPort(e.target.value)
-              setChanges(true)
+            onChange={(e) => {
+              setPort(e.target.value);
+              setChanges(true);
             }}
             type="number"
             style={{ marginBottom: 10 }}
@@ -156,9 +234,9 @@ export default (props) => {
           <Input
             placeholder={multi_buy || "Set Value"}
             value={multi_buy}
-            onChange={e => {
-              setMultiBuy(e.target.value)
-              setChanges(true)
+            onChange={(e) => {
+              setMultiBuy(e.target.value);
+              setChanges(true);
             }}
             type="number"
             style={{ marginBottom: 10 }}
@@ -170,48 +248,58 @@ export default (props) => {
             setChanges={setChanges}
             hasChanges={hasChanges}
           />
-          {
-            hasChanges && (
-              <div style={{ marginTop: 20, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end'}}>
-                <Button
-                  onClick={() => {
-                    setAddress(queryData.organization.address)
-                    setPort(queryData.organization.port)
-                    setMultiBuy(queryData.organization.multi_buy)
-                    setJoinCreds(JSON.parse(queryData.organization.join_credentials))
-                    setChanges(false)
-                  }}
-                  style={{ marginRight: 10 }}
-                >
-                  Clear
-                </Button>
-                <Button
-                  onClick={() => {
-                    const parsedCreds = join_credentials.filter(c => c.dev_eui || c.app_eui)
-                    updateOrganizationCreds(currentOrganizationId, address, port, JSON.stringify(parsedCreds), multi_buy)
-                    .then(res => {
-                      if (res.status == 204) {
-                        setJoinCreds(parsedCreds)
-                        setChanges(false)
-                      }
-                    })
-                  }}
-                  type="primary"
-                >
-                  Save
-                </Button>
-              </div>
-            )
-          }
+          {hasChanges && (
+            <div
+              style={{
+                marginTop: 20,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button
+                onClick={() => {
+                  setAddress(queryData.organization.address);
+                  setPort(queryData.organization.port);
+                  setMultiBuy(queryData.organization.multi_buy);
+                  setJoinCreds(
+                    JSON.parse(queryData.organization.join_credentials)
+                  );
+                  setChanges(false);
+                }}
+                style={{ marginRight: 10 }}
+              >
+                Clear
+              </Button>
+              <Button
+                onClick={() => {
+                  const parsedCreds = join_credentials.filter(
+                    (c) => c.dev_eui || c.app_eui
+                  );
+                  updateOrganizationCreds(
+                    currentOrganizationId,
+                    address,
+                    port,
+                    JSON.stringify(parsedCreds),
+                    multi_buy
+                  ).then((res) => {
+                    if (res.status == 204) {
+                      setJoinCreds(parsedCreds);
+                      setChanges(false);
+                    }
+                  });
+                }}
+                type="primary"
+              >
+                Save
+              </Button>
+            </div>
+          )}
         </div>
-        {
-          userEmail === 'jeffrey@helium.com' && (
-            <pre>
-              {JSON.stringify(netIds, null, 2)}
-            </pre>
-          )
-        }
+        {userEmail === "jeffrey@helium.com" && (
+          <pre>{JSON.stringify(netIds, null, 2)}</pre>
+        )}
       </div>
     </DashboardLayout>
-  )
-}
+  );
+};
