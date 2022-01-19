@@ -2,12 +2,7 @@ defmodule Console.Repo.Migrations.ChangeNetIdToInteger do
   use Ecto.Migration
 
   def change do
-    alter table("net_ids") do
-      modify :value, :integer, null: false
-    end
-
-    alter table("packets") do
-      modify :net_id, :integer, null: false
-    end
+    execute "ALTER TABLE net_ids ALTER COLUMN value TYPE integer USING (value::integer)"
+    execute "ALTER TABLE packets ALTER COLUMN net_id TYPE integer USING (net_id::integer)" 
   end
 end
