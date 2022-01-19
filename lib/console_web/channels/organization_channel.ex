@@ -16,13 +16,13 @@ defmodule ConsoleWeb.OrganizationChannel do
   end
 
   def handle_in("packet_purchaser:get_config", _message, socket) do
-    ConsoleWeb.OrganizationController.broadcast_packet_purchaser_all_org_balance()
+    ConsoleWeb.OrganizationController.broadcast_packet_purchaser_all_org_config()
 
     {:noreply, socket}
   end
 
   def handle_in("packet_purchaser:get_org_balances", _message, socket) do
-    ConsoleWeb.OrganizationController.broadcast_packet_purchaser_all_org_config()
+    ConsoleWeb.OrganizationController.broadcast_packet_purchaser_all_org_balance()
 
     {:noreply, socket}
   end
@@ -33,8 +33,10 @@ defmodule ConsoleWeb.OrganizationChannel do
     if net_id == nil do
       {:reply, {:error, "Net Id does not associate with an organization"}, socket}
     else
+      IO.inspect packet
+      IO.puts net_id
       packet_attrs = %{
-        "dc_used" => packet["dc_used"]["used"],
+        "dc_used" => packet["dc_used"],
         "packet_size" => packet["packet_size"],
         "organization_id" => net_id.organization_id,
         "reported_at_epoch" => packet["reported_at_epoch"],
