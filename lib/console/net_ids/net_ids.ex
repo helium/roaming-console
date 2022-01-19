@@ -6,7 +6,7 @@ defmodule Console.NetIds do
   alias Console.Organizations.Organization
 
   def get_net_id(id) do
-    Repo.get_by(NetId, [id: id])
+    Repo.get_by(NetId, [value: id])
   end
 
   def create_net_id!(attrs \\ %{}, %Organization{} = organization) do
