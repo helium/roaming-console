@@ -29,12 +29,12 @@ defmodule ConsoleWeb.OrganizationChannel do
 
   def handle_in("packet_purchaser:new_packet", packet, socket) do
     net_id = NetIds.get_net_id(packet["net_id"])
+    IO.inspect packet
+    IO.puts net_id
 
     if net_id == nil do
       {:reply, {:error, "Net Id does not associate with an organization"}, socket}
     else
-      IO.inspect packet
-      IO.puts net_id
       packet_attrs = %{
         "dc_used" => packet["dc_used"],
         "packet_size" => packet["packet_size"],
