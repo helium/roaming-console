@@ -5,12 +5,14 @@ import numeral from "numeral";
 import DashboardLayout from "../common/DashboardLayout";
 import JoinCredentialsForm from "./JoinCredentialsForm";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
+import { GET_ORGANIZATION_PACKETS } from "../../graphql/packets";
 import { updateOrganizationCreds, getNetIds } from "../../actions/organization";
 import analyticsLogger from "../../util/analyticsLogger";
 import { Typography, Card, Row, Col, Button, Input } from "antd";
 const { Text } = Typography;
 import { primaryBlue, tertiaryPurple } from "../../util/colors";
 import { Bar } from "react-chartjs-2";
+import range from "lodash/range";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -37,8 +39,12 @@ const styles = {
   },
 };
 
-const options = {
-  maintainAspectRatio: false,
+const chartOptions = {
+  layout: {
+    padding: 12,
+  },
+  borderRadius: 100,
+  borderSkipped: false,
   plugins: {
     legend: {
       display: false,
@@ -47,33 +53,78 @@ const options = {
       display: true,
       text: "Packets Transferred",
     },
-  },
-};
-
-// TODO replace w/ necessary labels
-const labels = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-const data = {
-  labels,
-  datasets: [
-    {
-      data: [200, 300, 150, 40, 290, 100, 190, 240, 50, 270, 244, 102], // TODO replace w/ real data
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
+    tooltip: {
+      titleFont: {
+        size: 12,
+        weight: 400,
+      },
+      titleMarginBottom: 0,
+      bodyFont: {
+        size: 12,
+        weight: 300,
+      },
+      footerMarginTop: 10,
+      footerFont: {
+        size: 10,
+        weight: 400,
+      },
+      footerColor: "#909090",
+      displayColors: false,
+      callbacks: {
+        title: (tooltip) => {
+          if (tooltip[0].raw == 0.5) return "0 Packets";
+          else
+            return `${tooltip[0].raw} Packet${
+              tooltip[0].raw > 1 || parseInt(tooltip[0].raw) === 0 ? "s" : ""
+            }`;
+        },
+        label: (tooltip) => {
+          return `${tooltip.label} Net ID${
+            tooltip.label > 1 || parseInt(tooltip.label) === 0 ? "s" : ""
+          }`;
+        },
+        footer: (tooltip) => {
+          return `${24 - tooltip[0].dataIndex} ${
+            24 - tooltip[0].dataIndex === 1 ? "Hour" : "Hours"
+          } Ago`;
+        },
+      },
     },
-  ],
+  },
+  scales: {
+    xAxis: {
+      display: true,
+      title: {
+        display: true,
+        text: "Time Ago in Hours",
+      },
+      ticks: {
+        display: true,
+        callback: (value, index, values) => {
+          const list = [24, 12, 6, 3, 1];
+          if (list.includes(24 - index)) return 24 - index;
+          return "";
+        },
+      },
+      grid: {
+        display: false,
+      },
+    },
+    yAxis: {
+      display: true,
+      title: {
+        display: true,
+        text: "# of Packets",
+      },
+      ticks: {
+        display: false,
+      },
+      grid: {
+        display: false,
+      },
+    },
+  },
+  maintainAspectRatio: false,
 };
 
 export default (props) => {
@@ -98,6 +149,15 @@ export default (props) => {
   } = useQuery(ORGANIZATION_SHOW, {
     fetchPolicy: "cache-first",
     variables: { id: currentOrganizationId },
+  });
+
+  const {
+    loading: packetsLoading,
+    error: packetsError,
+    data: packetsData,
+    refetch: packetsRefetch,
+  } = useQuery(GET_ORGANIZATION_PACKETS, {
+    fetchPolicy: "cache-first",
   });
 
   const channel = socket.channel("graphql:dashboard_index", {});
@@ -130,7 +190,62 @@ export default (props) => {
   }, [queryData]);
 
   const renderChart = () => {
-    return <Bar options={options} data={data} />;
+    if (packetsData) {
+      const packetsMap = packetsData.packets.reduce((acc, packet) => {
+        const key = Math.ceil(
+          (Date.now() - packet.reported_at_epoch) / 1000 / 3600
+        );
+        if (acc[key]) {
+          if (acc[key][packet.net_id]) {
+            return Object.assign({}, acc, {
+              [key]: Object.assign({}, acc[key], {
+                [packet.net_id]: acc[key][packet.net_id] + 1,
+              }),
+            });
+          } else {
+            return Object.assign({}, acc, {
+              [key]: Object.assign({}, acc[key], { [packet.net_id]: 1 }),
+            });
+          }
+        } else {
+          return Object.assign({}, acc, { [key]: { [packet.net_id]: 1 } });
+        }
+      }, {});
+
+      const data = range(24, 0).map((index) => {
+        if (packetsMap[index]) {
+          return Object.values(packetsMap[index]).reduce((a, b) => a + b);
+        }
+        return 0.5;
+      });
+
+      const labels = range(24, 0).map((index) => {
+        if (packetsMap[index]) {
+          return Object.keys(packetsMap[index]).length;
+        }
+        return 0;
+      });
+
+      const backgroundColor = data.map((val) => {
+        if (val == 0.5) return "#ACB9CD";
+        else return "#2C79EE";
+      });
+
+      const chartData = {
+        labels,
+        datasets: [
+          {
+            data,
+            backgroundColor,
+          },
+        ],
+      };
+
+      return (
+        <Bar id="packet-bar-chart" data={chartData} options={chartOptions} />
+      );
+    }
+    return <div />;
   };
 
   return (
@@ -161,7 +276,9 @@ export default (props) => {
                   style={{ alignItems: "center", minWidth: 300 }}
                 >
                   <Text style={{ ...styles.numberCount, color: primaryBlue }}>
-                    {numeral(100000).format("0,0")}
+                    {numeral(
+                      queryData && queryData.organization.total_packets_sent
+                    ).format("0,0")}
                   </Text>
                 </Row>
               </div>
@@ -180,7 +297,9 @@ export default (props) => {
                   <Text
                     style={{ ...styles.numberCount, color: tertiaryPurple }}
                   >
-                    {numeral(100000).format("0,0")}
+                    {numeral(
+                      queryData && queryData.organization.total_dc_used
+                    ).format("0,0")}
                   </Text>
                 </Row>
               </div>
@@ -200,7 +319,9 @@ export default (props) => {
                   style={{ alignItems: "center", minWidth: 300 }}
                 >
                   <Text style={{ ...styles.numberCount }}>
-                    {numeral(100000).format("0,0")}
+                    {numeral(
+                      queryData && queryData.organization.dc_balance
+                    ).format("0,0")}
                   </Text>
                 </Row>
               </div>
@@ -273,9 +394,9 @@ export default (props) => {
               </Button>
               <Button
                 onClick={() => {
-                  const parsedCreds = join_credentials.filter(
-                    (c) => c.dev_eui || c.app_eui
-                  );
+                  const parsedCreds =
+                    join_credentials &&
+                    join_credentials.filter((c) => c.dev_eui || c.app_eui);
                   updateOrganizationCreds(
                     currentOrganizationId,
                     address,

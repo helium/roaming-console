@@ -3,6 +3,7 @@ defmodule Console.Packets do
   alias Console.Repo
 
   alias Console.Packets.Packet
+  alias Console.Organizations
 
   def create_packet(attrs \\ %{}) do
     %Packet{}

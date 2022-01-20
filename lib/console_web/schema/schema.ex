@@ -45,6 +45,8 @@ defmodule ConsoleWeb.Schema do
     field :port, :integer
     field :join_credentials, :string
     field :multi_buy, :integer
+    field :total_dc_used, :integer
+    field :total_packets_sent, :integer
   end
 
   object :api_key do
@@ -71,6 +73,11 @@ defmodule ConsoleWeb.Schema do
 
   object :notifications_setting do
     field :config, :json
+  end
+
+  object :packet do
+    field :reported_at_epoch, :integer
+    field :net_id, :integer
   end
 
   query do
@@ -109,6 +116,10 @@ defmodule ConsoleWeb.Schema do
 
     field :notifications_setting, :notifications_setting do
       resolve(&Console.Notifications.NotificationResolver.find/2)
+    end
+
+    field :packets, list_of(:packet) do
+      resolve &Console.Packets.PacketResolver.get_packets/2
     end
   end
 end
