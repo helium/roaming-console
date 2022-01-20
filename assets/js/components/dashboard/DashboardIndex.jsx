@@ -40,10 +40,7 @@ const styles = {
 };
 
 const chartOptions = {
-  layout: {
-    padding: 12,
-  },
-  borderRadius: 100,
+  borderRadius: 5,
   borderSkipped: false,
   plugins: {
     legend: {
@@ -241,9 +238,7 @@ export default (props) => {
         ],
       };
 
-      return (
-        <Bar id="packet-bar-chart" data={chartData} options={chartOptions} />
-      );
+      return <Bar data={chartData} options={chartOptions} height={250} />;
     }
     return <div />;
   };
