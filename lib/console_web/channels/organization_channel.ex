@@ -2,6 +2,7 @@ defmodule ConsoleWeb.OrganizationChannel do
   use Phoenix.Channel
   alias Console.Packets
   alias Console.NetIds
+  alias Console.Organizations
 
   def join("organization:all", _message, socket) do
     {:ok, socket}
@@ -45,6 +46,13 @@ defmodule ConsoleWeb.OrganizationChannel do
 
       case Packets.create_packet(packet_attrs) do
         {:ok, _} ->
+          organization = Organizations.get_organization!(net_id.organization_id)
+          Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - packet["dc_used"] })
+
+          if organization.dc_balance - packet["dc_used"] == 0 do
+            ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", %{ net_ids: [net_id.value]})
+          end
+
           {:noreply, socket}
         _ ->
           {:reply, {:error, "Failed to add packet to database"}, socket}

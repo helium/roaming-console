@@ -18,7 +18,7 @@ class JoinCredentialsForm extends Component {
     }
   }
 
-  addHeaderRow = () => {
+  addCredentialRow = () => {
     const credentials = [
       ...this.state.credentials,
       { dev_eui: "", app_eui: "" },
@@ -26,7 +26,7 @@ class JoinCredentialsForm extends Component {
     this.setState({ credentials });
   };
 
-  handleHttpHeaderUpdate = (e) => {
+  handleCredentialUpdate = (e) => {
     let index, input;
     [index, input] = e.target.name.split("-");
 
@@ -52,7 +52,7 @@ class JoinCredentialsForm extends Component {
                   placeholder="Dev EUI"
                   name={`${i}-dev_eui`}
                   value={obj.dev_eui}
-                  onChange={this.handleHttpHeaderUpdate}
+                  onChange={this.handleCredentialUpdate}
                   style={{ width: "100%" }}
                 />
               </Col>
@@ -61,14 +61,14 @@ class JoinCredentialsForm extends Component {
                   placeholder="App EUI"
                   name={`${i}-app_eui`}
                   value={obj.app_eui}
-                  onChange={this.handleHttpHeaderUpdate}
+                  onChange={this.handleCredentialUpdate}
                   style={{ width: "100%" }}
                 />
               </Col>
             </Row>
           ))}
         <Row>
-          <Button onClick={this.addHeaderRow}>Add Header</Button>
+          <Button onClick={this.addCredentialRow}>Add Credential</Button>
         </Row>
       </div>
     );
