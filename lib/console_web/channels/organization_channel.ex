@@ -44,11 +44,11 @@ defmodule ConsoleWeb.OrganizationChannel do
         "net_id" => packet["net_id"],
       }
 
-      organization = Organizations.get!(net_id.organization_id)
-      Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - packet["dc_used"] })
-
       case Packets.create_packet(packet_attrs) do
         {:ok, _} ->
+          organization = Organizations.get!(net_id.organization_id)
+          Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - packet["dc_used"] })
+
           if organization.dc_balance - packet["dc_used"] > 0 do
             ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:keep_purchasing", %{ net_ids: [net_id.value]})
           else
