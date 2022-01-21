@@ -5,6 +5,7 @@ defmodule Console.DcPurchases do
   alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Organization
   alias Console.Organizations
+  alias Console.NetIds
 
   def get_by_payment_id(id) do
     DcPurchase

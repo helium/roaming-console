@@ -46,7 +46,7 @@ defmodule ConsoleWeb.OrganizationChannel do
 
       case Packets.create_packet(packet_attrs) do
         {:ok, _} ->
-          organization = Organizations.get!(net_id.organization_id)
+          organization = Organizations.get_organization!(net_id.organization_id)
           Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - packet["dc_used"] })
 
           if organization.dc_balance - packet["dc_used"] == 0 do
