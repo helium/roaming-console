@@ -8,18 +8,19 @@ import { ORGANIZATION_SHOW } from "../../graphql/organizations";
 import { GET_ORGANIZATION_PACKETS } from "../../graphql/packets";
 import { updateOrganizationCreds, getNetIds } from "../../actions/organization";
 import analyticsLogger from "../../util/analyticsLogger";
-import { Typography, Card, Row, Col, Button, Input } from "antd";
+import { Typography, Card, Row, Col, Button, Input, Tooltip } from "antd";
 const { Text } = Typography;
 import { primaryBlue, tertiaryPurple } from "../../util/colors";
 import { Bar } from "react-chartjs-2";
 import range from "lodash/range";
+import RedoOutlined from "@ant-design/icons/RedoOutlined";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
   Title,
-  Tooltip,
+  Tooltip as ChartTooltip,
   Legend,
 } from "chart.js";
 
@@ -28,7 +29,7 @@ ChartJS.register(
   LinearScale,
   BarElement,
   Title,
-  Tooltip,
+  ChartTooltip,
   Legend
 );
 
@@ -139,10 +140,10 @@ export default (props) => {
   const socket = useSelector((state) => state.apollo.socket);
 
   const {
-    loading: queryLoading,
-    error: queryError,
-    data: queryData,
-    refetch: queryRefetch,
+    loading: orgLoading,
+    error: orgError,
+    data: orgData,
+    refetch: orgRefetch,
   } = useQuery(ORGANIZATION_SHOW, {
     fetchPolicy: "cache-first",
     variables: { id: currentOrganizationId },
@@ -164,27 +165,33 @@ export default (props) => {
     channel.on(
       `graphql:dashboard_index:${currentOrganizationId}:settings_update`,
       (_message) => {
-        queryRefetch();
+        orgRefetch();
       }
     );
+
+    const autoRefresh = setInterval(() => {
+      orgRefetch();
+      packetsRefetch();
+    }, 300000); // 5 minutes
 
     if (userEmail === "jeffrey@helium.com") {
       getNetIds().then((data) => setNetIds(data));
     }
 
     return () => {
+      clearInterval(autoRefresh);
       channel.leave();
     };
   }, []);
 
   useEffect(() => {
-    if (queryData && queryData.organization) {
-      setAddress(queryData.organization.address);
-      setPort(queryData.organization.port);
-      setMultiBuy(queryData.organization.multi_buy);
-      setJoinCreds(JSON.parse(queryData.organization.join_credentials));
+    if (orgData && orgData.organization) {
+      setAddress(orgData.organization.address);
+      setPort(orgData.organization.port);
+      setMultiBuy(orgData.organization.multi_buy);
+      setJoinCreds(JSON.parse(orgData.organization.join_credentials));
     }
-  }, [queryData]);
+  }, [orgData]);
 
   const renderChart = () => {
     if (packetsData) {
@@ -244,7 +251,28 @@ export default (props) => {
   };
 
   return (
-    <DashboardLayout title="Dashboard" user={props.user}>
+    <DashboardLayout
+      title="Dashboard"
+      user={props.user}
+      extra={
+        <Tooltip
+          title="Dashboard will automatically refresh every 5 mins."
+          placement="bottom"
+        >
+          <Button
+            type="primary"
+            icon={<RedoOutlined />}
+            style={{ borderRadius: 4 }}
+            onClick={() => {
+              orgRefetch();
+              packetsRefetch();
+            }}
+          >
+            Refresh
+          </Button>
+        </Tooltip>
+      }
+    >
       <div
         style={{
           padding: "30px 30px 30px 30px",
@@ -272,7 +300,7 @@ export default (props) => {
                 >
                   <Text style={{ ...styles.numberCount, color: primaryBlue }}>
                     {numeral(
-                      queryData && queryData.organization.total_packets_sent
+                      orgData && orgData.organization.total_packets_sent
                     ).format("0,0")}
                   </Text>
                 </Row>
@@ -293,7 +321,7 @@ export default (props) => {
                     style={{ ...styles.numberCount, color: tertiaryPurple }}
                   >
                     {numeral(
-                      queryData && queryData.organization.total_dc_used
+                      orgData && orgData.organization.total_dc_used
                     ).format("0,0")}
                   </Text>
                 </Row>
@@ -314,9 +342,9 @@ export default (props) => {
                   style={{ alignItems: "center", minWidth: 300 }}
                 >
                   <Text style={{ ...styles.numberCount }}>
-                    {numeral(
-                      queryData && queryData.organization.dc_balance
-                    ).format("0,0")}
+                    {numeral(orgData && orgData.organization.dc_balance).format(
+                      "0,0"
+                    )}
                   </Text>
                 </Row>
               </div>
@@ -375,11 +403,11 @@ export default (props) => {
             >
               <Button
                 onClick={() => {
-                  setAddress(queryData.organization.address);
-                  setPort(queryData.organization.port);
-                  setMultiBuy(queryData.organization.multi_buy);
+                  setAddress(orgData.organization.address);
+                  setPort(orgData.organization.port);
+                  setMultiBuy(orgData.organization.multi_buy);
                   setJoinCreds(
-                    JSON.parse(queryData.organization.join_credentials)
+                    JSON.parse(orgData.organization.join_credentials)
                   );
                   setChanges(false);
                 }}
