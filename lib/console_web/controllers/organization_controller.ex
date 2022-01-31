@@ -79,7 +79,7 @@ defmodule ConsoleWeb.OrganizationController do
     else
       update_attrs = Map.take(attrs, ["address", "port", "join_credentials", "multi_buy"])
       with {:ok, _} <- Organizations.update_organization(organization, update_attrs) do
-        ConsoleWeb.Endpoint.broadcast("graphql:dashboard_index", "graphql:dashboard_index:#{id}:settings_update", %{})
+        ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{id}:settings_update", %{})
         broadcast_packet_purchaser_all_org_config()
 
         conn

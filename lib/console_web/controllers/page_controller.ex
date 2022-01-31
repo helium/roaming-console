@@ -16,6 +16,7 @@ defmodule ConsoleWeb.PageController do
         "notifications",
         "profile",
         "dashboard",
+        "configuration",
         "callback"
       ]
 

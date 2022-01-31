@@ -20,6 +20,7 @@ import DataCreditsIndex from "./components/billing/DataCreditsIndex";
 import NoOrganization from "./components/organizations/NoOrganization";
 import DashboardIndex from "./components/dashboard/DashboardIndex";
 import NotificationsIndex from "./components/notifications/NotificationsIndex";
+import ConfigurationIndex from "./components/configuration/ConfigurationIndex";
 
 const MagicRouter = (props) => {
   const {
@@ -84,6 +85,13 @@ const MagicRouter = (props) => {
                   path="/dashboard"
                   component={(props) => (
                     <DashboardIndex user={user} {...props} />
+                  )}
+                />
+                <Route
+                  exact
+                  path="/configuration"
+                  component={(props) => (
+                    <ConfigurationIndex user={user} {...props} />
                   )}
                 />
                 <Route

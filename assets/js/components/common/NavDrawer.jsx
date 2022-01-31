@@ -39,6 +39,23 @@ class NavDrawer extends Component {
         <div style={{ position: "relative" }}>
           <NavLink
             draggable="false"
+            to={"/configuration"}
+            activeClassName="is-active"
+            className="menu-link"
+          >
+            Configuration
+          </NavLink>
+          {history.location.pathname === "/configuration" && (
+            <img
+              draggable="false"
+              src={Caret}
+              style={{ right: -16, position: "absolute", top: 8, height: 12 }}
+            />
+          )}
+        </div>
+        <div style={{ position: "relative" }}>
+          <NavLink
+            draggable="false"
             to={"/datacredits"}
             activeClassName="is-active"
             className="menu-link"

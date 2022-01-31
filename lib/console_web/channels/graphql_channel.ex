@@ -5,7 +5,7 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
-  def join("graphql:dashboard_index", _message, socket) do
+  def join("graphql:configuration_index", _message, socket) do
     {:ok, socket}
   end
 
