@@ -1,42 +1,41 @@
-import React, { Component } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { parse } from 'query-string'
-import { joinOrganization } from '../../actions/organization'
-import { getInvitation } from '../../actions/invitation.js'
-import AuthLayout from '../common/AuthLayout'
-import Logo from '../../../img/symbol.svg'
-import { Typography, Button, Card, Row, Col } from 'antd'
-const { Title } = Typography
+import React, { Component } from "react";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { parse } from "query-string";
+import { joinOrganization } from "../../actions/organization";
+import { getInvitation } from "../../actions/invitation.js";
+import AuthLayout from "../common/AuthLayout";
+import Logo from "../../../img/symbol.svg";
+import { Typography, Button, Card, Row, Col } from "antd";
+const { Title } = Typography;
 
 @connect(mapStateToProps, mapDispatchToProps)
 class JoinOrganizationPrompt extends Component {
   state = {
     organizationName: "",
     email: "",
-    firstRender: true
-  }
+    firstRender: true,
+  };
 
   componentDidMount() {
-    this.setState({ firstRender: false })
+    this.setState({ firstRender: false });
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.firstRender && !this.state.firstRender) {
-      const { invitationToken, getInvitation } = this.props
+      const { invitationToken, getInvitation } = this.props;
 
-      getInvitation(invitationToken)
-      .then(invite => this.setState({ email: invite.email, invite }))
+      getInvitation(invitationToken).then((invite) =>
+        this.setState({ email: invite.email, invite })
+      );
     }
   }
 
   acceptInvitation = (e) => {
-    e.preventDefault()
-    const { joinOrganization, invitationToken } = this.props
-    joinOrganization(
-      invitationToken
-    );
-  }
+    e.preventDefault();
+    const { joinOrganization, invitationToken } = this.props;
+    joinOrganization(invitationToken);
+  };
 
   render() {
     const { invite } = this.state;
@@ -74,7 +73,7 @@ class JoinOrganizationPrompt extends Component {
               <Col sm={12}>
                 <Button
                   disabled={!invite}
-                  onClick={() => this.props.history.push("/devices")}
+                  onClick={() => this.props.history.push("/dashboard")}
                   style={{ width: "100%" }}
                 >
                   Reject Invitation
@@ -99,11 +98,11 @@ class JoinOrganizationPrompt extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  let queryParams = parse(ownProps.location.search)
+  let queryParams = parse(ownProps.location.search);
   if (queryParams.invitation !== undefined) {
     return {
       invitationToken: queryParams.invitation,
-    }
+    };
   }
 }
 
@@ -111,4 +110,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ joinOrganization, getInvitation }, dispatch);
 }
 
-export default JoinOrganizationPrompt
+export default JoinOrganizationPrompt;

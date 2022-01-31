@@ -5,7 +5,7 @@ import { ApolloProvider } from "@apollo/client";
 import { history } from "./store/configureStore";
 import { fetchOrganization } from "./actions/organization";
 import { setupApolloClient } from "./actions/apollo";
-import { getMagicSessionToken } from "./actions/magic"
+import { getMagicSessionToken } from "./actions/magic";
 
 // Routes
 import { connect } from "react-redux";
@@ -29,35 +29,39 @@ const MagicRouter = (props) => {
     fetchOrganization,
     setupApolloClient,
     apolloClient,
-    user
+    user,
   } = props;
 
   useEffect(() => {
-    if (
-      !currentOrganizationId &&
-      !loadingOrganization &&
-      !loadedOrganization
-    ) {
-      fetchOrganization()
-      return
+    if (!currentOrganizationId && !loadingOrganization && !loadedOrganization) {
+      fetchOrganization();
+      return;
     } else if (!apolloClient && currentOrganizationId) {
-      setupApolloClient(getMagicSessionToken, currentOrganizationId)
-      return
+      setupApolloClient(getMagicSessionToken, currentOrganizationId);
+      return;
     }
-  }, [
-    currentOrganizationId,
-    loadingOrganization,
-    loadedOrganization,
-    user,
-  ]);
+  }, [currentOrganizationId, loadingOrganization, loadedOrganization, user]);
 
-  const redirectPath = "dashboard"
+  const redirectPath = "dashboard";
 
-  if (loadingOrganization || (loadedOrganization && currentOrganizationId && !apolloClient)) return (
-    <div style={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-      <Spin size="large" />
-    </div>
+  if (
+    loadingOrganization ||
+    (loadedOrganization && currentOrganizationId && !apolloClient)
   )
+    return (
+      <div
+        style={{
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Spin size="large" />
+      </div>
+    );
 
   return (
     <ConnectedRouter history={history}>
@@ -69,8 +73,10 @@ const MagicRouter = (props) => {
           component={JoinOrganizationPrompt}
         />
         <Route>
-          { loadedOrganization && !currentOrganizationId && (<NoOrganization />) }
-          { currentOrganizationId && apolloClient && (
+          {loadedOrganization && !currentOrganizationId && (
+            <NoOrganization user={user} />
+          )}
+          {currentOrganizationId && apolloClient && (
             <ApolloProvider client={apolloClient}>
               <Switch>
                 <Route
@@ -83,9 +89,7 @@ const MagicRouter = (props) => {
                 <Route
                   exact
                   path="/users"
-                  component={(props) => (
-                    <UserIndex user={user} {...props} />
-                  )}
+                  component={(props) => <UserIndex user={user} {...props} />}
                 />
                 <Route
                   exact
@@ -110,9 +114,7 @@ const MagicRouter = (props) => {
                 />
                 <Route
                   path="/profile"
-                  component={(props) => (
-                    <Profile user={user} {...props} />
-                  )}
+                  component={(props) => <Profile user={user} {...props} />}
                 />
               </Switch>
             </ApolloProvider>
