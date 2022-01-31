@@ -21,9 +21,9 @@ defmodule Console.Auth.User do
     timestamps()
   end
 
-  def changeset(user, attrs \\ :empty) do
+  def create_changeset(user, attrs \\ :empty) do
     user
-    |> cast(attrs, [:email])
+    |> cast(attrs, [:id, :email, :password_hash])
     |> validate_length(:email, min: 1, max: 255)
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
