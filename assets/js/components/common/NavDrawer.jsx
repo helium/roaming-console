@@ -107,13 +107,13 @@ class NavDrawer extends Component {
         <div style={{ position: "relative" }}>
           <NavLink
             draggable="false"
-            to={"/notifications"}
+            to={"/alerts"}
             activeClassName="is-active"
             className="menu-link"
           >
-            Notifications
+            Alerts
           </NavLink>
-          {history.location.pathname === "/notifications" && (
+          {history.location.pathname === "/alerts" && (
             <img
               draggable="false"
               src={Caret}

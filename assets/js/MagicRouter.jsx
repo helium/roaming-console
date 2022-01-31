@@ -19,7 +19,7 @@ import OrganizationIndex from "./components/organizations/OrganizationIndex";
 import DataCreditsIndex from "./components/billing/DataCreditsIndex";
 import NoOrganization from "./components/organizations/NoOrganization";
 import DashboardIndex from "./components/dashboard/DashboardIndex";
-import NotificationsIndex from "./components/notifications/NotificationsIndex";
+import AlertsIndex from "./components/alerts/AlertsIndex";
 import ConfigurationIndex from "./components/configuration/ConfigurationIndex";
 
 const MagicRouter = (props) => {
@@ -115,10 +115,8 @@ const MagicRouter = (props) => {
                 />
                 <Route
                   exact
-                  path="/notifications"
-                  component={(props) => (
-                    <NotificationsIndex user={user} {...props} />
-                  )}
+                  path="/alerts"
+                  component={(props) => <AlertsIndex user={user} {...props} />}
                 />
                 <Route
                   path="/profile"

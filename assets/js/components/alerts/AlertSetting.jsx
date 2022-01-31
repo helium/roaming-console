@@ -4,19 +4,28 @@ import { Typography, Switch, Button, Menu, Dropdown } from "antd";
 const { Text } = Typography;
 import { userCan } from "../common/UserCan";
 
-export default ({ notificationType, notificationsSetting, updateNotificationsSetting, setChangesState }) => {
+export default ({
+  alertType,
+  alertsSetting,
+  updateAlertsSetting,
+  setChangesState,
+}) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
 
   const recipientMenu = () => (
     <Menu
       onClick={(e) => {
-        updateNotificationsSetting(
-          Object.assign(
-            {},
-            notificationsSetting,
-            { [notificationType.key]: {email: { recipient: e.key, active: notificationsSetting[notificationType.key].email.active }}})
-        )
-        setChangesState(true)
+        updateAlertsSetting(
+          Object.assign({}, alertsSetting, {
+            [alertType.key]: {
+              email: {
+                recipient: e.key,
+                active: alertsSetting[alertType.key].email.active,
+              },
+            },
+          })
+        );
+        setChangesState(true);
       }}
     >
       <Menu.Item key="admin">Admin</Menu.Item>
@@ -46,30 +55,34 @@ export default ({ notificationType, notificationsSetting, updateNotificationsSet
               fontSize: "16px",
             }}
           >
-            {notificationsSetting[notificationType.key].email.recipient === 'read' ?
-              "read-Only" : notificationsSetting[notificationType.key].email.recipient
-            }
+            {alertsSetting[alertType.key].email.recipient === "read"
+              ? "read-Only"
+              : alertsSetting[alertType.key].email.recipient}
           </a>
         </Dropdown>
         <Text style={{ fontSize: "16px" }}> when </Text>
         <Text style={{ fontSize: "16px" }} strong>
-          {notificationType.description}
+          {alertType.description}
         </Text>
       </span>
       <Switch
         style={{ marginLeft: 10 }}
         disabled={!userCan({ role: currentRole })}
-        checked={notificationsSetting[notificationType.key].email.active}
+        checked={alertsSetting[alertType.key].email.active}
         onChange={(checked) => {
-          updateNotificationsSetting(
-            Object.assign(
-              {},
-              notificationsSetting,
-              { [notificationType.key]: {email: { recipient: notificationsSetting[notificationType.key].email.recipient, active: checked }}})
-          )
-          setChangesState(true)
+          updateAlertsSetting(
+            Object.assign({}, alertsSetting, {
+              [alertType.key]: {
+                email: {
+                  recipient: alertsSetting[alertType.key].email.recipient,
+                  active: checked,
+                },
+              },
+            })
+          );
+          setChangesState(true);
         }}
       />
     </div>
-  )
-}
+  );
+};

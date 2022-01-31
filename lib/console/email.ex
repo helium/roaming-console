@@ -8,15 +8,15 @@ defmodule Console.Email do
   alias Console.Organizations.Organization
   alias DateTime
 
-  def dc_transfer_source_notification(from_org, to_org, dc_transferred, user, recipient) do
-    dc_transfer_notification_email(from_org.name, from_org.name, to_org.name, dc_transferred, from_org.dc_balance, user, recipient)
+  def dc_transfer_source_alert(from_org, to_org, dc_transferred, user, recipient) do
+    dc_transfer_alert_email(from_org.name, from_org.name, to_org.name, dc_transferred, from_org.dc_balance, user, recipient)
   end
 
-  def dc_transfer_dest_notification(from_org, to_org, dc_transferred, user, recipient) do
-    dc_transfer_notification_email(to_org.name, from_org.name, to_org.name, dc_transferred, to_org.dc_balance, user, recipient)
+  def dc_transfer_dest_alert(from_org, to_org, dc_transferred, user, recipient) do
+    dc_transfer_alert_email(to_org.name, from_org.name, to_org.name, dc_transferred, to_org.dc_balance, user, recipient)
   end
 
-  def dc_top_up_notification_email(%Organization{name: organization_name}, %DcPurchase{dc_purchased: dc_purchased, cost: cost}, recipient) do
+  def dc_top_up_alert_email(%Organization{name: organization_name}, %DcPurchase{dc_purchased: dc_purchased, cost: cost}, recipient) do
     formatted_credits = dc_format(dc_purchased)
     base_email()
     |> to(recipient)
@@ -28,7 +28,7 @@ defmodule Console.Email do
     |> render(:data_credit_top_up)
   end
 
-  def delete_org_notification_email(%Organization{name: organization_name}, recipient, deleted_by) do
+  def delete_org_alert_email(%Organization{name: organization_name}, recipient, deleted_by) do
     base_email()
     |> to(recipient)
     |> subject("An organization was deleted from Helium Roaming Console")
@@ -38,10 +38,10 @@ defmodule Console.Email do
     |> render(:delete_organization_notice)
   end
 
-  def dc_balance_notification_email(%Organization{name: organization_name}, recipient, dc_balance) do
+  def dc_balance_alert_email(%Organization{name: organization_name}, recipient, dc_balance) do
     base_email()
     |> to(recipient)
-    |> subject("Data credit low balance notification")
+    |> subject("Data credit low balance alert")
     |> assign(:balance, dc_balance)
     |> assign(:organization_name, organization_name)
     |> assign(:date_time, current_time())
@@ -51,7 +51,7 @@ defmodule Console.Email do
   def payment_method_updated_email(%User{email: updater_email}, %Organization{name: organization_name}, recipient, action) do
     base_email()
     |> to(recipient)
-    |> subject("Payment method change notification")
+    |> subject("Payment method change alert")
     |> assign(:updater_email, updater_email)
     |> assign(:organization_name, organization_name)
     |> assign(:date_time, current_time())
@@ -64,7 +64,7 @@ defmodule Console.Email do
 
     base_email()
     |> to(recipient)
-    |> subject("Data credit purchase notification")
+    |> subject("Data credit purchase alert")
     |> assign(:purchaser_email, purchaser_email)
     |> assign(:organization_name, organization_name)
     |> assign(:dc_purchased, formatted_credits)
@@ -133,11 +133,11 @@ defmodule Console.Email do
     |> String.reverse
   end
 
-  defp dc_transfer_notification_email(organization_name, source_organization_name, destination_organization_name, dc_transfered, balance, %User{email: transferer_email}, recipient) do
+  defp dc_transfer_alert_email(organization_name, source_organization_name, destination_organization_name, dc_transfered, balance, %User{email: transferer_email}, recipient) do
     formatted_credits = dc_format(dc_transfered)
     base_email()
     |> to(recipient)
-    |> subject("Data credit transfer notification")
+    |> subject("Data credit transfer alert")
     |> assign(:organization_name, organization_name)
     |> assign(:source_organization, source_organization_name)
     |> assign(:destination_organization, destination_organization_name)

@@ -71,7 +71,7 @@ defmodule ConsoleWeb.Schema do
     field :to_organization, :string
   end
 
-  object :notifications_setting do
+  object :alerts_setting do
     field :config, :json
   end
 
@@ -114,8 +114,8 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.DcPurchases.DcPurchaseResolver.paginate/2)
     end
 
-    field :notifications_setting, :notifications_setting do
-      resolve(&Console.Notifications.NotificationResolver.find/2)
+    field :alerts_setting, :alerts_setting do
+      resolve(&Console.Alerts.AlertResolver.find/2)
     end
 
     field :packets, list_of(:packet) do

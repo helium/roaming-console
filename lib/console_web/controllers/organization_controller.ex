@@ -148,7 +148,7 @@ defmodule ConsoleWeb.OrganizationController do
 
         with {:ok, _} <- Organizations.delete_organization(organization) do
           Enum.each(admins, fn administrator ->
-            Email.delete_org_notification_email(organization, administrator.email, membership.email)
+            Email.delete_org_alert_email(organization, administrator.email, membership.email)
             |> Mailer.deliver_later()
           end)
 

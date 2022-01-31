@@ -255,12 +255,12 @@ defmodule ConsoleWeb.DataCreditController do
         with {:ok, {:ok, from_org_updated, to_org_updated }} <- Organizations.send_dc_to_org(amount, current_organization, to_organization) do
           Organizations.get_administrators(from_org_updated)
           |> Enum.each(fn administrator ->
-            Email.dc_transfer_source_notification(from_org_updated, to_org_updated, amount, current_user, administrator.email)
+            Email.dc_transfer_source_alert(from_org_updated, to_org_updated, amount, current_user, administrator.email)
             |> Mailer.deliver_later()
           end)
           Organizations.get_administrators(to_org_updated)
           |> Enum.each(fn administrator ->
-            Email.dc_transfer_dest_notification(from_org_updated, to_org_updated, amount, current_user, administrator.email)
+            Email.dc_transfer_dest_alert(from_org_updated, to_org_updated, amount, current_user, administrator.email)
             |> Mailer.deliver_later()
           end)
           ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{from_org_updated.id}:update_dc", %{})

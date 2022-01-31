@@ -1,4 +1,4 @@
-defmodule Console.Notifications.Notification do
+defmodule Console.Alerts.Alert do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,7 +6,7 @@ defmodule Console.Notifications.Notification do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "notifications" do
+  schema "alerts" do
     field :config, :map
 
     belongs_to :organization, Organization
@@ -14,10 +14,10 @@ defmodule Console.Notifications.Notification do
   end
 
   @doc false
-  def changeset(notification, attrs) do
-    notification
+  def changeset(alert, attrs) do
+    alert
     |> cast(attrs, [:config, :organization_id])
     |> validate_required([:config, :organization_id])
-    |> unique_constraint(:organization_id, name: :notifications_organization_id_index, message: "Notification config already exists for this organization.")
+    |> unique_constraint(:organization_id, name: :alerts_organization_id_index, message: "Alert config already exists for this organization.")
   end
 end

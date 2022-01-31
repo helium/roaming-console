@@ -29,7 +29,7 @@ defmodule ConsoleWeb.GraphqlChannel do
     {:ok, socket}
   end
 
-  def join("graphql:notifications_index", _message, socket) do
+  def join("graphql:alerts_index", _message, socket) do
     {:ok, socket}
   end
 end
