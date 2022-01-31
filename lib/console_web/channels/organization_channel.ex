@@ -49,7 +49,7 @@ defmodule ConsoleWeb.OrganizationChannel do
           organization = Organizations.get_organization!(net_id.organization_id)
           Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - packet["dc_used"] })
 
-          if organization.dc_balance - packet["dc_used"] == 0 do
+          if organization.dc_balance - packet["dc_used"] <= 0 do
             ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", %{ net_ids: [net_id.value]})
           end
 
