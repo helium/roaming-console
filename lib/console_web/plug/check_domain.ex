@@ -15,7 +15,7 @@ defmodule ConsoleWeb.Plug.CheckDomain do
     else
       case conn.host do
         "localhost" -> conn
-        "roaming-console.herokuapp.com" -> conn
+        "roaming.helium.com" -> conn
         _ ->
           if Application.get_env(:console, :self_hosted) == nil do
             conn
