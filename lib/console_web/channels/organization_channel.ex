@@ -8,6 +8,10 @@ defmodule ConsoleWeb.OrganizationChannel do
     {:ok, socket}
   end
 
+  def join("net_id:all", _message, socket) do
+    {:ok, socket}
+  end
+
   def handle_in("packet_purchaser:address", %{"address" => packet_purchaser_address}, socket) do
     packet_purchaser_address
     |> to_string()
