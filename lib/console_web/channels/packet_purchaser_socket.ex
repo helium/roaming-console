@@ -2,6 +2,7 @@ defmodule ConsoleWeb.PacketPurchaserSocket do
   use Phoenix.Socket
 
   channel("organization:*", ConsoleWeb.OrganizationChannel)
+  channel("net_id:*", ConsoleWeb.OrganizationChannel)
 
   def connect(%{"token" => token}, socket) do
     case ConsoleWeb.Guardian.decode_and_verify(token) do
