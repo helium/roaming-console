@@ -8,7 +8,7 @@
     <meta name="author" content="">
 
     <title>Helium Roaming Console</title>
-    <link rel="icon" href="https://console.helium.com/favicon.png" >
+    <link rel="icon" href="https://roaming.helium.com/favicon.png" >
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <script src="https://js.stripe.com/v3/"></script>
   </head>

@@ -20,7 +20,7 @@ defmodule ConsoleWeb.Plug.CheckDomain do
           if Application.get_env(:console, :self_hosted) == nil do
             conn
             |> Plug.Conn.resp(:found, "")
-            |> Plug.Conn.put_resp_header("location", "https://console.helium.com")
+            |> Plug.Conn.put_resp_header("location", "https://roaming.helium.com")
             |> Plug.Conn.halt()
           else
             conn
