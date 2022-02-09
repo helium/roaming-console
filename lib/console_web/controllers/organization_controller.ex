@@ -178,11 +178,11 @@ defmodule ConsoleWeb.OrganizationController do
 
   def broadcast_packet_purchaser_all_org_balance() do
     results = Organizations.get_all_org_dc_balance
-    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:dc_balance:list", results)
+    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:dc_balance:list", %{ org_dc_balance_list: results })
   end
 
   def broadcast_packet_purchaser_all_org_config() do
     results = Organizations.get_all_org_config
-    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:config:list", results)
+    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:config:list", %{ org_config_list: results })
   end
 end
