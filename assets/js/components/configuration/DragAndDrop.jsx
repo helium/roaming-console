@@ -1,14 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  blueForDeviceStatsLarge,
-  dragAndDropBackgroundColor,
-} from "../../util/colors";
+import { secondaryBlue, dragAndDropBackgroundColor } from "../../util/colors";
 
 let style = {
   display: "flex",
   justifyContent: "center",
   width: "100%",
-  border: `1px dashed ${blueForDeviceStatsLarge}`,
+  border: `1px dashed ${secondaryBlue}`,
   borderRadius: 5,
   backgroundColor: dragAndDropBackgroundColor,
 };
@@ -72,9 +69,7 @@ const DragAndDrop = ({ children, fileSelected }) => {
   }, [dragging]);
   const dropStyle = {
     ...style,
-    border: dragging
-      ? `1px dashed black`
-      : `1px dashed ${blueForDeviceStatsLarge}`,
+    border: dragging ? `1px dashed black` : `1px dashed ${secondaryBlue}`,
   };
   return (
     <div

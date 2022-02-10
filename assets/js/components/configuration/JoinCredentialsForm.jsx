@@ -4,7 +4,7 @@ const { Text } = Typography;
 import { Row, Col } from "antd";
 import Modal from "antd/lib/modal/Modal";
 import DragAndDrop from "./DragAndDrop";
-import { blueForDeviceStatsLarge } from "../../util/colors";
+import { secondaryBlue } from "../../util/colors";
 import Papa from "papaparse";
 import { displayError } from "../../util/messages";
 
@@ -144,7 +144,7 @@ class JoinCredentialsForm extends Component {
               style={{
                 textAlign: "center",
                 margin: "30px 80px",
-                color: blueForDeviceStatsLarge,
+                color: secondaryBlue,
               }}
             >
               Drag .csv file here or click to choose file
