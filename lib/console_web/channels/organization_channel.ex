@@ -48,16 +48,16 @@ defmodule ConsoleWeb.OrganizationChannel do
         "net_id" => packet["net_id"],
       }
 
-      case Packets.create_packet(packet_attrs) do
-        {:ok, _} ->
-          organization = Organizations.get_organization!(net_id.organization_id)
-          Organizations.update_organization(organization, %{ "dc_balance" => organization.dc_balance - packet["dc_used"] })
+      with {:ok, new_packet} <- Packets.create_packet(packet_attrs) do
+        ConsoleWeb.MessageQueuePublisher.publish(Jason.encode!(%{
+          "id" => new_packet.id,
+          "dc_used" => new_packet.dc_used,
+          "net_id" => new_packet.net_id,
+          "organization_id" => net_id.organization_id,
+        }))
 
-          if organization.dc_balance - packet["dc_used"] <= 0 do
-            ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", %{ net_ids: [net_id.value]})
-          end
-
-          {:noreply, socket}
+        {:noreply, socket}
+      else
         _ ->
           {:reply, {:error, "Failed to add packet to database"}, socket}
       end

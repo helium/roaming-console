@@ -79,6 +79,7 @@ defmodule ConsoleWeb.Router do
     resources "/organizations", OrganizationController, only: [:index, :show]
     post "/organizations/burned", OrganizationController, :burned_dc
     post "/organizations/manual_update_packet_purchaser_dc", OrganizationController, :manual_update_packet_purchaser_dc
+    post "/send_packerooni", PacketController, :send_packerooni
   end
 
   scope "/api/v1", ConsoleWeb.V1 do

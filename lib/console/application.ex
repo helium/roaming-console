@@ -6,12 +6,16 @@ defmodule Console.Application do
   def start(_type, _args) do
     # Define workers and child supervisors to be supervised
     children = [
-      {Phoenix.PubSub, name: Console.PubSub},
+      {Task.Supervisor, name: ConsoleWeb.TaskSupervisor},
       {Console.Repo, []},
       {ConsoleWeb.Endpoint, []},
+      {Phoenix.PubSub, name: Console.PubSub},
       {Absinthe.Subscription, [ConsoleWeb.Endpoint]},
-      {ConsoleWeb.Monitor, %{}},
-      {Task.Supervisor, name: ConsoleWeb.TaskSupervisor},
+      {ConsoleWeb.Monitor, %{ address: "", events_state: [], events_error_state: [], amqp_conn: nil }},
+      {ConsoleWeb.MessageQueuePublisher, %{}},
+      {ConsoleWeb.MessageQueueConsumer, %{}},
+      {Console.EtlWorker, %{}},
+      {Console.EtlErrorWorker, %{}},
       Console.Scheduler
     ]
 

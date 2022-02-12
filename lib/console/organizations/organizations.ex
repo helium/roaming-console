@@ -369,4 +369,9 @@ defmodule Console.Organizations do
 
     List.first(invitations)
   end
+
+  def get_organizations_in_list(ids) do
+    from(o in Organization, where: o.id in ^ids)
+    |> Repo.all()
+  end
 end
