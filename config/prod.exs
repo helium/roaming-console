@@ -30,6 +30,9 @@ config :console,
 config :console,
   magic_secret_key: System.get_env("MAGIC_SECRET_KEY")
 
+config :console,
+  amqp_url: System.get_env("AMQP_URL")
+
 config :appsignal, :config,
   active: true,
   name: System.get_env("APPSIGNAL_APP_NAME"),
