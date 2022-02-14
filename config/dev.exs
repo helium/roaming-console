@@ -77,3 +77,6 @@ config :console,
   allowed_ip_range: ["127.0.0.1"]
 
 config :logger, level: :debug
+
+config :console,
+  socket_check_origin: "//localhost"

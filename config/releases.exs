@@ -47,3 +47,6 @@ config :console, Console.Mailer,
   api_key: System.get_env("MAILGUN_API_KEY"),
   domain: System.get_env("SITE_DOMAIN_MAILGUN"),
   base_uri: System.get_env("MAILGUN_URL") || "https://api.mailgun.net/v3"
+
+config :console,
+  socket_check_origin: System.get_env("SOCKET_CHECK_ORIGIN") || "//localhost"

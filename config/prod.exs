@@ -38,3 +38,6 @@ config :appsignal, :config,
 
 config :console,
   stripe_secret_key: System.get_env("STRIPE_SECRET_KEY")
+
+config :console,
+  socket_check_origin: System.get_env("SOCKET_CHECK_ORIGIN")
