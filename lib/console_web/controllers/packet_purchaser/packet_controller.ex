@@ -25,8 +25,8 @@ defmodule ConsoleWeb.PacketPurchaser.PacketController do
       with {:ok, new_packet} <- Packets.create_packet(packet_attrs) do
         ConsoleWeb.MessageQueuePublisher.publish(Jason.encode!(%{
           "id" => new_packet.id,
-          "dc_used" => 4,
-          "net_id" => 9,
+          "dc_used" => new_packet.dc_used,
+          "net_id" => new_packet.net_id,
           "organization_id" => net_id.organization_id,
         }))
 
