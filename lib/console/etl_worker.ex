@@ -9,22 +9,20 @@ defmodule Console.EtlWorker do
   end
 
   def init(_opts) do
-    if Application.get_env(:console, :use_amqp_events) do
-      schedule_events_etl(10)
-    end
+    schedule_packets_etl(10)
     {:ok, %{}}
   end
 
-  def handle_info(:run_events_etl, state) do
-    events = ConsoleWeb.Monitor.get_events_state()
-    delivery_tags = Enum.map(events, fn e -> elem(e, 0) end)
+  def handle_info(:run_packets_etl, state) do
+    packets = ConsoleWeb.Monitor.get_packets_state()
+    delivery_tags = Enum.map(packets, fn e -> elem(e, 0) end)
 
     Task.Supervisor.async_nolink(ConsoleWeb.TaskSupervisor, fn ->
       try do
-        parsed_events = Enum.map(events, fn e -> elem(e, 1) |> Jason.decode!() end)
+        parsed_packets = Enum.map(packets, fn e -> elem(e, 1) |> Jason.decode!() end)
 
-        if length(parsed_events) > 0 do      
-          organization_updates_map = generate_organization_updates_map(parsed_events)
+        if length(parsed_packets) > 0 do      
+          organization_updates_map = generate_organization_updates_map(parsed_packets)
 
           organizations_to_update =
             organization_updates_map
@@ -52,43 +50,43 @@ defmodule Console.EtlWorker do
           
           with {:ok, _} <- result do
             ConsoleWeb.MessageQueueConsumer.ack(delivery_tags)
-            ConsoleWeb.Monitor.remove_from_events_state(length(events))
+            ConsoleWeb.Monitor.remove_from_packets_state(length(packets))
           end
         end
       rescue
         error ->
           ConsoleWeb.MessageQueueConsumer.reject(delivery_tags)
-          ConsoleWeb.Monitor.remove_from_events_state(length(events))
+          ConsoleWeb.Monitor.remove_from_packets_state(length(packets))
           Appsignal.send_error(error, "Failed to process in ETL Worker", ["etl_worker"])
       end
     end)
     |> Task.await(:infinity)
 
-    schedule_events_etl(1)
+    schedule_packets_etl(1)
     {:noreply, state}
   end
 
-  defp schedule_events_etl(wait_time) do
-    Process.send_after(self(), :run_events_etl, wait_time)
+  defp schedule_packets_etl(wait_time) do
+    Process.send_after(self(), :run_packets_etl, wait_time)
   end
 
-  defp generate_organization_updates_map(parsed_events) do
-    parsed_events
-    |> Enum.reduce(%{}, fn event, acc ->
-      if event["dc_used"] > 0 do
+  defp generate_organization_updates_map(parsed_packets) do
+    parsed_packets
+    |> Enum.reduce(%{}, fn packet, acc ->
+      if packet["dc_used"] > 0 do
         update_attrs =
-          case acc[event["organization_id"]] do
+          case acc[packet["organization_id"]] do
             nil ->
               %{
-                "dc_used" => event["dc_used"],
+                "dc_used" => packet["dc_used"],
               }
             _ ->
               %{
-                "dc_used" => event["dc_used"] + acc[event["organization_id"]]["dc_used"],
+                "dc_used" => packet["dc_used"] + acc[packet["organization_id"]]["dc_used"],
               }
           end
 
-        Map.merge(acc, %{ event["organization_id"] => update_attrs })
+        Map.merge(acc, %{ packet["organization_id"] => update_attrs })
       else
         acc
       end

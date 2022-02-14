@@ -74,9 +74,6 @@ config :console,
   stripe_secret_key: "sk_test_Lvy2r3SRCzwjfh3tvZsOBTrG00Cm8M7v1q"
 
 config :console,
-  use_amqp_events: true
-
-config :console,
   amqp_url: "amqp://guest:guest@localhost"
 
 config :console,

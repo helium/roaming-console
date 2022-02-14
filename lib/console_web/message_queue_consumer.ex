@@ -7,9 +7,7 @@ defmodule ConsoleWeb.MessageQueueConsumer do
   end
 
   def init(_opts) do
-    if Application.get_env(:console, :use_amqp_events) do
-      connect()
-    end
+    connect()
 
     {:ok, nil}
   end
@@ -41,8 +39,8 @@ defmodule ConsoleWeb.MessageQueueConsumer do
         {:ok, channel} = Channel.open(conn)
         Process.monitor(conn.pid)
 
-        {:ok, _consumer_tag} = Basic.consume(channel, "events_queue_error", nil, no_ack: true)
-        {:ok, _consumer_tag} = Basic.consume(channel, "events_queue")
+        {:ok, _consumer_tag} = Basic.consume(channel, "packets_queue_error", nil, no_ack: true)
+        {:ok, _consumer_tag} = Basic.consume(channel, "packets_queue")
 
         {:noreply, channel}
       {:error, reason} ->
@@ -88,8 +86,8 @@ defmodule ConsoleWeb.MessageQueueConsumer do
 
   def handle_info({:basic_deliver, payload, %{routing_key: routing_key, delivery_tag: tag, redelivered: _redelivered}}, channel) do
     case routing_key do
-      "events_queue" -> ConsoleWeb.Monitor.add_to_events_state(tag, payload)
-      "events_queue_error" -> ConsoleWeb.Monitor.add_to_events_error_state(payload)
+      "packets_queue" -> ConsoleWeb.Monitor.add_to_packets_state(tag, payload)
+      "packets_queue_error" -> ConsoleWeb.Monitor.add_to_packets_error_state(payload)
     end
     {:noreply, channel}
   end

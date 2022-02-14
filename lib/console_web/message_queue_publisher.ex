@@ -7,9 +7,7 @@ defmodule ConsoleWeb.MessageQueuePublisher do
   end
 
   def init(_opts) do
-    if Application.get_env(:console, :use_amqp_events) do
-      connect()
-    end
+    connect()
 
     {:ok, nil}
   end
@@ -37,13 +35,13 @@ defmodule ConsoleWeb.MessageQueuePublisher do
         {:ok, channel} = Channel.open(conn)
         Process.monitor(channel.pid)
 
-        # Basic.qos(channel, prefetch_count: 100) # For back pressure on too many events being processed by etl worker
-        {:ok, _} = Queue.declare(channel, "events_queue_error", durable: true)
-        {:ok, _} = Queue.declare(channel, "events_queue",
+        # Basic.qos(channel, prefetch_count: 100) # For back pressure on too many packets being processed by etl worker
+        {:ok, _} = Queue.declare(channel, "packets_queue_error", durable: true)
+        {:ok, _} = Queue.declare(channel, "packets_queue",
            durable: true,
            arguments: [
              {"x-dead-letter-exchange", :longstr, ""},
-             {"x-dead-letter-routing-key", :longstr, "events_queue_error"}
+             {"x-dead-letter-routing-key", :longstr, "packets_queue_error"}
            ]
          )
 
@@ -60,7 +58,7 @@ defmodule ConsoleWeb.MessageQueuePublisher do
 
   def handle_cast({:publish, message}, channel) do
     if channel != nil do
-      Basic.publish(channel, "", "events_queue", message, [persistent: true, expiration: 60000])
+      Basic.publish(channel, "", "packets_queue", message, [persistent: true, expiration: 60000])
     end
 
     {:noreply, channel}

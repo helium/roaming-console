@@ -13,23 +13,16 @@ defmodule ConsoleWeb.PacketPurchaser.PacketController do
       {:error}
     else
       packet_attrs = %{
-        "dc_used" => 1,
+        "dc_used" => 4,
         "packet_size" => 1,
         "organization_id" => net_id.organization_id,
-        "reported_at_epoch" => 1642703271909,
+        "reported_at_epoch" => 1644863419389,
         "packet_hash" => "1234",
         "type" => "unknown",
         "net_id" => 9,
       }
 
       with {:ok, new_packet} <- Packets.create_packet(packet_attrs) do
-        ConsoleWeb.MessageQueuePublisher.publish(Jason.encode!(%{
-          "id" => new_packet.id,
-          "dc_used" => 1,
-          "net_id" => 9,
-          "organization_id" => net_id.organization_id,
-        }))
-
         ConsoleWeb.MessageQueuePublisher.publish(Jason.encode!(%{
           "id" => new_packet.id,
           "dc_used" => 4,
@@ -39,6 +32,7 @@ defmodule ConsoleWeb.PacketPurchaser.PacketController do
 
         conn
         |> put_resp_header("message", "yay")
+        |> send_resp(:no_content, "")
       else
         _ ->
           {:error}
