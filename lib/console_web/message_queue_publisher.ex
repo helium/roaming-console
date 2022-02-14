@@ -67,7 +67,7 @@ defmodule ConsoleWeb.MessageQueuePublisher do
   def handle_info({:DOWN, _, :process, _, reason}, _channel) do
     IO.inspect reason
     { _,{ _, _, message}} = reason
-    # Appsignal.send_error(%RuntimeError{ message: message }, "AMQP Publish channel closed", ["message_queue_publisher.ex"])
+    Appsignal.send_error(%RuntimeError{ message: message }, "AMQP Publish channel closed", ["message_queue_publisher.ex"])
 
     connect()
     {:noreply, nil}
