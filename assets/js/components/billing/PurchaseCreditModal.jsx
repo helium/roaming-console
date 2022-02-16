@@ -217,6 +217,14 @@ class PurchaseCreditModal extends Component {
 
   showQRCode = () => {
     analyticsLogger.logEvent("ACTION_OPEN_PURCHASE_DC_MODAL_QR_CODE");
+    if (this.state.packetPurchaserAddress === '') {
+      this.props.getPacketPurchaserAddress().then(({ data }) => {
+        if (typeof data.address === "string") {
+          this.setState({ packetPurchaserAddress: data.address });
+        }
+      });
+    }
+
     this.props.generateMemo().then(({ data }) => {
       const qr = {
         type: "dc_burn",

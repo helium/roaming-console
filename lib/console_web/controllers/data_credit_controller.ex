@@ -114,7 +114,7 @@ defmodule ConsoleWeb.DataCreditController do
 
     with {:ok, %Organization{} = _organization} <- Organizations.update_organization(current_organization, %{ "default_payment_id" => defaultPaymentId }) do
       ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
-      
+
       # send alert email (if applicable)
       current_organization = Organizations.get_organization!(current_organization.id)
       alert = Alerts.get_alert(current_organization)
@@ -152,7 +152,7 @@ defmodule ConsoleWeb.DataCreditController do
         if latestAddedCardId != nil do
           Organizations.update_organization(current_organization, %{ "default_payment_id" => latestAddedCardId })
         end
-        
+
         # send alert email (if applicable)
         current_organization = Organizations.get_organization!(current_organization.id)
         alert = Alerts.get_alert(current_organization)
@@ -314,6 +314,9 @@ defmodule ConsoleWeb.DataCreditController do
 
   def get_packet_purchaser_address(conn, _) do
     address = ConsoleWeb.Monitor.get_packet_purchaser_address()
+    if address == "" do
+      ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:refetch:packet_purchaser_address", %{})
+    end
     conn |> send_resp(:ok, Poison.encode!(%{ address: address }))
   end
 
@@ -351,7 +354,7 @@ defmodule ConsoleWeb.DataCreditController do
         prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 and organization.dc_balance > 499990 ->
           # # DC Balance has dipped below 500,000. Send an alert.
           Email.dc_balance_alert_email(organization, organization.dc_balance, recipient_emails) |> Mailer.deliver_later()
-          
+
         prev_dc_balance > 0 and organization.dc_balance <= 0 ->
           # DC Balance has gone to zero. Send a notice.
           Email.dc_balance_alert_email(organization, 0, recipient_emails) |> Mailer.deliver_later()
