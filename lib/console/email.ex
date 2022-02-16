@@ -38,7 +38,7 @@ defmodule Console.Email do
     |> render(:delete_organization_notice)
   end
 
-  def dc_balance_alert_email(%Organization{name: organization_name}, recipient, dc_balance) do
+  def dc_balance_alert_email(%Organization{name: organization_name}, dc_balance, recipient) do
     base_email()
     |> to(recipient)
     |> subject("Data credit low balance alert")

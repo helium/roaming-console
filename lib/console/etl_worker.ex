@@ -51,6 +51,8 @@ defmodule Console.EtlWorker do
           with {:ok, _} <- result do
             ConsoleWeb.MessageQueueConsumer.ack(delivery_tags)
             ConsoleWeb.Monitor.remove_from_packets_state(length(packets))
+            IO.inspect "PROCESS #{length(packets)} PACKETS FROM ETL WORKER SUCCESSFULLY"
+            check_updated_orgs_dc_balance(organizations_to_update)
           end
         end
       rescue
@@ -64,6 +66,18 @@ defmodule Console.EtlWorker do
 
     schedule_packets_etl(1)
     {:noreply, state}
+  end
+
+  defp check_updated_orgs_dc_balance(organizations_to_update) do
+    zipped_orgs_before_after =
+      organizations_to_update
+      |> Enum.map(fn org -> org.id end)
+      |> Organizations.get_organizations_in_list()
+      |> Enum.zip(organizations_to_update)
+      
+    Enum.each(zipped_orgs_before_after, fn tuple ->
+      ConsoleWeb.DataCreditController.check_org_dc_balance(elem(tuple, 0), elem(tuple, 1).dc_balance)
+    end)
   end
 
   defp schedule_packets_etl(wait_time) do
