@@ -1,0 +1,5 @@
+Hi there,
+
+<%= @user_email %> has removed a payment method in your organization, <%= @organization_name %>, on Helium Roaming Console at <%= @date_time %>.
+
+You can view additional information regarding your payment methods here.

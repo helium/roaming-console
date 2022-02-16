@@ -7,6 +7,7 @@ defmodule ConsoleWeb.DataCreditController do
   alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Organization
   alias Console.Mailer
+  alias Console.Alerts
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
@@ -112,12 +113,15 @@ defmodule ConsoleWeb.DataCreditController do
 
     with {:ok, %Organization{} = _organization} <- Organizations.update_organization(current_organization, %{ "default_payment_id" => defaultPaymentId }) do
       ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
-      # Send email about payment method changed
-      Organizations.get_administrators(current_organization)
-      |> Enum.each(fn administrator ->
-        conn.assigns.current_user
-        |> Email.payment_method_updated_email(current_organization, administrator.email, "updated") |> Mailer.deliver_later()
-      end)
+      
+      # send alert email (if applicable)
+      current_organization = Organizations.get_organization!(current_organization.id)
+      alert = Alerts.get_alert(current_organization)
+      if alert != nil and alert.config["payments_updated"]["email"]["active"] do
+        recipient_emails = Alerts.get_alert_recipient_emails(current_organization, alert.config["payments_updated"]["email"]["recipient"])
+        Email.payments_update_email(conn.assigns.current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
+      end
+
       conn
       |> put_resp_header("message", "Default payment method updated successfully")
       |> send_resp(:no_content, "")
@@ -147,12 +151,14 @@ defmodule ConsoleWeb.DataCreditController do
         if latestAddedCardId != nil do
           Organizations.update_organization(current_organization, %{ "default_payment_id" => latestAddedCardId })
         end
-        # Send email about payment method changed
-        Organizations.get_administrators(current_organization)
-        |> Enum.each(fn administrator ->
-          conn.assigns.current_user
-          |> Email.payment_method_updated_email(current_organization, administrator.email, "removed") |> Mailer.deliver_later()
-        end)
+        
+        # send alert email (if applicable)
+        current_organization = Organizations.get_organization!(current_organization.id)
+        alert = Alerts.get_alert(current_organization)
+        if alert != nil and alert.config["payments_updated"]["email"]["active"] do
+          recipient_emails = Alerts.get_alert_recipient_emails(current_organization, alert.config["payments_updated"]["email"]["recipient"])
+          Email.payments_removed_email(conn.assigns.current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
+        end
 
         ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
 
@@ -191,11 +197,12 @@ defmodule ConsoleWeb.DataCreditController do
             ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
             broadcast_packet_purchaser_refill_dc_balance(current_organization)
 
-            # send transaction emails
-            Organizations.get_administrators(current_organization)
-            |> Enum.each(fn admin ->
-              Email.data_credit_purchase_email(dc_purchase, current_user, current_organization, admin.email) |> Mailer.deliver_later()
-            end)
+            # send alert email (if applicable)
+            alert = Alerts.get_alert(current_organization)
+            if alert != nil and alert.config["dc_purchased"]["email"]["active"] do
+              recipient_emails = Alerts.get_alert_recipient_emails(current_organization, alert.config["dc_purchased"]["email"]["recipient"])
+              Email.data_credit_purchase_email(dc_purchase, current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
+            end
 
             conn
             |> put_resp_header("message", "Payment successful, your Data Credits balance has been refreshed.")

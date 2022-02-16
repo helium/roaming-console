@@ -2,6 +2,9 @@ defmodule ConsoleWeb.MembershipController do
   use ConsoleWeb, :controller
 
   alias Console.Organizations
+  alias Console.Alerts
+  alias Console.Email
+  alias Console.Mailer
 
   plug ConsoleWeb.Plug.AuthorizeAction
 
@@ -17,6 +20,14 @@ defmodule ConsoleWeb.MembershipController do
     else
       with {:ok, _} <- Organizations.update_membership(membership, attrs) do
         ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_organization.id}:member_list_update", %{})
+        
+        # send alert email (if applicable)
+        current_organization = Organizations.get_organization!(current_organization.id)
+        alert = Alerts.get_alert(current_organization)
+        if alert != nil and alert.config["users_updated"]["email"]["active"] do
+          recipient_emails = Alerts.get_alert_recipient_emails(current_organization, alert.config["users_updated"]["email"]["recipient"])
+          Email.user_updated_email(membership.email, current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
+        end
 
         conn
         |> put_resp_header("message", "User role updated successfully")
@@ -35,6 +46,14 @@ defmodule ConsoleWeb.MembershipController do
     else
       with {:ok, _} <- Organizations.delete_membership(membership) do
         ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_organization.id}:member_list_update", %{})
+
+        # send alert email (if applicable)
+        current_organization = Organizations.get_organization!(current_organization.id)
+        alert = Alerts.get_alert(current_organization)
+        if alert != nil and alert.config["users_updated"]["email"]["active"] do
+          recipient_emails = Alerts.get_alert_recipient_emails(current_organization, alert.config["users_updated"]["email"]["recipient"])
+          Email.user_deleted_email(membership.email, current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
+        end
 
         conn
         |> put_resp_header("message", "User removed from organization")

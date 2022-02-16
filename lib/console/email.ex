@@ -147,4 +147,57 @@ defmodule Console.Email do
     |> assign(:date_time, current_time())
     |> render(:data_credit_transfer)
   end
+
+  def payments_update_email(%User{email: email}, %Organization{name: organization_name}, recipients) do
+    base_email()
+    |> to(recipients)
+    |> subject("Payment Method Alert")
+    |> assign(:user_email, email)
+    |> assign(:organization_name, organization_name)
+    |> assign(:date_time, current_time())
+    |> render(:payments_update)
+  end
+
+  def payments_removed_email(%User{email: email}, %Organization{name: organization_name}, recipients) do
+    base_email()
+    |> to(recipients)
+    |> subject("Payment Method Alert")
+    |> assign(:user_email, email)
+    |> assign(:organization_name, organization_name)
+    |> assign(:date_time, current_time())
+    |> render(:payments_update)
+  end
+
+  def user_invited_email(invitee_email, %User{email: email}, %Organization{name: organization_name}, recipients) do
+    base_email()
+    |> to(recipients)
+    |> subject("User Alert")
+    |> assign(:invitee_email, invitee_email)
+    |> assign(:user_email, email)
+    |> assign(:organization_name, organization_name)
+    |> assign(:date_time, current_time())
+    |> render(:user_invited)
+  end
+
+  def user_deleted_email(deleted_user_email, %User{email: email}, %Organization{name: organization_name}, recipients) do
+    base_email()
+    |> to(recipients)
+    |> subject("User Alert")
+    |> assign(:deleted_user_email, deleted_user_email)
+    |> assign(:user_email, email)
+    |> assign(:organization_name, organization_name)
+    |> assign(:date_time, current_time())
+    |> render(:user_deleted)
+  end
+
+  def user_updated_email(updated_user_email, %User{email: email}, %Organization{name: organization_name}, recipients) do
+    base_email()
+    |> to(recipients)
+    |> subject("User Alert")
+    |> assign(:updated_user_email, updated_user_email)
+    |> assign(:user_email, email)
+    |> assign(:organization_name, organization_name)
+    |> assign(:date_time, current_time())
+    |> render(:user_updated)
+  end
 end

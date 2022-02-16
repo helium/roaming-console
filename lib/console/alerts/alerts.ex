@@ -4,6 +4,7 @@ defmodule Console.Alerts do
 
   alias Console.Alerts.Alert
   alias Console.Organizations.Organization
+  alias Console.Organizations
 
   def get_alert(organization) do
      Repo.get_by(Alert, [organization_id: organization.id])
@@ -21,5 +22,16 @@ defmodule Console.Alerts do
     alert
     |> Alert.changeset(attrs)
     |> Repo.update()
+  end
+
+  def get_alert_recipient_emails(%Organization{} = organization, recipient_type) do
+    roles = case recipient_type do
+      "admin" -> ["admin"]
+      "manager" -> ["manager"]
+      "read" -> ["read"]
+      "all" -> ["admin", "manager", "read"]
+    end
+
+    Organizations.get_memberships_by_organization_and_role(organization.id, roles) |> Enum.map(fn (member) -> member.email end)
   end
 end
