@@ -252,7 +252,7 @@ export default (props) => {
         <Row gutter={16}>
           <Col span={8}>
             <Card
-              title="Total Packets Sent"
+              title="Total Packets Sent (Last 30 Days)"
               bodyStyle={{ height: 90, padding: 0 }}
             >
               <div
@@ -273,7 +273,10 @@ export default (props) => {
             </Card>
           </Col>
           <Col span={8}>
-            <Card title="Total DC Used" bodyStyle={{ height: 90, padding: 0 }}>
+            <Card
+              title="Total DC Used (Last 30 Days)"
+              bodyStyle={{ height: 90, padding: 0 }}
+            >
               <div
                 style={{ overflowX: "scroll", padding: 24 }}
                 className="no-scroll-bar"
