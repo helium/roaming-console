@@ -28,12 +28,13 @@ defmodule Console.EtlErrorWorker do
           }
           ConsoleWeb.Monitor.remove_from_packets_error_state()
 
-          with {:ok, _} <- Organizations.update_organization(org, org_attrs) do
+          with {:ok, updated_org} <- Organizations.update_organization(org, org_attrs) do
             ConsoleWeb.Monitor.remove_from_packets_error_state()
             if org.dc_balance - parsed_packet.dc_used <= 0 do
               net_id_values = NetIds.get_all_for_organization(org.id) |> Enum.map(fn n -> n.value end)
               ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", %{ net_ids: net_id_values})
             end
+            ConsoleWeb.DataCreditController.check_org_dc_balance(updated_org, org.dc_balance)
           end
         end
       rescue

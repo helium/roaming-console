@@ -8,6 +8,7 @@ defmodule ConsoleWeb.DataCreditController do
   alias Console.Organizations.Organization
   alias Console.Mailer
   alias Console.Alerts
+  alias Console.Repo
 
   plug ConsoleWeb.Plug.AuthorizeAction
   action_fallback(ConsoleWeb.FallbackController)
@@ -338,6 +339,87 @@ defmodule ConsoleWeb.DataCreditController do
     else {:error, _} ->
       conn
       |> send_resp(502, "")
+    end
+  end
+
+  def check_org_dc_balance(organization, prev_dc_balance) do
+    # send alert email (if applicable)
+    alert = Alerts.get_alert(organization)
+    if organization.automatic_charge_amount == nil and alert != nil and alert.config["dc_low"]["email"]["active"] do
+      recipient_emails = Alerts.get_alert_recipient_emails(organization, alert.config["dc_low"]["email"]["recipient"])
+      cond do
+        prev_dc_balance > 500_000 and organization.dc_balance <= 500_000 and organization.dc_balance > 499990 ->
+          # # DC Balance has dipped below 500,000. Send an alert.
+          Email.dc_balance_alert_email(organization, organization.dc_balance, recipient_emails) |> Mailer.deliver_later()
+          
+        prev_dc_balance > 0 and organization.dc_balance <= 0 ->
+          # DC Balance has gone to zero. Send a notice.
+          Email.dc_balance_alert_email(organization, 0, recipient_emails) |> Mailer.deliver_later()
+        true -> nil
+      end
+    end
+
+    if organization.automatic_charge_amount != nil
+      and organization.automatic_payment_method != nil
+      and organization.dc_balance < 500000
+      and not organization.pending_automatic_purchase do
+
+        {:ok, updated_org_pending_result} =
+          Repo.transaction(fn ->
+            organization = Organizations.get_organization!(organization.id)
+            if organization.pending_automatic_purchase do
+              nil
+            else
+              Organizations.update_organization!(organization, %{ "pending_automatic_purchase" => true })
+            end
+          end)
+
+        case updated_org_pending_result do
+          nil -> nil
+          organization ->
+            request_body = URI.encode_query(%{
+              "customer" => organization.stripe_customer_id,
+              "amount" => organization.automatic_charge_amount,
+              "currency" => "usd",
+              "payment_method" => organization.automatic_payment_method,
+              "off_session" => "true",
+              "confirm" => "true",
+            })
+
+            with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_intents", request_body, @headers) do
+              with 200 <- stripe_response.status_code do
+                payment_intent = Poison.decode!(stripe_response.body)
+
+                with "succeeded" <- payment_intent["status"],
+                  {:ok, stripe_response} <- HTTPoison.get("#{@stripe_api_url}/v1/payment_methods/#{payment_intent["payment_method"]}", @headers),
+                  200 <- stripe_response.status_code do
+                    card = Poison.decode!(stripe_response.body)
+
+                    attrs = %{
+                      "dc_purchased" => payment_intent["amount"] * 1000,
+                      "cost" => payment_intent["amount"],
+                      "card_type" => card["card"]["brand"],
+                      "last_4" => card["card"]["last4"],
+                      "user_id" => "Recurring Charge",
+                      "organization_id" => organization.id,
+                      "payment_id" => payment_intent["id"],
+                    }
+
+                    with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
+                      organization = Organizations.get_organization!(organization.id)
+                      Organizations.get_administrators(organization)
+                      |> Enum.each(fn administrator ->
+                        Email.dc_top_up_alert_email(organization, dc_purchase, administrator.email)
+                        |> Mailer.deliver_later()
+                      end)
+                      ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{organization.id}:update_dc_table", %{})
+                      ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
+                      broadcast_packet_purchaser_refill_dc_balance(organization)
+                    end
+                end
+              end
+            end
+        end
     end
   end
 
