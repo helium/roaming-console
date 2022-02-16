@@ -1,0 +1,5 @@
+Hi there,
+
+<%= @user_email %> has updated the user, <%= @updated_user_email %>, to your organization, <%= @organization_name %>, on Helium Roaming Console at <%= @date_time %>.
+
+You can view additional information regarding users here.

@@ -6,6 +6,7 @@ defmodule ConsoleWeb.InvitationController do
   alias Console.Email
   alias Console.Mailer
   alias Console.Repo
+  alias Console.Alerts
 
   plug ConsoleWeb.Plug.AuthorizeAction when action not in [:accept, :redirect_to_register, :get_by_token, :get_by_email, :resend_invitation]
 
@@ -21,6 +22,13 @@ defmodule ConsoleWeb.InvitationController do
         Organizations.create_invitation(current_user, organization, attrs) do
         Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
         ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{conn.assigns.current_organization.id}:invitation_list_update", %{})
+
+        # send alert email (if applicable)
+        alert = Alerts.get_alert(organization)
+        if alert != nil and alert.config["users_updated"]["email"]["active"] do
+          recipient_emails = Alerts.get_alert_recipient_emails(organization, alert.config["users_updated"]["email"]["recipient"])
+          Email.user_invited_email(attrs["email"], current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
+        end
 
         conn
         |> put_status(:created)

@@ -8,7 +8,7 @@
     <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no"> <!-- Tell iOS not to automatically link certain text strings. -->
     <meta name="color-scheme" content="light">
     <meta name="supported-color-schemes" content="light">
-    <title>Payment Method Change</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    <title>User Alert</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
 
     <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
     <!--[if gte mso 9]>
@@ -240,20 +240,18 @@
                             <!-- Spacing -->
                             <tr>
                                 <td style="font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;">
-                                    <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; ">Payment Method Alert</h1>
+                                    <h1 style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; margin: 0 0 30px; font-size: 30px; line-height: 30px; color: #333333; font-weight: normal; ">User Alert</h1>
                                     <p style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 18px; color: #333333; line-height: 22px; margin: 0 0 15px;">
                                       Hi there,
                                       <br />
                                       <br />
-                                      An administrator of <%= @organization_name %> made changes to your payment methods on Helium Roaming Console.
-                                     <br/><br/>
-                                     <%= @updater_email %> <%= @action %> a payment method at <%= @date_time %>.
+                                      <%= @user_email %> has updated the user, <%= @updated_user_email %>, in your organization, <b><%= @organization_name %></b>, on Helium Roaming Console at <%= @date_time %>.
                                     </p>
                                 </td>
                             </tr>
                             <tr>
                               <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 14px; color: #333333;line-height: 22px;">
-                                You can view additional information regarding data credits <a target="_blank" href="<%= @url <> "/datacredits" %>">here</a>.
+                                You can view additional information regarding users <a target="_blank" href="<%= @url <> "/users" %>">here</a>.
                               </td>
                             </tr>
                             <!-- Spacing -->

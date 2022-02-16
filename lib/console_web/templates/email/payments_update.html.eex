@@ -8,7 +8,7 @@
     <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no"> <!-- Tell iOS not to automatically link certain text strings. -->
     <meta name="color-scheme" content="light">
     <meta name="supported-color-schemes" content="light">
-    <title>Payment Method Change</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
+    <title>Payment Method Alert</title> <!-- The title tag shows in email notifications, like Android 4.4. -->
 
     <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
     <!--[if gte mso 9]>
@@ -245,15 +245,13 @@
                                       Hi there,
                                       <br />
                                       <br />
-                                      An administrator of <%= @organization_name %> made changes to your payment methods on Helium Roaming Console.
-                                     <br/><br/>
-                                     <%= @updater_email %> <%= @action %> a payment method at <%= @date_time %>.
+                                      <%= @user_email %> has updated the default payment method in your organization, <b><%= @organization_name %></b>, on Helium Roaming Console at <%= @date_time %>.
                                     </p>
                                 </td>
                             </tr>
                             <tr>
                               <td style="font-family:avenir, apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial,sans-serif; font-size: 14px; color: #333333;line-height: 22px;">
-                                You can view additional information regarding data credits <a target="_blank" href="<%= @url <> "/datacredits" %>">here</a>.
+                                You can view additional information regarding your payment methods <a target="_blank" href="<%= @url <> "/datacredits" %>">here</a>.
                               </td>
                             </tr>
                             <!-- Spacing -->
