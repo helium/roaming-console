@@ -47,6 +47,11 @@ defmodule ConsoleWeb.MembershipController do
       with {:ok, _} <- Organizations.delete_membership(membership) do
         ConsoleWeb.Endpoint.broadcast("graphql:members_table", "graphql:members_table:#{conn.assigns.current_organization.id}:member_list_update", %{})
 
+        case Organizations.get_invitation(current_organization, membership.email) do
+          nil -> nil
+          invitation -> Organizations.delete_invitation(invitation)
+        end
+
         # send alert email (if applicable)
         current_organization = Organizations.get_organization!(current_organization.id)
         alert = Alerts.get_alert(current_organization)
