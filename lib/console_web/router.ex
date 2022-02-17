@@ -62,8 +62,6 @@ defmodule ConsoleWeb.Router do
     get "/data_credits/generate_memo", DataCreditController, :generate_memo
     get "/data_credits/packet_purchaser_address", DataCreditController, :get_packet_purchaser_address
     get "/data_credits/get_hnt_price", DataCreditController, :get_hnt_price
-
-    get "/net_ids", OrganizationController, :get_net_ids
   end
 
   scope "/api/packet_purchaser", ConsoleWeb.PacketPurchaser do

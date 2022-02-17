@@ -163,18 +163,6 @@ defmodule ConsoleWeb.OrganizationController do
     end
   end
 
-  def get_net_ids(conn, _) do
-    case conn.assigns.current_user.email do
-      "jeffrey@helium.com" ->
-        results = Organizations.get_all_org_config() |> Poison.encode!()
-
-        conn
-        |> send_resp(:ok, results)
-      _ ->
-        {:error, :forbidden, "You don't have access to do this"}
-    end
-  end
-
   def broadcast_packet_purchaser_all_org_balance() do
     results = Organizations.get_all_org_dc_balance
     ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:dc_balance:list", %{ org_dc_balance_list: results })
