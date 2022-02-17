@@ -144,9 +144,8 @@ defmodule ConsoleWeb.OrganizationController do
           ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{destination_org.id}:update_dc_table", %{})
         end
 
-        admins = Organizations.get_administrators(organization)
-
         with {:ok, _} <- Organizations.delete_organization(organization) do
+          admins = Organizations.get_administrators(organization)
           Enum.each(admins, fn administrator ->
             Email.delete_org_alert_email(organization, administrator.email, membership.email)
             |> Mailer.deliver_later()
