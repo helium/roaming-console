@@ -71,7 +71,9 @@ const MagicRouter = (props) => {
         <Route
           path="/join_organization"
           loaded={loadedOrganization}
-          component={JoinOrganizationPrompt}
+          component={(props) => (
+            <JoinOrganizationPrompt user={user} {...props} />
+          )}
         />
         <Route>
           {loadedOrganization && !currentOrganizationId && (
