@@ -48,11 +48,6 @@ const getOrganizations = async () => {
   return organizations.data;
 }
 
-export const getNetIds = async () => {
-  const results = await rest.get('/api/net_ids/');
-  return results.data;
-}
-
 export const createOrganization = (name, noOtherOrg = false) => {
   return (dispatch) => {
     rest.post('/api/organizations', {

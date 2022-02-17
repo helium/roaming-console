@@ -3,6 +3,7 @@ defmodule ConsoleWeb.DataCreditController do
   alias Console.Email
   alias Console.Memos
   alias Console.Organizations
+  alias Console.NetIds
   alias Console.DcPurchases
   alias Console.DcPurchases.DcPurchase
   alias Console.Organizations.Organization
@@ -410,14 +411,16 @@ defmodule ConsoleWeb.DataCreditController do
 
                     with {:ok, %DcPurchase{} = dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
                       organization = Organizations.get_organization!(organization.id)
+
+                      ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{organization.id}:update_dc_table", %{})
+                      ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
+                      broadcast_packet_purchaser_refill_dc_balance(organization)
+
                       Organizations.get_administrators(organization)
                       |> Enum.each(fn administrator ->
                         Email.dc_top_up_alert_email(organization, dc_purchase, administrator.email)
                         |> Mailer.deliver_later()
                       end)
-                      ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{organization.id}:update_dc_table", %{})
-                      ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
-                      broadcast_packet_purchaser_refill_dc_balance(organization)
                     end
                 end
               end
@@ -427,8 +430,9 @@ defmodule ConsoleWeb.DataCreditController do
   end
 
   def broadcast_packet_purchaser_refill_dc_balance(%Organization{} = organization) do
-    ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:refill:dc_balance", %{
-      "id" => organization.id, "dc_balance_nonce" => organization.dc_balance_nonce, "dc_balance" => organization.dc_balance
-    })
+    if organization.dc_balance > 0 do
+      net_id_values = NetIds.get_all_for_organization(organization.id) |> Enum.map(fn n -> n.value end)
+      ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:keep_purchasing", %{ net_ids: net_id_values })
+    end
   end
 end

@@ -40,10 +40,10 @@ defmodule ConsoleWeb.PacketPurchaser.OrganizationController do
           nil ->
             organization = Organizations.get_organization!(memo.organization_id)
             with {:ok, %DcPurchase{} = _dc_purchase } <- DcPurchases.create_dc_purchase_update_org(attrs, organization) do
-              Organizations.update_organization(organization, %{ "received_free_dc" => false })
-
               ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{organization.id}:update_dc", %{})
               ConsoleWeb.Endpoint.broadcast("graphql:dc_purchases_table", "graphql:dc_purchases_table:#{organization.id}:update_dc_table", %{})
+
+              {:ok, organization} = Organizations.update_organization(organization, %{ "received_free_dc" => false })
               ConsoleWeb.DataCreditController.broadcast_packet_purchaser_refill_dc_balance(organization)
 
               conn |> send_resp(:no_content, "")
@@ -64,6 +64,7 @@ defmodule ConsoleWeb.PacketPurchaser.OrganizationController do
 
     with {:ok, organization} <- Organizations.update_organization(organization, attrs) do
       ConsoleWeb.DataCreditController.broadcast_packet_purchaser_refill_dc_balance(organization)
+
       conn |> send_resp(:no_content, "")
     end
   end

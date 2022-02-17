@@ -3,7 +3,7 @@ import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import JoinCredentialsForm from "./JoinCredentialsForm";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
-import { updateOrganizationCreds, getNetIds } from "../../actions/organization";
+import { updateOrganizationCreds } from "../../actions/organization";
 import { Typography, Button, Input } from "antd";
 const { Text } = Typography;
 import DashboardLayout from "../common/DashboardLayout";
@@ -15,7 +15,6 @@ export default (props) => {
   );
   const userEmail = useSelector((state) => state.magicUser.email);
 
-  const [netIds, setNetIds] = useState("");
   const [address, setAddress] = useState(null);
   const [port, setPort] = useState(null);
   const [join_credentials, setJoinCreds] = useState(null);
@@ -42,10 +41,6 @@ export default (props) => {
         orgRefetch();
       }
     );
-
-    if (userEmail === "jeffrey@helium.com") {
-      getNetIds().then((data) => setNetIds(data));
-    }
 
     return () => {
       channel.leave();
@@ -160,9 +155,6 @@ export default (props) => {
                 Save
               </Button>
             </div>
-          )}
-          {userEmail === "jeffrey@helium.com" && (
-            <pre>{JSON.stringify(netIds, null, 2)}</pre>
           )}
         </div>
       </div>
