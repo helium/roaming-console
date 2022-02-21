@@ -9,7 +9,5 @@ defmodule Console.Repo.Migrations.RemoveTeams do
     alter table(:gateways) do
       remove :team_id
     end
-
-    drop table(:teams)
   end
 end
