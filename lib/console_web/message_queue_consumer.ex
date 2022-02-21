@@ -39,8 +39,8 @@ defmodule ConsoleWeb.MessageQueueConsumer do
         {:ok, channel} = Channel.open(conn)
         Process.monitor(conn.pid)
 
-        {:ok, _consumer_tag} = Basic.consume(channel, "packets_queue_error", nil, no_ack: true)
-        {:ok, _consumer_tag} = Basic.consume(channel, "packets_queue")
+        {:ok, _consumer_tag} = Basic.consume(channel, "#{Application.get_env(:console, :amqp_queue_name)}_error", nil, no_ack: true)
+        {:ok, _consumer_tag} = Basic.consume(channel, "#{Application.get_env(:console, :amqp_queue_name)}")
 
         {:noreply, channel}
       {:error, reason} ->
@@ -85,9 +85,13 @@ defmodule ConsoleWeb.MessageQueueConsumer do
   end
 
   def handle_info({:basic_deliver, payload, %{routing_key: routing_key, delivery_tag: tag, redelivered: _redelivered}}, channel) do
-    case routing_key do
-      "packets_queue" -> ConsoleWeb.Monitor.add_to_packets_state(tag, payload)
-      "packets_queue_error" -> ConsoleWeb.Monitor.add_to_packets_error_state(payload)
+    cond do
+      routing_key == "#{Application.get_env(:console, :amqp_queue_name)}" ->
+        ConsoleWeb.Monitor.add_to_packets_state(tag, payload)
+      routing_key == "#{Application.get_env(:console, :amqp_queue_name)}_error" ->
+        ConsoleWeb.Monitor.add_to_packets_error_state(payload)
+      true ->
+        Appsignal.send_error(%RuntimeError{ message: "Invalid routing key" }, "AMQP Consumer channel encountered invalid routing key", ["message_queue_consumer.ex"])
     end
     {:noreply, channel}
   end

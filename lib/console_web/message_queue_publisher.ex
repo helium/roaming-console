@@ -36,12 +36,12 @@ defmodule ConsoleWeb.MessageQueuePublisher do
         Process.monitor(channel.pid)
 
         # Basic.qos(channel, prefetch_count: 100) # For back pressure on too many packets being processed by etl worker
-        {:ok, _} = Queue.declare(channel, "packets_queue_error", durable: true)
-        {:ok, _} = Queue.declare(channel, "packets_queue",
+        {:ok, _} = Queue.declare(channel, "#{Application.get_env(:console, :amqp_queue_name)}_error", durable: true)
+        {:ok, _} = Queue.declare(channel, "#{Application.get_env(:console, :amqp_queue_name)}",
            durable: true,
            arguments: [
              {"x-dead-letter-exchange", :longstr, ""},
-             {"x-dead-letter-routing-key", :longstr, "packets_queue_error"}
+             {"x-dead-letter-routing-key", :longstr, "#{Application.get_env(:console, :amqp_queue_name)}_error"}
            ]
          )
 
@@ -58,7 +58,7 @@ defmodule ConsoleWeb.MessageQueuePublisher do
 
   def handle_cast({:publish, message}, channel) do
     if channel != nil do
-      Basic.publish(channel, "", "packets_queue", message, [persistent: true, expiration: 60000])
+      Basic.publish(channel, "", "#{Application.get_env(:console, :amqp_queue_name)}", message, [persistent: true, expiration: 60000])
     end
 
     {:noreply, channel}

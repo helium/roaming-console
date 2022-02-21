@@ -77,6 +77,9 @@ config :console,
   amqp_url: "amqp://guest:guest@localhost"
 
 config :console,
+  amqp_queue_name: "packets_queue"
+
+config :console,
   allowed_ip_range: ["127.0.0.1"]
 
 config :logger, level: :debug

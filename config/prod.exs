@@ -33,6 +33,9 @@ config :console,
 config :console,
   amqp_url: System.get_env("AMQP_URL")
 
+config :console,
+  amqp_queue_name: System.get_env("AMQP_QUEUE_NAME")
+
 config :appsignal, :config,
   active: true,
   name: System.get_env("APPSIGNAL_APP_NAME"),
