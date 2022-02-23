@@ -4,7 +4,8 @@ import { useSelector } from "react-redux";
 import numeral from "numeral";
 import DashboardLayout from "../common/DashboardLayout";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
-import { GET_ORGANIZATION_PACKETS } from "../../graphql/packets";
+import { displayError } from "../../util/messages";
+import { getPackets } from "../../actions/packets";
 import analyticsLogger from "../../util/analyticsLogger";
 import { Typography, Card, Row, Col, Button, Input, Tooltip } from "antd";
 const { Text } = Typography;
@@ -124,9 +125,18 @@ const chartOptions = {
 };
 
 export default (props) => {
+  const [packets, setPackets] = useState([]);
   const currentOrganizationId = useSelector(
     (state) => state.organization.currentOrganizationId
   );
+
+  const getAllPackets = () => {
+    getPackets()
+      .then((response) => {
+        setPackets(response);
+      })
+      .catch(() => displayError());
+  };
 
   const {
     loading: orgLoading,
@@ -138,19 +148,14 @@ export default (props) => {
     variables: { id: currentOrganizationId },
   });
 
-  const {
-    loading: packetsLoading,
-    error: packetsError,
-    data: packetsData,
-    refetch: packetsRefetch,
-  } = useQuery(GET_ORGANIZATION_PACKETS, {
-    fetchPolicy: "cache-first",
-  });
+  useEffect(() => {
+    getAllPackets();
+  }, []);
 
   useEffect(() => {
     const autoRefresh = setInterval(() => {
       orgRefetch();
-      packetsRefetch();
+      getAllPackets();
     }, 300000); // 5 minutes
 
     return () => {
@@ -211,7 +216,7 @@ export default (props) => {
             style={{ borderRadius: 4 }}
             onClick={() => {
               orgRefetch();
-              packetsRefetch();
+              getAllPackets();
             }}
           >
             Refresh
