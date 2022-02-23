@@ -117,9 +117,5 @@ defmodule ConsoleWeb.Schema do
     field :alerts_setting, :alerts_setting do
       resolve(&Console.Alerts.AlertResolver.find/2)
     end
-
-    field :packets, list_of(:packet) do
-      resolve &Console.Packets.PacketResolver.get_packets/2
-    end
   end
 end
