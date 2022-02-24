@@ -14,7 +14,7 @@ config :console, Console.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
-  database: "console_test",
+  database: "roaming_console_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
@@ -22,6 +22,8 @@ config :console, Console.Mailer,
   adapter: Bamboo.TestAdapter
 
 config :console, env: Mix.env
+
+config :console, :access_token_decoder, Console.AccessTokenDecoder.MockDecodeAccessToken
 
 config :console,
   packet_purchaser_secrets: [

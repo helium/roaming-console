@@ -2,7 +2,6 @@ defmodule ConsoleWeb.OrganizationChannel do
   use Phoenix.Channel
   alias Console.Packets
   alias Console.NetIds
-  alias Console.Organizations
 
   def join("organization:all", _message, socket) do
     {:ok, socket}
