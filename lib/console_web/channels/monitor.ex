@@ -1,6 +1,6 @@
 defmodule ConsoleWeb.Monitor do
   use Agent
-  
+
   def start_link(initial_state) do
     Agent.start_link(fn -> initial_state end, name: __MODULE__)
   end
@@ -10,7 +10,7 @@ defmodule ConsoleWeb.Monitor do
   end
 
   def update_packet_purchaser_address(address) do
-    Agent.update(MODULE, fn state -> Map.put(state, :address, address) end)
+    Agent.update(__MODULE__, fn state -> Map.put(state, :address, address) end)
   end
 
   def get_packets_state do
