@@ -7,7 +7,9 @@ defmodule ConsoleWeb.MessageQueuePublisher do
   end
 
   def init(_opts) do
-    connect()
+    if Application.get_env(:console, :env) != :test do
+      connect()
+    end
 
     {:ok, nil}
   end

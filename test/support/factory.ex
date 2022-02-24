@@ -5,13 +5,7 @@ defmodule Console.Factory do
   alias Console.Organizations
   alias Console.Organizations.Organization
   alias Console.ApiKeys.ApiKey
-  alias Console.Labels.Label
-  alias Console.Labels.DevicesLabels
-  alias Console.Channels.Channel
-  alias Console.Devices.Device
-  alias Console.Functions.Function
   alias Console.Organizations.Membership
-  alias Console.Flows.Flow
 
   def authenticate_user(%{conn: conn}) do
     user = params_for(:user)
@@ -43,5 +37,9 @@ defmodule Console.Factory do
       key: "key",
       user_id: "me"
     }
+  end
+
+  def membership_factory do
+    %Membership{}
   end
 end

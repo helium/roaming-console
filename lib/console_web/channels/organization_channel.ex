@@ -2,7 +2,6 @@ defmodule ConsoleWeb.OrganizationChannel do
   use Phoenix.Channel
   alias Console.Packets
   alias Console.NetIds
-  alias Console.Organizations
 
   def join("organization:all", _message, socket) do
     {:ok, socket}
@@ -49,12 +48,14 @@ defmodule ConsoleWeb.OrganizationChannel do
       }
 
       with {:ok, new_packet} <- Packets.create_packet(packet_attrs) do
-        ConsoleWeb.MessageQueuePublisher.publish(Jason.encode!(%{
-          "id" => new_packet.id,
-          "dc_used" => new_packet.dc_used,
-          "net_id" => new_packet.net_id,
-          "organization_id" => net_id.organization_id,
-        }))
+        if Application.get_env(:console, :env) != :test do
+          ConsoleWeb.MessageQueuePublisher.publish(Jason.encode!(%{
+            "id" => new_packet.id,
+            "dc_used" => new_packet.dc_used,
+            "net_id" => new_packet.net_id,
+            "organization_id" => net_id.organization_id,
+          }))
+        end
 
         {:noreply, socket}
       else

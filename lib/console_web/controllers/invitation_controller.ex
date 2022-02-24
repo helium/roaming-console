@@ -15,28 +15,35 @@ defmodule ConsoleWeb.InvitationController do
   def create(conn, %{"invitation" => attrs}) do
     current_user = conn.assigns.current_user
     current_organization = conn.assigns.current_organization
-    organization = Organizations.get_organization!(current_user, attrs["organization"])
 
-    if current_organization.id == organization.id and current_user.email != attrs["email"] do
-      with {:ok, %{ invitation: invitation, user: _ }} <-
-        Organizations.create_invitation(current_user, organization, attrs) do
-        Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
-        ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{conn.assigns.current_organization.id}:invitation_list_update", %{})
-
-        # send alert email (if applicable)
-        alert = Alerts.get_alert(organization)
-        if alert != nil and alert.config["users_updated"]["email"]["active"] do
-          recipient_emails = Alerts.get_alert_recipient_emails(organization, alert.config["users_updated"]["email"]["recipient"])
-          Email.user_invited_email(attrs["email"], current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
-        end
-
-        conn
-        |> put_status(:created)
-        |> put_resp_header("message", "Invitation sent")
-        |> render("show.json", invitation: invitation)
-      end
+    if is_nil(attrs["organization"]) do
+      {:error, :not_found, "Missing organization ID"}
     else
-      {:error, :forbidden, "You don't have access to do this"}
+      organization = Organizations.get_organization!(current_user, attrs["organization"])
+
+      if current_organization.id == organization.id and current_user.email != attrs["email"] do
+        case Organizations.create_invitation(current_user, organization, attrs) do
+          {:ok, %{ invitation: invitation, user: _ }} -> 
+            Email.invitation_email(invitation, current_user, organization) |> Mailer.deliver_later()
+            ConsoleWeb.Endpoint.broadcast("graphql:invitations_table", "graphql:invitations_table:#{conn.assigns.current_organization.id}:invitation_list_update", %{})
+
+            # send alert email (if applicable)
+            alert = Alerts.get_alert(organization)
+            if alert != nil and alert.config["users_updated"]["email"]["active"] do
+              recipient_emails = Alerts.get_alert_recipient_emails(organization, alert.config["users_updated"]["email"]["recipient"])
+              Email.user_invited_email(attrs["email"], current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
+            end
+
+            conn
+            |> put_status(:created)
+            |> put_resp_header("message", "Invitation sent")
+            |> render("show.json", invitation: invitation)
+          {:error, _, error, _} ->
+            {:error, error}
+        end
+      else
+        {:error, :forbidden, "You don't have access to do this"}
+      end
     end
   end
 
