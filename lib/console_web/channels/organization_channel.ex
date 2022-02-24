@@ -58,7 +58,8 @@ defmodule ConsoleWeb.OrganizationChannel do
 
         {:noreply, socket}
       else
-        _ ->
+        error ->
+          IO.inspect error
           {:reply, {:error, "Failed to add packet to database"}, socket}
       end
     end
