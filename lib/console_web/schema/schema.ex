@@ -75,9 +75,8 @@ defmodule ConsoleWeb.Schema do
     field :config, :json
   end
 
-  object :packet do
-    field :reported_at_epoch, :integer
-    field :net_id, :integer
+  object :packets_per_hour do
+    field :packets_per_hour, :json
   end
 
   query do
@@ -116,6 +115,10 @@ defmodule ConsoleWeb.Schema do
 
     field :alerts_setting, :alerts_setting do
       resolve(&Console.Alerts.AlertResolver.find/2)
+    end
+
+    field :packets, :packets_per_hour do
+      resolve &Console.Packets.PacketResolver.get_packets/2
     end
   end
 end

@@ -164,27 +164,8 @@ export default (props) => {
   }, []);
 
   const renderChart = () => {
-    if (packets.length > 0) {
-      const packetsMap = packets.reduce((acc, packet) => {
-        const key = Math.ceil(
-          (Date.now() - packet.reported_at_epoch) / 1000 / 3600
-        );
-        if (acc[key]) {
-          if (acc[key][packet.net_id]) {
-            return Object.assign({}, acc, {
-              [key]: Object.assign({}, acc[key], {
-                [packet.net_id]: acc[key][packet.net_id] + 1,
-              }),
-            });
-          } else {
-            return Object.assign({}, acc, {
-              [key]: Object.assign({}, acc[key], { [packet.net_id]: 1 }),
-            });
-          }
-        } else {
-          return Object.assign({}, acc, { [key]: { [packet.net_id]: 1 } });
-        }
-      }, {});
+    if (packetsData) {
+      const packetsMap = JSON.parse(packetsData.packets.packets_per_hour);
 
       const data = range(24, 0).map((index) => {
         if (packetsMap[index]) {
