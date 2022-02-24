@@ -6,7 +6,7 @@ defmodule ConsoleWeb.Monitor do
   end
 
   def get_packet_purchaser_address do
-    Agent.get(__MODULE__, fn state -> state end)
+    Agent.get(__MODULE__, fn state -> Map.get(state, :address) end)
   end
 
   def update_packet_purchaser_address(address) do
