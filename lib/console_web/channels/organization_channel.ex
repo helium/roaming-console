@@ -63,7 +63,10 @@ defmodule ConsoleWeb.OrganizationChannel do
           msg = "Failed to add packet to database"
           Appsignal.send_error(errors, msg, ["organization_channel.ex"])
           {:reply, {:error, msg}, socket}
-        _ -> {:reply, {:error, "Failed to add packet to database"}, socket}
+        error ->
+          msg = "Failed to add packet to database"
+          Appsignal.send_error(error, msg, ["organization_channel.ex"])
+          {:reply, {:error, msg}, socket}
       end
     end
   end
