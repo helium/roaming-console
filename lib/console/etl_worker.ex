@@ -36,7 +36,7 @@ defmodule Console.EtlWorker do
                 org_attrs = %{
                   "dc_balance" => Enum.max([org.dc_balance - organization_updates_map[org.id]["dc_used"], 0]),
                   "total_dc" => org.total_dc + organization_updates_map[org.id]["dc_used"],
-                  "total_packets" => org.total_packets + length(parsed_packets)
+                  "total_packets" => org.total_packets + organization_updates_map[org.id]["packets_sent"]
                 }
                 
                 net_id_values = NetIds.get_all_for_organization(org.id) |> Enum.map(fn n -> n.value end)
@@ -95,10 +95,12 @@ defmodule Console.EtlWorker do
             nil ->
               %{
                 "dc_used" => packet["dc_used"],
+                "packets_sent" => 1
               }
             _ ->
               %{
                 "dc_used" => packet["dc_used"] + acc[packet["organization_id"]]["dc_used"],
+                "packets_sent" => acc[packet["organization_id"]]["packets_sent"] + 1
               }
           end
 
