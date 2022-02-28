@@ -17,9 +17,9 @@ export const ORGANIZATION_SHOW = gql`
       port
       join_credentials
       multi_buy
-      total_packets_sent
-      total_dc_used
       dc_balance
+      total_dc
+      total_packets
     }
   }
 `;
