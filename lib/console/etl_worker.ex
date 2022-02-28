@@ -35,6 +35,8 @@ defmodule Console.EtlWorker do
               Enum.each(organizations_to_update, fn org ->
                 org_attrs = %{
                   "dc_balance" => Enum.max([org.dc_balance - organization_updates_map[org.id]["dc_used"], 0]),
+                  "total_dc" => org.total_dc + organization_updates_map[org.id]["dc_used"],
+                  "total_packets" => org.total_packets + length(parsed_packets)
                 }
                 
                 net_id_values = NetIds.get_all_for_organization(org.id) |> Enum.map(fn n -> n.value end)

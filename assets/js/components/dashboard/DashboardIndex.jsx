@@ -246,7 +246,7 @@ export default (props) => {
                 >
                   <Text style={{ ...styles.numberCount, color: primaryBlue }}>
                     {numeral(
-                      orgData && orgData.organization.total_packets_sent
+                      orgData && orgData.organization.total_packets
                     ).format("0,0")}
                   </Text>
                 </Row>
@@ -269,9 +269,9 @@ export default (props) => {
                   <Text
                     style={{ ...styles.numberCount, color: tertiaryPurple }}
                   >
-                    {numeral(
-                      orgData && orgData.organization.total_dc_used
-                    ).format("0,0")}
+                    {numeral(orgData && orgData.organization.total_dc).format(
+                      "0,0"
+                    )}
                   </Text>
                 </Row>
               </div>

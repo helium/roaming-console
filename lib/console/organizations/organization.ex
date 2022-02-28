@@ -20,6 +20,8 @@ defmodule Console.Organizations.Organization do
     field :join_credentials, :string
     field :port, :integer
     field :multi_buy, :integer
+    field :total_dc, :integer
+    field :total_packets, :integer
 
     has_many :memberships, Console.Organizations.Membership, on_delete: :delete_all
     many_to_many :users, Console.Auth.User, join_through: "memberships"
@@ -65,7 +67,9 @@ defmodule Console.Organizations.Organization do
       :address,
       :port,
       :multi_buy,
-      :join_credentials
+      :join_credentials,
+      :total_dc,
+      :total_packets
     ])
   end
 

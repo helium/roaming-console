@@ -45,8 +45,8 @@ defmodule ConsoleWeb.Schema do
     field :port, :integer
     field :join_credentials, :string
     field :multi_buy, :integer
-    field :total_dc_used, :integer
-    field :total_packets_sent, :integer
+    field :total_dc, :integer
+    field :total_packets, :integer
   end
 
   object :api_key do
