@@ -6,7 +6,7 @@ import DashboardLayout from "../common/DashboardLayout";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
 import { GET_ORGANIZATION_PACKETS } from "../../graphql/packets";
 import analyticsLogger from "../../util/analyticsLogger";
-import { Typography, Card, Row, Col, Button, Tooltip } from "antd";
+import { Typography, Card, Row, Col, Button, Tooltip, Spin } from "antd";
 const { Text } = Typography;
 import { primaryBlue, tertiaryPurple } from "../../util/colors";
 import { Bar } from "react-chartjs-2";
@@ -159,7 +159,26 @@ export default (props) => {
   }, []);
 
   const renderChart = () => {
-    if (packetsData) {
+    if (packetsLoading) {
+      const labels = range(24, 0).map((index) => {
+        return 0;
+      });
+
+      const chartData = {
+        labels,
+        datasets: [
+          {
+            data: [],
+            backgroundColor: "#ACB9CD",
+          },
+        ],
+      };
+      return (
+        <Spin wrapperClassName="dashboard-packets-loading" tip="Loading...">
+          <Bar data={chartData} options={chartOptions} height={300} />
+        </Spin>
+      );
+    } else if (packetsData) {
       const packetsMap = JSON.parse(packetsData.packets.packets_per_hour);
 
       const data = range(24, 0).map((index) => {
@@ -191,9 +210,14 @@ export default (props) => {
         ],
       };
 
-      return <Bar data={chartData} options={chartOptions} height={250} />;
+      return <Bar data={chartData} options={chartOptions} height={300} />;
+    } else if (packetsError) {
+      return (
+        <div style={{ padding: 40, margin: "auto" }}>
+          <Text>Data failed to load, please reload the page and try again</Text>
+        </div>
+      );
     }
-    return <div />;
   };
 
   return (
