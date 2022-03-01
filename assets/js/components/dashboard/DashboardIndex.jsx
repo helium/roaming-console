@@ -70,7 +70,7 @@ const chartOptions = {
         title: (tooltip) => {
           if (tooltip[0].raw == 0.5) return "0 Packets";
           else
-            return `${tooltip[0].raw} Packet${
+            return `${numeral(tooltip[0].raw).format("0,0")} Packet${
               tooltip[0].raw > 1 || parseInt(tooltip[0].raw) === 0 ? "s" : ""
             }`;
         },
