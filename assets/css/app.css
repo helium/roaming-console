@@ -480,3 +480,7 @@ a.version-link {
   border-left-color: black;
   padding-right: 10px;
 }
+
+.dashboard-packets-loading {
+  width: 100%;
+}
