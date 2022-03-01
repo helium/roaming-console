@@ -135,6 +135,7 @@ export default (props) => {
     refetch: packetsRefetch,
   } = useQuery(GET_ORGANIZATION_PACKETS, {
     fetchPolicy: "cache-first",
+    notifyOnNetworkStatusChange: true,
   });
 
   const {
@@ -219,6 +220,8 @@ export default (props) => {
       );
     }
   };
+
+  console.log(packetsLoading);
 
   return (
     <DashboardLayout
