@@ -59,9 +59,14 @@ defmodule ConsoleWeb.OrganizationChannel do
 
         {:noreply, socket}
       else
+        {:error, %Ecto.Changeset{ valid?: false, action: :insert, errors: errors}} ->
+          msg = "Failed to add packet to database"
+          Appsignal.send_error(errors, msg, ["organization_channel.ex"])
+          {:reply, {:error, msg}, socket}
         error ->
-          IO.inspect error
-          {:reply, {:error, "Failed to add packet to database"}, socket}
+          msg = "Failed to add packet to database"
+          Appsignal.send_error(error, msg, ["organization_channel.ex"])
+          {:reply, {:error, msg}, socket}
       end
     end
   end

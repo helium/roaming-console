@@ -31,5 +31,6 @@ defmodule Console.Packets.Packet do
       :type,
       :net_id
     ])
+    |> validate_required([:dc_used, :packet_size, :reported_at_epoch, :organization_id, :type, :net_id])
   end
 end
