@@ -25,7 +25,7 @@ defmodule Console.EtlErrorWorker do
           org = Organizations.get_organization!(parsed_packet.organization_id)
           org_attrs = %{
             "dc_balance" => Enum.max([org.dc_balance - parsed_packet.dc_used, 0]),
-            "total_dc" => org.total_dc + packet["dc_used"],
+            "total_dc" => org.total_dc + parsed_packet.dc_used,
             "total_packets" => org.total_packets + 1
           }
           ConsoleWeb.Monitor.remove_from_packets_error_state()
