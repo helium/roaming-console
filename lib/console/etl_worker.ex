@@ -21,14 +21,14 @@ defmodule Console.EtlWorker do
       try do
         parsed_packets = Enum.map(packets, fn e -> elem(e, 1) |> Jason.decode!() end)
 
-        if length(parsed_packets) > 0 do      
+        if length(parsed_packets) > 0 do
           organization_updates_map = generate_organization_updates_map(parsed_packets)
 
           organizations_to_update =
             organization_updates_map
             |> Map.keys()
             |> Organizations.get_organizations_in_list()
-          
+
           result =
             Ecto.Multi.new()
             |> Ecto.Multi.run(:org_updates, fn _repo, _ ->
@@ -38,7 +38,7 @@ defmodule Console.EtlWorker do
                   "total_dc" => org.total_dc + organization_updates_map[org.id]["dc_used"],
                   "total_packets" => org.total_packets + organization_updates_map[org.id]["packets_sent"]
                 }
-                
+
                 net_id_values = NetIds.get_all_for_organization(org.id) |> Enum.map(fn n -> n.value end)
                 if org.dc_balance - organization_updates_map[org.id]["dc_used"] <= 0 do
                   ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", %{ net_ids: net_id_values})
@@ -49,7 +49,7 @@ defmodule Console.EtlWorker do
               {:ok, "success"}
             end)
             |> Repo.transaction()
-          
+
           with {:ok, _} <- result do
             ConsoleWeb.MessageQueueConsumer.ack(delivery_tags)
             ConsoleWeb.Monitor.remove_from_packets_state(length(packets))
@@ -61,7 +61,7 @@ defmodule Console.EtlWorker do
         error ->
           ConsoleWeb.MessageQueueConsumer.reject(delivery_tags)
           ConsoleWeb.Monitor.remove_from_packets_state(length(packets))
-          Appsignal.send_error(error, "Failed to process in ETL Worker", ["etl_worker"])
+          Appsignal.send_error(error, "Failed to process in ETL Worker", __STACKTRACE__)
       end
     end)
     |> Task.await(:infinity)
@@ -76,7 +76,7 @@ defmodule Console.EtlWorker do
       |> Enum.map(fn org -> org.id end)
       |> Organizations.get_organizations_in_list()
       |> Enum.zip(organizations_to_update)
-      
+
     Enum.each(zipped_orgs_before_after, fn tuple ->
       ConsoleWeb.DataCreditController.check_org_dc_balance(elem(tuple, 0), elem(tuple, 1).dc_balance)
     end)
