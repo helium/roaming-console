@@ -484,3 +484,7 @@ a.version-link {
 .dashboard-packets-loading {
   width: 100%;
 }
+
+#join-creds-pair .ant-space-item {
+  flex-grow: 1;
+}

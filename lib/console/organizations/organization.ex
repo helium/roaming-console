@@ -71,6 +71,12 @@ defmodule Console.Organizations.Organization do
       :total_dc,
       :total_packets
     ])
+    |> validate_required([:address, :port])
+    |> check_address()
+    |> validate_number(:port, greater_than_or_equal_to: 0, message: "Port numbers range from 0 to 65535")
+    |> validate_number(:port, less_than_or_equal_to: 65535, message: "Port numbers range from 0 to 65535")
+    |> validate_number(:multi_buy, greater_than_or_equal_to: 0, message: "Multi buy must be a positive integer")
+    |> check_credentials_update()
   end
 
   defp check_name(changeset) do
@@ -80,6 +86,47 @@ defmodule Console.Organizations.Organization do
         case valid_name do
           false -> add_error(changeset, :message, "Please refrain from using special characters in the org name")
           true -> changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp check_credentials_update(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{join_credentials: creds}} ->
+        join_credentials_map =
+          Regex.replace(~r/([a-z0-9]+):/, creds, "\"\\1\":")
+          |> String.replace("'", "\"")
+          |> Poison.decode!
+        
+        invalid = Enum.any?(join_credentials_map, fn cred ->
+          cond do
+            String.contains?(cred["dev_eui"], "*") and String.length(cred["dev_eui"]) > 1 ->
+              true
+            String.contains?(cred["app_eui"], "*") -> true
+            true -> false
+          end
+        end)
+
+        if invalid do
+          add_error(changeset, :message, "Join credentials are invalid")
+        else 
+          changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp check_address(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{address: address}} ->
+        cond do
+          String.contains?(address, " ") ->
+            add_error(changeset, :message, "Address cannot have spaces")
+          !String.match?(address, ~r/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/) ->
+            add_error(changeset, :message, "Address is invalid")
+          true ->
+            changeset
         end
       _ -> changeset
     end

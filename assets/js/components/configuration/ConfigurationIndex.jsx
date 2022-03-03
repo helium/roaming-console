@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
-import JoinCredentialsForm from "./JoinCredentialsForm";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
 import { updateOrganizationCreds } from "../../actions/organization";
-import { Typography, Button, Input } from "antd";
+import { Typography, Button, Input, Form, Space } from "antd";
 const { Text } = Typography;
 import DashboardLayout from "../common/DashboardLayout";
+import {
+  MinusCircleOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import BulkJoinCredentialsModal from "./BulkJoinCredentialsModal";
 
 export default (props) => {
+  const [form] = Form.useForm();
   const socket = useSelector((state) => state.apollo.socket);
   const currentOrganizationId = useSelector(
     (state) => state.organization.currentOrganizationId
   );
-  const userEmail = useSelector((state) => state.magicUser.email);
-
-  const [address, setAddress] = useState(null);
-  const [port, setPort] = useState(null);
-  const [join_credentials, setJoinCreds] = useState(null);
-  const [multi_buy, setMultiBuy] = useState(null);
-  const [hasChanges, setChanges] = useState(false);
+  const [showJoinCredsModal, setShowJoinCredsModal] = useState(false);
 
   const {
     loading: orgLoading,
@@ -48,13 +48,28 @@ export default (props) => {
   }, []);
 
   useEffect(() => {
-    if (orgData && orgData.organization) {
-      setAddress(orgData.organization.address);
-      setPort(orgData.organization.port);
-      setMultiBuy(orgData.organization.multi_buy);
-      setJoinCreds(JSON.parse(orgData.organization.join_credentials));
-    }
+    form.resetFields();
   }, [orgData]);
+
+  const isValidPositiveInteger = (input) => {
+    const num = Number(input);
+
+    if (Number.isInteger(num) && num > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const onFinish = (values) => {
+    updateOrganizationCreds(
+      currentOrganizationId,
+      values.address.replace(/\s/g, ""),
+      values.port,
+      JSON.stringify(values.join_credentials),
+      values.multi_buy
+    );
+  };
 
   return (
     <DashboardLayout title="Configuration" user={props.user}>
@@ -69,95 +84,203 @@ export default (props) => {
           boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
         }}
       >
-        <div style={{ width: 450 }}>
-          <Text>Address</Text>
-          <Input
-            placeholder={address || "Set Address"}
-            value={address}
-            onChange={(e) => {
-              setAddress(e.target.value);
-              setChanges(true);
-            }}
-            style={{ marginBottom: 10 }}
-          />
-          <Text>Port</Text>
-          <Input
-            placeholder={port || "Set Port"}
-            value={port}
-            onChange={(e) => {
-              setPort(e.target.value);
-              setChanges(true);
-            }}
-            type="number"
-            style={{ marginBottom: 10 }}
-          />
-          <Text>Multi Packet Purchase</Text>
-          <Input
-            placeholder={multi_buy || "Set Value"}
-            value={multi_buy}
-            onChange={(e) => {
-              setMultiBuy(e.target.value);
-              setChanges(true);
-            }}
-            type="number"
-            style={{ marginBottom: 10 }}
-          />
-          <Text>Join Credentials</Text>
-          <JoinCredentialsForm
-            join_credentials={join_credentials}
-            setJoinCreds={setJoinCreds}
-            setChanges={setChanges}
-            hasChanges={hasChanges}
-          />
-          {hasChanges && (
-            <div
-              style={{
-                marginTop: 20,
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-end",
-              }}
+        <div style={{ width: 460 }}>
+          <Form
+            form={form}
+            layout="vertical"
+            initialValues={
+              orgData &&
+              orgData.organization && {
+                address: orgData.organization.address,
+                port: orgData.organization.port,
+                multi_buy: orgData.organization.multi_buy,
+                join_credentials: JSON.parse(
+                  orgData.organization.join_credentials
+                ),
+              }
+            }
+            onFinish={onFinish}
+            autoComplete="off"
+          >
+            <Form.Item
+              name="address"
+              label="Address"
+              rules={[
+                { required: true, message: "Address is required." },
+                {
+                  validator: (_, value) => {
+                    const res = value.match(
+                      /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g
+                    );
+                    return res !== null
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          "Address must be a valid URL or IP address."
+                        );
+                  },
+                },
+              ]}
+              hasFeedback
             >
-              <Button
-                onClick={() => {
-                  setAddress(orgData.organization.address);
-                  setPort(orgData.organization.port);
-                  setMultiBuy(orgData.organization.multi_buy);
-                  setJoinCreds(
-                    JSON.parse(orgData.organization.join_credentials)
-                  );
-                  setChanges(false);
-                }}
-                style={{ marginRight: 10 }}
-              >
-                Clear
-              </Button>
-              <Button
-                onClick={() => {
-                  const parsedCreds =
-                    join_credentials &&
-                    join_credentials.filter((c) => c.dev_eui || c.app_eui);
-                  updateOrganizationCreds(
-                    currentOrganizationId,
-                    address,
-                    port,
-                    JSON.stringify(parsedCreds),
-                    multi_buy
-                  ).then((res) => {
-                    if (res.status == 204) {
-                      setJoinCreds(parsedCreds);
-                      setChanges(false);
-                    }
-                  });
-                }}
-                type="primary"
-              >
-                Save
-              </Button>
-            </div>
-          )}
+              <Input required />
+            </Form.Item>
+            <Form.Item
+              name="port"
+              label="Port"
+              rules={[
+                { required: true, message: "Port is required." },
+                {
+                  validator: (_, value) =>
+                    parseInt(value) <= 65535
+                      ? Promise.resolve()
+                      : Promise.reject("Port numbers range from 0 to 65535."),
+                },
+                {
+                  validator: (_, value) =>
+                    isValidPositiveInteger(value)
+                      ? Promise.resolve()
+                      : Promise.reject("Port must be a positive integer."),
+                },
+              ]}
+              hasFeedback
+            >
+              <Input type="number" required />
+            </Form.Item>
+            <Form.Item
+              name="multi_buy"
+              label="Multi Packet Purchase"
+              rules={[
+                {
+                  validator: (_, value) =>
+                    !value || isValidPositiveInteger(value)
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          "Multi Packet Purchase must be a positive integer."
+                        ),
+                },
+              ]}
+              hasFeedback
+            >
+              <Input type="number" />
+            </Form.Item>
+            <Form.List name="join_credentials">
+              {(fields, { add, remove }) => (
+                <>
+                  <div style={{ padding: "0 0 8px" }}>
+                    <Text style={{ color: "rgba(0,0,0,.85)" }}>
+                      Join Credentials
+                    </Text>
+                  </div>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <Space
+                      key={key}
+                      style={{ display: "flex", marginBottom: 8 }}
+                      align="baseline"
+                      id="join-creds-pair"
+                    >
+                      <Form.Item
+                        {...restField}
+                        name={[name, "dev_eui"]}
+                        rules={[
+                          { required: true, message: "Missing Dev EUI" },
+                          {
+                            validator: (_, value) => {
+                              if (
+                                value.indexOf("*") !== -1 &&
+                                value.length > 1
+                              ) {
+                                return Promise.reject(
+                                  "Dev EUI may be the wildcard character (*) but it may not contain it."
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
+                          },
+                        ]}
+                        hasFeedback
+                      >
+                        <Input placeholder="Dev EUI" />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "app_eui"]}
+                        rules={[
+                          { required: true, message: "Missing App EUI" },
+                          {
+                            validator: (_, value) => {
+                              if (value.indexOf("*") !== -1) {
+                                return Promise.reject(
+                                  "App EUI may not be or contain the wildcard character (*)."
+                                );
+                              } else {
+                                return Promise.resolve();
+                              }
+                            },
+                          },
+                        ]}
+                        hasFeedback
+                      >
+                        <Input placeholder="App EUI" />
+                      </Form.Item>
+                      <MinusCircleOutlined onClick={() => remove(name)} />
+                    </Space>
+                  ))}
+                  <Form.Item>
+                    <div style={{ display: "flex" }}>
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                        style={{ flexGrow: 1 }}
+                      >
+                        Add Join Credential
+                      </Button>
+                      <Button
+                        icon={<UploadOutlined />}
+                        onClick={() => {
+                          setShowJoinCredsModal(true);
+                        }}
+                        style={{ flexGrow: 1, marginLeft: 15 }}
+                      >
+                        Use CSV File
+                      </Button>
+                    </div>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+            <Form.Item>
+              <div style={{ display: "flex" }}>
+                <Button
+                  onClick={() => {
+                    form.resetFields();
+                  }}
+                  style={{ flexGrow: 1 }}
+                >
+                  Clear
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ flexGrow: 2, marginLeft: 15 }}
+                >
+                  Save
+                </Button>
+              </div>
+            </Form.Item>
+          </Form>
         </div>
       </div>
+      <BulkJoinCredentialsModal
+        open={showJoinCredsModal}
+        close={() => {
+          setShowJoinCredsModal(false);
+        }}
+        updateCredentials={(creds) => {
+          form.setFieldsValue({ join_credentials: creds });
+        }}
+      />
     </DashboardLayout>
   );
 };

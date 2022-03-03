@@ -221,8 +221,6 @@ export default (props) => {
     }
   };
 
-  console.log(packetsLoading);
-
   return (
     <DashboardLayout
       title="Dashboard"
