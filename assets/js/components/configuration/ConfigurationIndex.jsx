@@ -166,9 +166,11 @@ export default (props) => {
             <Form.List name="join_credentials">
               {(fields, { add, remove }) => (
                 <>
-                  <Text style={{ color: "rgba(0,0,0,.85)" }}>
-                    Join Credentials
-                  </Text>
+                  <div style={{ padding: "0 0 8px" }}>
+                    <Text style={{ color: "rgba(0,0,0,.85)" }}>
+                      Join Credentials
+                    </Text>
+                  </div>
                   {fields.map(({ key, name, ...restField }) => (
                     <Space
                       key={key}
