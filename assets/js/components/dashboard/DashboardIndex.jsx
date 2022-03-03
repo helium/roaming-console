@@ -47,7 +47,7 @@ const chartOptions = {
     },
     title: {
       display: true,
-      text: "Packets Transferred",
+      text: "Packets Transferred (last 24 hrs, updated every 5 minutes)",
     },
     tooltip: {
       titleFont: {
