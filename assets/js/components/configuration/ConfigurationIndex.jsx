@@ -174,6 +174,7 @@ export default (props) => {
                       key={key}
                       style={{ display: "flex", marginBottom: 8 }}
                       align="baseline"
+                      id="join-creds-pair"
                     >
                       <Form.Item
                         {...restField}
