@@ -224,31 +224,47 @@ export default (props) => {
                     </Space>
                   ))}
                   <Form.Item>
-                    <Button
-                      type="dashed"
-                      onClick={() => add()}
-                      icon={<PlusOutlined />}
-                      style={{ width: "45%", marginRight: 10 }}
-                    >
-                      Add Join Credential
-                    </Button>
-                    <Button
-                      icon={<UploadOutlined />}
-                      onClick={() => {
-                        setShowJoinCredsModal(true);
-                      }}
-                      style={{ width: "45%" }}
-                    >
-                      Use CSV File
-                    </Button>
+                    <div style={{ display: "flex" }}>
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                        style={{ flexGrow: 1 }}
+                      >
+                        Add Join Credential
+                      </Button>
+                      <Button
+                        icon={<UploadOutlined />}
+                        onClick={() => {
+                          setShowJoinCredsModal(true);
+                        }}
+                        style={{ flexGrow: 1, marginLeft: 15 }}
+                      >
+                        Use CSV File
+                      </Button>
+                    </div>
                   </Form.Item>
                 </>
               )}
             </Form.List>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Save
-              </Button>
+              <div style={{ display: "flex" }}>
+                <Button
+                  onClick={() => {
+                    form.resetFields();
+                  }}
+                  style={{ flexGrow: 1 }}
+                >
+                  Clear
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ flexGrow: 2, marginLeft: 15 }}
+                >
+                  Save
+                </Button>
+              </div>
             </Form.Item>
           </Form>
         </div>
