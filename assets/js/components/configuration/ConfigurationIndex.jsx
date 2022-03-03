@@ -64,7 +64,7 @@ export default (props) => {
   const onFinish = (values) => {
     updateOrganizationCreds(
       currentOrganizationId,
-      values.address,
+      values.address.replace(/\s/g, ""),
       values.port,
       JSON.stringify(values.join_credentials),
       values.multi_buy
@@ -195,6 +195,7 @@ export default (props) => {
                             },
                           },
                         ]}
+                        hasFeedback
                       >
                         <Input placeholder="Dev EUI" />
                       </Form.Item>
@@ -215,6 +216,7 @@ export default (props) => {
                             },
                           },
                         ]}
+                        hasFeedback
                       >
                         <Input placeholder="App EUI" />
                       </Form.Item>
