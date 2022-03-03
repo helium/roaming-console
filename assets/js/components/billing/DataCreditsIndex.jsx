@@ -34,6 +34,8 @@ const styles = {
   image: {
     width: 33,
     marginRight: 8,
+    top: -4,
+    position: "relative",
   },
   numberCount: {
     fontSize: 40,
@@ -236,13 +238,19 @@ class DataCreditsIndex extends Component {
               title="Remaining Data Credits"
               bodyStyle={{ height: 90, padding: 0 }}
             >
-              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
-                <img style={styles.image} src={DCIMg} />
-                <Text style={{ ...styles.numberCount, color: primaryBlue }}>
-                  {numeral(dc_balance).format("0,0")}
-                </Text>
-              </Row>
+              <div
+                style={{ overflowX: "scroll", padding: 24 }}
+                className="no-scroll-bar"
+              >
+                <Row
+                  type="flex"
+                  style={{ alignItems: "center", minWidth: 300 }}
+                >
+                  <img style={styles.image} src={DCIMg} />
+                  <Text style={{ ...styles.numberCount, color: primaryBlue }}>
+                    {numeral(dc_balance).format("0,0")}
+                  </Text>
+                </Row>
               </div>
             </Card>
           </Col>
@@ -262,13 +270,21 @@ class DataCreditsIndex extends Component {
               }
               bodyStyle={{ height: 90, padding: 0 }}
             >
-              <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-              <Row type="flex" style={{ alignItems: "center", minWidth: 300 }}>
-                <img style={styles.image} src={BytesIMg} />
-                <Text style={{ ...styles.numberCount, color: tertiaryPurple }}>
-                  {numeral(dc_balance * 24).format("0,0")}
-                </Text>
-              </Row>
+              <div
+                style={{ overflowX: "scroll", padding: 24 }}
+                className="no-scroll-bar"
+              >
+                <Row
+                  type="flex"
+                  style={{ alignItems: "center", minWidth: 350 }}
+                >
+                  <img style={styles.image} src={BytesIMg} />
+                  <Text
+                    style={{ ...styles.numberCount, color: tertiaryPurple }}
+                  >
+                    {numeral(dc_balance * 24).format("0,0")}
+                  </Text>
+                </Row>
               </div>
             </Card>
           </Col>
@@ -291,46 +307,52 @@ class DataCreditsIndex extends Component {
                   }
                   bodyStyle={{ height: 90, padding: 0 }}
                 >
-                  <div style={{ overflowX: 'scroll', padding: 24 }} className="no-scroll-bar">
-                  {this.state.paymentMethods.length > 0 && defaultPayment && (
-                    <Row type="flex" style={{ alignItems: "center", minWidth: 200 }}>
-                      <Col span={16}>
-                        <PaymentCard
-                          key={defaultPayment.id}
-                          card={defaultPayment.card}
-                        />
-                      </Col>
-                      <Col
-                        span={8}
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-end",
-                          marginTop: -2,
-                        }}
+                  <div
+                    style={{ overflowX: "scroll", padding: 24 }}
+                    className="no-scroll-bar"
+                  >
+                    {this.state.paymentMethods.length > 0 && defaultPayment && (
+                      <Row
+                        type="flex"
+                        style={{ alignItems: "center", minWidth: 200 }}
                       >
-                        <p
+                        <Col span={16}>
+                          <PaymentCard
+                            key={defaultPayment.id}
+                            card={defaultPayment.card}
+                          />
+                        </Col>
+                        <Col
+                          span={8}
                           style={{
-                            fontFamily: "monospace",
-                            color: "#777777",
-                            display: "inline",
-                            position: "relative",
-                            top: 6,
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            marginTop: -2,
                           }}
                         >
-                          {defaultPayment.card.exp_month > 9
-                            ? defaultPayment.card.exp_month
-                            : "0" + defaultPayment.card.exp_month}
-                          /{defaultPayment.card.exp_year.toString().slice(2)}
-                        </p>
-                      </Col>
-                    </Row>
-                  )}
-                  {!defaultPayment && this.state.triedFetchingPayments && (
-                    <Row type="flex" style={{ alignItems: "center" }}>
-                      <Text style={styles.numberCount}>N/A</Text>
-                    </Row>
-                  )}
+                          <p
+                            style={{
+                              fontFamily: "monospace",
+                              color: "#777777",
+                              display: "inline",
+                              position: "relative",
+                              top: 6,
+                            }}
+                          >
+                            {defaultPayment.card.exp_month > 9
+                              ? defaultPayment.card.exp_month
+                              : "0" + defaultPayment.card.exp_month}
+                            /{defaultPayment.card.exp_year.toString().slice(2)}
+                          </p>
+                        </Col>
+                      </Row>
+                    )}
+                    {!defaultPayment && this.state.triedFetchingPayments && (
+                      <Row type="flex" style={{ alignItems: "center" }}>
+                        <Text style={styles.numberCount}>N/A</Text>
+                      </Row>
+                    )}
                   </div>
                 </Card>
               </UserCan>
@@ -377,7 +399,7 @@ class DataCreditsIndex extends Component {
               flexDirection: "row",
               justifyContent: "flex-end",
               padding: "0px 0px 20px 0px",
-              overflowX: 'scroll'
+              overflowX: "scroll",
             }}
             className="no-scroll-bar"
           >
@@ -399,7 +421,9 @@ class DataCreditsIndex extends Component {
                   {this.state.paymentMethods.length > 0 && (
                     <Button
                       icon={<SyncOutlined />}
-                      onClick={() => this.openModal("showAutomaticRenewalModal")}
+                      onClick={() =>
+                        this.openModal("showAutomaticRenewalModal")
+                      }
                       style={{
                         borderRadius: 4,
                         marginRight: 20,
