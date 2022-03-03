@@ -13,7 +13,7 @@ const { Text } = Typography;
 const ALERT_TYPES = [
   {
     key: "dc_low",
-    description: "Data Credit balance is low",
+    description: "Data Credit balance is low (below 500,000 and at 0)",
   },
   {
     key: "dc_purchased",
