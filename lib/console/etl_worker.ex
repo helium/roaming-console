@@ -44,7 +44,7 @@ defmodule Console.EtlWorker do
                   ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", %{ net_ids: net_id_values})
                 end
 
-                Organizations.update_organization(org, org_attrs)
+                Organizations.update_organization!(org, org_attrs)
               end)
               {:ok, "success"}
             end)

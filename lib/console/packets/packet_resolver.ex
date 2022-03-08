@@ -21,6 +21,6 @@ defmodule Console.Packets.PacketResolver do
       else
         Map.put(acc, key, %{ packet.net_id => 1 })
       end
-    end)}
+    end), packets_last_1d: length(packets)}
   end
 end

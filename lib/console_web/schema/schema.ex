@@ -47,6 +47,9 @@ defmodule ConsoleWeb.Schema do
     field :multi_buy, :integer
     field :total_dc, :integer
     field :total_packets, :integer
+    field :packets_last_30d, :integer
+    field :dc_last_1d, :integer
+    field :dc_last_30d, :integer
   end
 
   object :api_key do
@@ -77,6 +80,7 @@ defmodule ConsoleWeb.Schema do
 
   object :packets_per_hour do
     field :packets_per_hour, :json
+    field :packets_last_1d, :integer
   end
 
   query do

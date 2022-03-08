@@ -3,6 +3,7 @@ defmodule Console.Packets do
   alias Console.Repo
 
   alias Console.Packets.Packet
+  alias Console.Packets.PacketsView
 
   def create_packet(attrs \\ %{}) do
     %Packet{}
@@ -15,5 +16,9 @@ defmodule Console.Packets do
       select: %{reported_at_epoch: p.reported_at_epoch, net_id: p.net_id},
       where: p.organization_id == ^organization_id and p.reported_at_epoch > ^epoch_since and p.reported_at_epoch < ^current_epoch
     Repo.all(query)
+  end
+
+  def get_count_view_for_org(id) do
+    Repo.get(PacketsView, id)
   end
 end

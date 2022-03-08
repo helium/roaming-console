@@ -49,6 +49,10 @@ config :console,
 
 config :console, Console.Scheduler,
   jobs: [
+    refresh_materialized_views: [
+      schedule: "0 * * * *", # every hour @ 0 mins
+      task: {Console.Jobs, :refresh_materialized_views, []}
+    ],
   ]
 
 # Import environment specific config. This must remain at the bottom

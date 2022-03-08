@@ -20,6 +20,9 @@ export const ORGANIZATION_SHOW = gql`
       dc_balance
       total_dc
       total_packets
+      packets_last_30d
+      dc_last_30d
+      dc_last_1d
     }
   }
 `;
