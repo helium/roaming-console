@@ -32,23 +32,10 @@ defmodule Console.Organizations.OrganizationResolver do
           |> Enum.filter(fn {_, v} -> v != nil end)
           |> Enum.into(%{})
       end
-    
-    current_unix = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
-    unix1d = current_unix - 86400000
-
-    {:ok, org_id} = Ecto.UUID.dump(organization.id)
-    result = Ecto.Adapters.SQL.query!(
-      Console.Repo,
-      "SELECT sum(dc_used) FROM packets where organization_id = $1 and reported_at_epoch > $2",
-      [org_id, unix1d]
-    )
-    sums = List.flatten(result.rows)
-    dc_last_1d = Enum.at(sums, 0) || 0
 
     organization = organization
       |> Map.put(:packets_last_30d, Map.get(stats_view, :packets_30d, 0))
       |> Map.put(:dc_last_30d, Map.get(stats_view, :dc_30d, 0))
-      |> Map.put(:dc_last_1d, dc_last_1d)
 
     {:ok, organization}
   end

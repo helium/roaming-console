@@ -329,7 +329,7 @@ export default (props) => {
                     >
                       {numeral(
                         orgData?.organization?.dc_last_30d +
-                          orgData?.organization?.dc_last_1d
+                          packetsData?.packets?.dc_last_1d
                       ).format("0,0")}
                     </Text>
                   </Col>
@@ -341,7 +341,7 @@ export default (props) => {
                     <Text
                       style={{ ...styles.numberCount, color: tertiaryPurple }}
                     >
-                      {numeral(orgData?.organization?.dc_last_1d).format("0,0")}
+                      {numeral(packetsData?.packets?.dc_last_1d).format("0,0")}
                     </Text>
                   </Col>
                 </Row>
