@@ -28,9 +28,8 @@ defmodule Console.EtlErrorWorker do
             "total_dc" => org.total_dc + parsed_packet.dc_used,
             "total_packets" => org.total_packets + 1
           }
-          ConsoleWeb.Monitor.remove_from_packets_error_state()
 
-          with {:ok, updated_org} <- Organizations.update_organization(org, org_attrs) do
+          with {:ok, updated_org} <- Organizations.update_organization!(org, org_attrs) do
             ConsoleWeb.Monitor.remove_from_packets_error_state()
             if org.dc_balance - parsed_packet.dc_used <= 0 do
               net_id_values = NetIds.get_all_for_organization(org.id) |> Enum.map(fn n -> n.value end)

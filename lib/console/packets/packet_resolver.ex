@@ -6,7 +6,11 @@ defmodule Console.Packets.PacketResolver do
     unix1d = current_unix - 86400000
     packets = Packets.get_packets_per_netid(current_organization.id, unix1d, current_unix)
 
-    {:ok, process_for_chart(packets)}
+    dc_last_1d = Enum.reduce(packets, 0, fn packet, acc ->
+      acc + packet.dc_used
+    end)
+
+    {:ok, process_for_chart(packets) |> Map.put(:dc_last_1d, dc_last_1d)}
   end
 
   defp process_for_chart(packets) do
@@ -21,6 +25,6 @@ defmodule Console.Packets.PacketResolver do
       else
         Map.put(acc, key, %{ packet.net_id => 1 })
       end
-    end)}
+    end), packets_last_1d: length(packets)}
   end
 end

@@ -33,7 +33,7 @@ ChartJS.register(
 
 const styles = {
   numberCount: {
-    fontSize: 40,
+    fontSize: 35,
     marginTop: -8,
   },
 };
@@ -256,59 +256,105 @@ export default (props) => {
         }}
       >
         <Row gutter={16}>
-          <Col span={8}>
+          <Col span={9}>
             <Card
-              title="Total Packets Sent (Last 30 Days)"
-              bodyStyle={{ height: 90, padding: 0 }}
+              title="Total Packets Sent"
+              bodyStyle={{ height: 120, padding: 0 }}
+              extra={
+                <Text style={{ fontSize: 20, color: primaryBlue }}>
+                  {numeral(orgData?.organization?.total_packets).format("0,0")}
+                </Text>
+              }
             >
               <div
-                style={{ overflowX: "scroll", padding: 24 }}
+                style={{
+                  overflowX: "scroll",
+                  padding: 20,
+                }}
                 className="no-scroll-bar"
               >
-                <Row
-                  type="flex"
-                  style={{ alignItems: "center", minWidth: 300 }}
-                >
-                  <Text style={{ ...styles.numberCount, color: primaryBlue }}>
-                    {numeral(
-                      orgData && orgData.organization.total_packets
-                    ).format("0,0")}
-                  </Text>
+                <Row style={{ minWidth: 400 }}>
+                  <Col span={12}>
+                    <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                      Last 30 Days
+                    </Text>
+                    <br />
+                    <Text style={{ ...styles.numberCount, color: primaryBlue }}>
+                      {numeral(
+                        orgData?.organization?.packets_last_30d +
+                          packetsData?.packets?.packets_last_1d
+                      ).format("0,0")}
+                    </Text>
+                  </Col>
+                  <Col span={12}>
+                    <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                      Last 24 Hours
+                    </Text>
+                    <br />
+                    <Text style={{ ...styles.numberCount, color: primaryBlue }}>
+                      {numeral(packetsData?.packets?.packets_last_1d).format(
+                        "0,0"
+                      )}
+                    </Text>
+                  </Col>
                 </Row>
               </div>
             </Card>
           </Col>
-          <Col span={8}>
+          <Col span={9}>
             <Card
-              title="Total DC Used (Last 30 Days)"
-              bodyStyle={{ height: 90, padding: 0 }}
+              title="Total DC Used"
+              bodyStyle={{ height: 120, padding: 0 }}
+              extra={
+                <Text style={{ fontSize: 20, color: tertiaryPurple }}>
+                  {numeral(orgData?.organization?.total_dc).format("0,0")}
+                </Text>
+              }
             >
               <div
-                style={{ overflowX: "scroll", padding: 24 }}
+                style={{
+                  overflowX: "scroll",
+                  padding: 20,
+                }}
                 className="no-scroll-bar"
               >
-                <Row
-                  type="flex"
-                  style={{ alignItems: "center", minWidth: 300 }}
-                >
-                  <Text
-                    style={{ ...styles.numberCount, color: tertiaryPurple }}
-                  >
-                    {numeral(orgData && orgData.organization.total_dc).format(
-                      "0,0"
-                    )}
-                  </Text>
+                <Row style={{ minWidth: 400 }}>
+                  <Col span={12}>
+                    <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                      Last 30 Days
+                    </Text>
+                    <br />
+                    <Text
+                      style={{ ...styles.numberCount, color: tertiaryPurple }}
+                    >
+                      {numeral(
+                        orgData?.organization?.dc_last_30d +
+                          packetsData?.packets?.dc_last_1d
+                      ).format("0,0")}
+                    </Text>
+                  </Col>
+                  <Col span={12}>
+                    <Text style={{ fontSize: 16, fontWeight: "300" }}>
+                      Last 24 Hours
+                    </Text>
+                    <br />
+                    <Text
+                      style={{ ...styles.numberCount, color: tertiaryPurple }}
+                    >
+                      {numeral(packetsData?.packets?.dc_last_1d).format("0,0")}
+                    </Text>
+                  </Col>
                 </Row>
               </div>
             </Card>
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Card
               title="Remaining DC Balance"
-              bodyStyle={{ height: 90, padding: 0 }}
+              bodyStyle={{ height: 120, padding: 0 }}
             >
               <div
-                style={{ overflowX: "scroll", padding: 24 }}
+                style={{ overflowX: "scroll", padding: "40px 24px" }}
                 className="no-scroll-bar"
               >
                 <Row
@@ -316,9 +362,7 @@ export default (props) => {
                   style={{ alignItems: "center", minWidth: 300 }}
                 >
                   <Text style={{ ...styles.numberCount }}>
-                    {numeral(orgData && orgData.organization.dc_balance).format(
-                      "0,0"
-                    )}
+                    {numeral(orgData?.organization?.dc_balance).format("0,0")}
                   </Text>
                 </Row>
               </div>
