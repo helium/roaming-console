@@ -2,8 +2,8 @@ defmodule Console.Repo.Migrations.UpdateMatViewInclusiveDateRange do
   use Ecto.Migration
 
   def up do
+    execute "DROP MATERIALIZED VIEW packets_view;"
     execute """
-    DROP MATERIALIZED VIEW packets_view;
     CREATE MATERIALIZED VIEW packets_view AS
       SELECT stats30d.organization_id, packets_30d, dc_30d from
       (
@@ -15,8 +15,8 @@ defmodule Console.Repo.Migrations.UpdateMatViewInclusiveDateRange do
   end
 
   def down do
+    execute "DROP MATERIALIZED VIEW packets_view;"
     execute """
-    DROP MATERIALIZED VIEW packets_view;
     CREATE MATERIALIZED VIEW packets_view AS
       SELECT stats30d.organization_id, packets_30d, dc_30d from
       (
