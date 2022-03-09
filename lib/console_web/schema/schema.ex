@@ -29,6 +29,10 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
   end
 
+  object :net_id do
+    field :value, :integer
+  end
+
   paginated object :organization do
     field :id, :id
     field :name, :string
@@ -49,6 +53,7 @@ defmodule ConsoleWeb.Schema do
     field :total_packets, :integer
     field :packets_last_30d, :integer
     field :dc_last_30d, :integer
+    field :net_ids, list_of(:net_id)
   end
 
   object :api_key do
