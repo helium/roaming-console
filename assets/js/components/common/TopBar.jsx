@@ -86,76 +86,6 @@ class TopBar extends Component {
           )}
         </div>
 
-        {organization && (
-          <Tooltip
-            title={
-              <span
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-                onClick={() => this.props.push("/datacredits")}
-                className="noselect"
-              >
-                <Text
-                  style={{
-                    color:
-                      organization.dc_balance > 1000 ? "#ffffff" : "#FF4D4F",
-                    fontWeight: 600,
-                    fontSize: 16,
-                  }}
-                >
-                  {organization.dc_balance > 1000
-                    ? "DC Balance"
-                    : "Your DC Balance is Low"}
-                </Text>
-                <Text style={{ color: "#ffffff" }}>
-                  {organization.dc_balance > 1000
-                    ? "Click here to Manage"
-                    : "Click here to Top Up"}
-                </Text>
-              </span>
-            }
-            onVisibleChange={this.refreshDC}
-          >
-            <div
-              style={{
-                height: 30,
-                backgroundColor:
-                  organization.dc_balance > 1000 ? "#000000" : "#FF4D4F",
-                borderRadius: 30,
-                paddingLeft: 10,
-                paddingRight: 10,
-                marginRight: 15,
-              }}
-            >
-              <img
-                draggable="false"
-                style={{
-                  width: 15,
-                  position: "relative",
-                  top: -13,
-                  marginRight: 4,
-                }}
-                src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark}
-              />
-              <Text
-                className="noselect"
-                style={{
-                  color: organization.dc_balance > 1000 ? "white" : "black",
-                  position: "relative",
-                  top: -12,
-                  cursor: "default",
-                }}
-              >
-                {numeral(organization.dc_balance).format("0,0")}
-              </Text>
-            </div>
-          </Tooltip>
-        )}
-
         <Space>
           <Text style={{ color: "white", fontWeight: 600 }}>Net IDs: </Text>
           {organization?.net_ids.map((net_id) => (
@@ -205,6 +135,75 @@ class TopBar extends Component {
               </div>
             </div>
           </MediaQuery>
+          {organization && (
+            <Tooltip
+              title={
+                <span
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => this.props.push("/datacredits")}
+                  className="noselect"
+                >
+                  <Text
+                    style={{
+                      color:
+                        organization.dc_balance > 1000 ? "#ffffff" : "#FF4D4F",
+                      fontWeight: 600,
+                      fontSize: 16,
+                    }}
+                  >
+                    {organization.dc_balance > 1000
+                      ? "DC Balance"
+                      : "Your DC Balance is Low"}
+                  </Text>
+                  <Text style={{ color: "#ffffff" }}>
+                    {organization.dc_balance > 1000
+                      ? "Click here to Manage"
+                      : "Click here to Top Up"}
+                  </Text>
+                </span>
+              }
+              onVisibleChange={this.refreshDC}
+            >
+              <div
+                style={{
+                  height: 30,
+                  backgroundColor:
+                    organization.dc_balance > 1000 ? "#000000" : "#FF4D4F",
+                  borderRadius: 30,
+                  paddingLeft: 10,
+                  paddingRight: 10,
+                  marginLeft: 15,
+                }}
+              >
+                <img
+                  draggable="false"
+                  style={{
+                    width: 15,
+                    position: "relative",
+                    top: -13,
+                    marginRight: 4,
+                  }}
+                  src={organization.dc_balance > 1000 ? DCIMg : DCIMgDark}
+                />
+                <Text
+                  className="noselect"
+                  style={{
+                    color: organization.dc_balance > 1000 ? "white" : "black",
+                    position: "relative",
+                    top: -12,
+                    cursor: "default",
+                  }}
+                >
+                  {numeral(organization.dc_balance).format("0,0")}
+                </Text>
+              </div>
+            </Tooltip>
+          )}
           <Dropdown
             overlay={menu(this.handleClick, currentOrganizationName)}
             trigger={["click"]}
