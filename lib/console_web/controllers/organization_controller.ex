@@ -6,6 +6,7 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.DcPurchases
   alias Console.Email
   alias Console.Mailer
+  alias Console.AuditActions
 
   plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete]
 
@@ -81,6 +82,15 @@ defmodule ConsoleWeb.OrganizationController do
       with {:ok, _} <- Organizations.update_organization(organization, update_attrs) do
         ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{id}:settings_update", %{})
         broadcast_packet_purchaser_all_org_config()
+
+        current_organization = conn.assigns.current_organization
+        current_email = conn.assigns.current_user.email
+        AuditActions.create_audit_action(
+          current_organization.id,
+          current_email,
+          "organization_controller_update",
+          attrs
+        )
 
         conn
         |> put_resp_header("message", "Settings for organization #{organization.name} updated successfully")
