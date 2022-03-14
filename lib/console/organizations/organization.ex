@@ -71,7 +71,6 @@ defmodule Console.Organizations.Organization do
       :total_dc,
       :total_packets
     ])
-    |> validate_required([:address, :port])
     |> check_address()
     |> validate_number(:port, greater_than_or_equal_to: 0, message: "Port numbers range from 0 to 65535")
     |> validate_number(:port, less_than_or_equal_to: 65535, message: "Port numbers range from 0 to 65535")

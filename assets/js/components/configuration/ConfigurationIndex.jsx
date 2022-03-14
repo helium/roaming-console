@@ -66,7 +66,7 @@ export default (props) => {
       currentOrganizationId,
       values.address.replace(/\s/g, ""),
       values.port,
-      JSON.stringify(values.join_credentials),
+      values.join_credentials ? JSON.stringify(values.join_credentials) : null,
       values.multi_buy
     );
   };
