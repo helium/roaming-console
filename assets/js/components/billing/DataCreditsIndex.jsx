@@ -162,7 +162,7 @@ class DataCreditsIndex extends Component {
             <p>
               <a
                 className="help-link"
-                href="https://docs.helium.com/use-the-network/console/data-credits"
+                href="https://docs.helium.com/use-the-network/roaming/#data-credits"
                 target="_blank"
               >
                 Learn more about Data Credits
