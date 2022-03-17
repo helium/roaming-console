@@ -104,7 +104,7 @@ export default (props) => {
           >
             <Form.Item
               name="address"
-              label="Address"
+              label={<Text className="config-label">Address</Text>}
               rules={[
                 { required: true, message: "Address is required." },
                 {
@@ -126,7 +126,7 @@ export default (props) => {
             </Form.Item>
             <Form.Item
               name="port"
-              label="Port"
+              label={<Text className="config-label">Port</Text>}
               rules={[
                 { required: true, message: "Port is required." },
                 {
@@ -148,7 +148,9 @@ export default (props) => {
             </Form.Item>
             <Form.Item
               name="multi_buy"
-              label="Multi Packet Purchase"
+              label={
+                <Text className="config-label">Multi Packet Purchase</Text>
+              }
               rules={[
                 {
                   validator: (_, value) =>
@@ -161,15 +163,28 @@ export default (props) => {
               ]}
               hasFeedback
             >
+              <div style={{ marginBottom: 5 }}>
+                Enter the number of desired packets (if available). Additional
+                packets are purchased only if multiple Hotspots "hear" and send
+                the same packet.
+              </div>
               <Input type="number" />
             </Form.Item>
             <Form.List name="join_credentials">
               {(fields, { add, remove }) => (
                 <>
                   <div style={{ padding: "0 0 8px" }}>
-                    <Text style={{ color: "rgba(0,0,0,.85)" }}>
+                    <Text
+                      className="config-label"
+                      style={{ color: "rgba(0,0,0,.85)" }}
+                    >
                       Join Credentials
                     </Text>
+                    <div style={{ margin: "10px 0px 5px 0px" }}>
+                      Use an asterisk “*” wildcard in the DevEUI field to map
+                      multiple DevEUI's to a single AppEUI. Each AppEUI requires
+                      a new entry.
+                    </div>
                   </div>
                   {fields.map(({ key, name, ...restField }) => (
                     <Space
@@ -182,15 +197,20 @@ export default (props) => {
                         {...restField}
                         name={[name, "dev_eui"]}
                         rules={[
-                          { required: true, message: "Missing Dev EUI" },
+                          { required: true, message: "Missing DevEUI" },
                           {
                             validator: (_, value) => {
+                              const res = value.match(/^[0-9a-fA-F]{16}$/g);
                               if (
                                 value.indexOf("*") !== -1 &&
                                 value.length > 1
                               ) {
                                 return Promise.reject(
-                                  "Dev EUI may be the wildcard character (*) but it may not contain it."
+                                  "DevEUI may be the wildcard character (*) but it may not contain it."
+                                );
+                              } else if (value !== "*" && res === null) {
+                                return Promise.reject(
+                                  "DevEUI must either be the wildcard character (*), or be exactly 8 bytes long and only contain characters 0-9 A-F."
                                 );
                               } else {
                                 return Promise.resolve();
@@ -200,18 +220,23 @@ export default (props) => {
                         ]}
                         hasFeedback
                       >
-                        <Input placeholder="Dev EUI" />
+                        <Input placeholder="DevEUI" />
                       </Form.Item>
                       <Form.Item
                         {...restField}
                         name={[name, "app_eui"]}
                         rules={[
-                          { required: true, message: "Missing App EUI" },
+                          { required: true, message: "Missing AppEUI" },
                           {
                             validator: (_, value) => {
+                              const res = value.match(/^[0-9a-fA-F]{16}$/g);
                               if (value.indexOf("*") !== -1) {
                                 return Promise.reject(
-                                  "App EUI may not be or contain the wildcard character (*)."
+                                  "AppEUI may not be or contain the wildcard character (*)."
+                                );
+                              } else if (res === null) {
+                                return Promise.reject(
+                                  "AppEUI must be exactly 8 bytes long, and only contain characters 0-9 A-F."
                                 );
                               } else {
                                 return Promise.resolve();
@@ -221,7 +246,7 @@ export default (props) => {
                         ]}
                         hasFeedback
                       >
-                        <Input placeholder="App EUI" />
+                        <Input placeholder="AppEUI" />
                       </Form.Item>
                       <MinusCircleOutlined onClick={() => remove(name)} />
                     </Space>
