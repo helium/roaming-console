@@ -488,8 +488,3 @@ a.version-link {
 #join-creds-pair .ant-space-item {
   flex-grow: 1;
 }
-
-.config-label {
-  font-size: 14px;
-  font-weight: 600;
-}
