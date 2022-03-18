@@ -18,7 +18,6 @@ const { Text } = Typography;
 import Logo from "../../../img/logo-horizontalwhite-symbol.svg";
 import ProfileActive from "../../../img/topbar-pf-active.png";
 import ProfileInactive from "../../../img/topbar-pf-inactive.svg";
-import QuestionIcon from "../../../img/topbar-question.svg";
 
 class TopBar extends Component {
   state = {
@@ -88,25 +87,6 @@ class TopBar extends Component {
         </div>
 
         <Space>
-          <MediaQuery minWidth={769}>
-            <Tooltip title="See Roaming Console Docs">
-              <a
-                href="https://docs.helium.com/use-the-network/roaming"
-                target="_blank"
-              >
-                <img
-                  draggable="false"
-                  src={QuestionIcon}
-                  style={{
-                    height: 32,
-                    position: "relative",
-                    top: "-1px",
-                    cursor: "pointer",
-                  }}
-                />
-              </a>
-            </Tooltip>
-          </MediaQuery>
           <Text style={{ color: "white", fontWeight: 600 }}>Net IDs: </Text>
           {organization?.net_ids.map((net_id) => (
             <Tag key={`badge-${net_id}`} color="#1890ff">
