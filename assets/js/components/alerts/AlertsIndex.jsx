@@ -100,12 +100,15 @@ export default (props) => {
             </div>
             <div>
               <p style={{ fontSize: "16px" }}>
-                Alerts can be created for different roaming conditions.
+                Email alerts can be set up for a number of conditions related to
+                Data Credit balance, user management, or payment methods. User
+                types (e.g. Administrator or Managers) can be specified to
+                receive alert.
               </p>
               <p>
                 <a
                   className="help-link"
-                  href="https://docs.helium.com/use-the-network/console"
+                  href="https://docs.helium.com/use-the-network/roaming/#alerts"
                   target="_blank"
                 >
                   Learn more about alerts

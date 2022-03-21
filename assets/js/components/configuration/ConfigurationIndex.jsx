@@ -12,6 +12,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import BulkJoinCredentialsModal from "./BulkJoinCredentialsModal";
+import { userCan } from "../common/UserCan";
 
 export default (props) => {
   const [form] = Form.useForm();
@@ -19,6 +20,7 @@ export default (props) => {
   const currentOrganizationId = useSelector(
     (state) => state.organization.currentOrganizationId
   );
+  const currentRole = useSelector((state) => state.organization.currentRole);
   const [showJoinCredsModal, setShowJoinCredsModal] = useState(false);
 
   const {
@@ -104,7 +106,7 @@ export default (props) => {
           >
             <Form.Item
               name="address"
-              label="Address"
+              label={<Text className="config-label">Address</Text>}
               rules={[
                 { required: true, message: "Address is required." },
                 {
@@ -122,11 +124,11 @@ export default (props) => {
               ]}
               hasFeedback
             >
-              <Input required />
+              <Input required disabled={!userCan({ role: currentRole })} />
             </Form.Item>
             <Form.Item
               name="port"
-              label="Port"
+              label={<Text className="config-label">Port</Text>}
               rules={[
                 { required: true, message: "Port is required." },
                 {
@@ -144,32 +146,57 @@ export default (props) => {
               ]}
               hasFeedback
             >
-              <Input type="number" required />
+              <Input
+                type="number"
+                required
+                disabled={!userCan({ role: currentRole })}
+              />
             </Form.Item>
             <Form.Item
-              name="multi_buy"
-              label="Multi Packet Purchase"
-              rules={[
-                {
-                  validator: (_, value) =>
-                    !value || isValidPositiveInteger(value)
-                      ? Promise.resolve()
-                      : Promise.reject(
-                          "Multi Packet Purchase must be a positive integer."
-                        ),
-                },
-              ]}
-              hasFeedback
+              label={
+                <Text className="config-label">Multi Packet Purchase</Text>
+              }
             >
-              <Input type="number" />
+              <div>
+                Enter the number of desired packets (if available). Additional
+                packets are purchased only if multiple Hotspots "hear" and send
+                the same packet.
+              </div>
+              <Form.Item
+                name="multi_buy"
+                hasFeedback
+                rules={[
+                  {
+                    validator: (_, value) =>
+                      !value || isValidPositiveInteger(value)
+                        ? Promise.resolve()
+                        : Promise.reject(
+                            "Multi Packet Purchase must be a positive integer."
+                          ),
+                  },
+                ]}
+              >
+                <Input
+                  type="number"
+                  disabled={!userCan({ role: currentRole })}
+                />
+              </Form.Item>
             </Form.Item>
             <Form.List name="join_credentials">
               {(fields, { add, remove }) => (
                 <>
                   <div style={{ padding: "0 0 8px" }}>
-                    <Text style={{ color: "rgba(0,0,0,.85)" }}>
+                    <Text
+                      className="config-label"
+                      style={{ color: "rgba(0,0,0,.85)" }}
+                    >
                       Join Credentials
                     </Text>
+                    <div style={{ margin: "10px 0px 5px 0px" }}>
+                      Use an asterisk “*” wildcard in the DevEUI field to map
+                      multiple DevEUI's to a single AppEUI. Each AppEUI requires
+                      a new entry.
+                    </div>
                   </div>
                   {fields.map(({ key, name, ...restField }) => (
                     <Space
@@ -182,15 +209,20 @@ export default (props) => {
                         {...restField}
                         name={[name, "dev_eui"]}
                         rules={[
-                          { required: true, message: "Missing Dev EUI" },
+                          { required: true, message: "Missing DevEUI" },
                           {
                             validator: (_, value) => {
+                              const res = value.match(/^[0-9a-fA-F]{16}$/g);
                               if (
                                 value.indexOf("*") !== -1 &&
                                 value.length > 1
                               ) {
                                 return Promise.reject(
-                                  "Dev EUI may be the wildcard character (*) but it may not contain it."
+                                  "DevEUI may be the wildcard character (*) but it may not contain it."
+                                );
+                              } else if (value !== "*" && res === null) {
+                                return Promise.reject(
+                                  "DevEUI must either be the wildcard character (*), or be exactly 8 bytes long and only contain characters 0-9 A-F."
                                 );
                               } else {
                                 return Promise.resolve();
@@ -200,18 +232,26 @@ export default (props) => {
                         ]}
                         hasFeedback
                       >
-                        <Input placeholder="Dev EUI" />
+                        <Input
+                          placeholder="DevEUI"
+                          disabled={!userCan({ role: currentRole })}
+                        />
                       </Form.Item>
                       <Form.Item
                         {...restField}
                         name={[name, "app_eui"]}
                         rules={[
-                          { required: true, message: "Missing App EUI" },
+                          { required: true, message: "Missing AppEUI" },
                           {
                             validator: (_, value) => {
+                              const res = value.match(/^[0-9a-fA-F]{16}$/g);
                               if (value.indexOf("*") !== -1) {
                                 return Promise.reject(
-                                  "App EUI may not be or contain the wildcard character (*)."
+                                  "AppEUI may not be or contain the wildcard character (*)."
+                                );
+                              } else if (res === null) {
+                                return Promise.reject(
+                                  "AppEUI must be exactly 8 bytes long, and only contain characters 0-9 A-F."
                                 );
                               } else {
                                 return Promise.resolve();
@@ -221,9 +261,14 @@ export default (props) => {
                         ]}
                         hasFeedback
                       >
-                        <Input placeholder="App EUI" />
+                        <Input
+                          placeholder="AppEUI"
+                          disabled={!userCan({ role: currentRole })}
+                        />
                       </Form.Item>
-                      <MinusCircleOutlined onClick={() => remove(name)} />
+                      {userCan({ role: currentRole }) && (
+                        <MinusCircleOutlined onClick={() => remove(name)} />
+                      )}
                     </Space>
                   ))}
                   <Form.Item>
@@ -233,6 +278,7 @@ export default (props) => {
                         onClick={() => add()}
                         icon={<PlusOutlined />}
                         style={{ flexGrow: 1 }}
+                        disabled={!userCan({ role: currentRole })}
                       >
                         Add Join Credential
                       </Button>
@@ -242,6 +288,7 @@ export default (props) => {
                           setShowJoinCredsModal(true);
                         }}
                         style={{ flexGrow: 1, marginLeft: 15 }}
+                        disabled={!userCan({ role: currentRole })}
                       >
                         Use CSV File
                       </Button>
@@ -257,6 +304,7 @@ export default (props) => {
                     form.resetFields();
                   }}
                   style={{ flexGrow: 1 }}
+                  disabled={!userCan({ role: currentRole })}
                 >
                   Clear
                 </Button>
@@ -264,6 +312,7 @@ export default (props) => {
                   type="primary"
                   htmlType="submit"
                   style={{ flexGrow: 2, marginLeft: 15 }}
+                  disabled={!userCan({ role: currentRole })}
                 >
                   Save
                 </Button>
