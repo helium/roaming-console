@@ -12,6 +12,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import BulkJoinCredentialsModal from "./BulkJoinCredentialsModal";
+import { userCan } from "../common/UserCan";
 
 export default (props) => {
   const [form] = Form.useForm();
@@ -19,6 +20,7 @@ export default (props) => {
   const currentOrganizationId = useSelector(
     (state) => state.organization.currentOrganizationId
   );
+  const currentRole = useSelector((state) => state.organization.currentRole);
   const [showJoinCredsModal, setShowJoinCredsModal] = useState(false);
 
   const {
@@ -122,7 +124,7 @@ export default (props) => {
               ]}
               hasFeedback
             >
-              <Input required />
+              <Input required disabled={!userCan({ role: currentRole })} />
             </Form.Item>
             <Form.Item
               name="port"
@@ -144,31 +146,41 @@ export default (props) => {
               ]}
               hasFeedback
             >
-              <Input type="number" required />
+              <Input
+                type="number"
+                required
+                disabled={!userCan({ role: currentRole })}
+              />
             </Form.Item>
             <Form.Item
-              name="multi_buy"
               label={
                 <Text className="config-label">Multi Packet Purchase</Text>
               }
-              rules={[
-                {
-                  validator: (_, value) =>
-                    !value || isValidPositiveInteger(value)
-                      ? Promise.resolve()
-                      : Promise.reject(
-                          "Multi Packet Purchase must be a positive integer."
-                        ),
-                },
-              ]}
-              hasFeedback
             >
-              <div style={{ marginBottom: 5 }}>
+              <div>
                 Enter the number of desired packets (if available). Additional
                 packets are purchased only if multiple Hotspots "hear" and send
                 the same packet.
               </div>
-              <Input type="number" />
+              <Form.Item
+                name="multi_buy"
+                hasFeedback
+                rules={[
+                  {
+                    validator: (_, value) =>
+                      !value || isValidPositiveInteger(value)
+                        ? Promise.resolve()
+                        : Promise.reject(
+                            "Multi Packet Purchase must be a positive integer."
+                          ),
+                  },
+                ]}
+              >
+                <Input
+                  type="number"
+                  disabled={!userCan({ role: currentRole })}
+                />
+              </Form.Item>
             </Form.Item>
             <Form.List name="join_credentials">
               {(fields, { add, remove }) => (
@@ -220,7 +232,10 @@ export default (props) => {
                         ]}
                         hasFeedback
                       >
-                        <Input placeholder="DevEUI" />
+                        <Input
+                          placeholder="DevEUI"
+                          disabled={!userCan({ role: currentRole })}
+                        />
                       </Form.Item>
                       <Form.Item
                         {...restField}
@@ -246,9 +261,14 @@ export default (props) => {
                         ]}
                         hasFeedback
                       >
-                        <Input placeholder="AppEUI" />
+                        <Input
+                          placeholder="AppEUI"
+                          disabled={!userCan({ role: currentRole })}
+                        />
                       </Form.Item>
-                      <MinusCircleOutlined onClick={() => remove(name)} />
+                      {userCan({ role: currentRole }) && (
+                        <MinusCircleOutlined onClick={() => remove(name)} />
+                      )}
                     </Space>
                   ))}
                   <Form.Item>
@@ -258,6 +278,7 @@ export default (props) => {
                         onClick={() => add()}
                         icon={<PlusOutlined />}
                         style={{ flexGrow: 1 }}
+                        disabled={!userCan({ role: currentRole })}
                       >
                         Add Join Credential
                       </Button>
@@ -267,6 +288,7 @@ export default (props) => {
                           setShowJoinCredsModal(true);
                         }}
                         style={{ flexGrow: 1, marginLeft: 15 }}
+                        disabled={!userCan({ role: currentRole })}
                       >
                         Use CSV File
                       </Button>
@@ -282,6 +304,7 @@ export default (props) => {
                     form.resetFields();
                   }}
                   style={{ flexGrow: 1 }}
+                  disabled={!userCan({ role: currentRole })}
                 >
                   Clear
                 </Button>
@@ -289,6 +312,7 @@ export default (props) => {
                   type="primary"
                   htmlType="submit"
                   style={{ flexGrow: 2, marginLeft: 15 }}
+                  disabled={!userCan({ role: currentRole })}
                 >
                   Save
                 </Button>
