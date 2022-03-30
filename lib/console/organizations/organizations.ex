@@ -328,7 +328,8 @@ defmodule Console.Organizations do
           port: org.port,
           joins: joins,
           multi_buy: org.multi_buy,
-          active: org.active
+          active: org.active,
+          disable_pull_data: org.disable_pull_data
         }
       end)
     end)
