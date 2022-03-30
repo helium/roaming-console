@@ -159,7 +159,7 @@ export default (props) => {
               label={<Text className="config-label">Disable Pull Data</Text>}
               valuePropName="checked"
             >
-              <Switch />
+              <Switch disabled={!userCan({ role: currentRole })} />
             </Form.Item>
             <Form.Item
               label={
