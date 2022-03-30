@@ -22,6 +22,7 @@ export const ORGANIZATION_SHOW = gql`
       total_packets
       packets_last_30d
       dc_last_30d
+      disable_pull_data
     }
   }
 `;

@@ -54,6 +54,7 @@ defmodule ConsoleWeb.Schema do
     field :packets_last_30d, :integer
     field :dc_last_30d, :integer
     field :net_ids, list_of(:net_id)
+    field :disable_pull_data, :boolean
   end
 
   object :api_key do

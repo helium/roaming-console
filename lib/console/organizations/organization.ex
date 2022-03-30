@@ -22,6 +22,7 @@ defmodule Console.Organizations.Organization do
     field :multi_buy, :integer
     field :total_dc, :integer
     field :total_packets, :integer
+    field :disable_pull_data, :boolean
 
     has_many :memberships, Console.Organizations.Membership, on_delete: :delete_all
     many_to_many :users, Console.Auth.User, join_through: "memberships"
@@ -69,7 +70,8 @@ defmodule Console.Organizations.Organization do
       :multi_buy,
       :join_credentials,
       :total_dc,
-      :total_packets
+      :total_packets,
+      :disable_pull_data
     ])
     |> check_address()
     |> validate_number(:port, greater_than_or_equal_to: 0, message: "Port numbers range from 0 to 65535")

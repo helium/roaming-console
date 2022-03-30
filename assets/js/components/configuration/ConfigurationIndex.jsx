@@ -3,7 +3,7 @@ import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
 import { updateOrganizationCreds } from "../../actions/organization";
-import { Typography, Button, Input, Form, Space } from "antd";
+import { Typography, Button, Input, Form, Space, Switch } from "antd";
 const { Text } = Typography;
 import DashboardLayout from "../common/DashboardLayout";
 import {
@@ -69,7 +69,8 @@ export default (props) => {
       values.address.replace(/\s/g, ""),
       values.port,
       values.join_credentials ? JSON.stringify(values.join_credentials) : null,
-      values.multi_buy
+      values.multi_buy,
+      values.disable_pull_data
     );
   };
 
@@ -99,6 +100,7 @@ export default (props) => {
                 join_credentials: JSON.parse(
                   orgData.organization.join_credentials
                 ),
+                disable_pull_data: orgData.organization.disable_pull_data,
               }
             }
             onFinish={onFinish}
@@ -151,6 +153,13 @@ export default (props) => {
                 required
                 disabled={!userCan({ role: currentRole })}
               />
+            </Form.Item>
+            <Form.Item
+              name="disable_pull_data"
+              label={<Text className="config-label">Disable Pull Data</Text>}
+              valuePropName="checked"
+            >
+              <Switch disabled={!userCan({ role: currentRole })} />
             </Form.Item>
             <Form.Item
               label={
