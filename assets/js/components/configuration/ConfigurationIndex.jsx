@@ -155,11 +155,19 @@ export default (props) => {
               />
             </Form.Item>
             <Form.Item
-              name="disable_pull_data"
               label={<Text className="config-label">Disable Pull Data</Text>}
-              valuePropName="checked"
             >
-              <Switch disabled={!userCan({ role: currentRole })} />
+              <div>
+                By default “PULL_DATA” packets are repeatedly sent to poll data
+                from the endpoint and confirm the health of the connection.
+              </div>
+              <Form.Item
+                noStyle
+                valuePropName="checked"
+                name="disable_pull_data"
+              >
+                <Switch disabled={!userCan({ role: currentRole })} />
+              </Form.Item>
             </Form.Item>
             <Form.Item
               label={
@@ -172,6 +180,7 @@ export default (props) => {
                 the same packet.
               </div>
               <Form.Item
+                noStyle
                 name="multi_buy"
                 hasFeedback
                 rules={[
