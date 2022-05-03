@@ -107,10 +107,6 @@ defmodule ConsoleWeb.Schema do
       resolve(&Console.Organizations.OrganizationResolver.find/2)
     end
 
-    paginated field :organizations, :paginated_organizations do
-      resolve(&Console.Organizations.OrganizationResolver.paginate/2)
-    end
-
     field :all_organizations, list_of(:organization) do
       resolve &Console.Organizations.OrganizationResolver.all/2
     end
