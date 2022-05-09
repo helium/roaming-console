@@ -39,9 +39,10 @@ defmodule Console.EtlWorker do
                   "total_packets" => org.total_packets + organization_updates_map[org.id]["packets_sent"]
                 }
 
-                net_id_values = NetIds.get_all_for_organization(org.id) |> Enum.map(fn n -> n.value end)
                 if org.dc_balance - organization_updates_map[org.id]["dc_used"] <= 0 do
-                  ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", %{ net_ids: net_id_values})
+                  NetIds.get_all_for_organization(org.id) |> Enum.map(fn net_id ->
+                    ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", net_id.value)
+                  end)
                 end
 
                 Organizations.update_organization!(org, org_attrs)
