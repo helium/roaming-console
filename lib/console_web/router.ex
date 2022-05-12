@@ -45,6 +45,7 @@ defmodule ConsoleWeb.Router do
 
     post "/users", InvitationController, :accept, as: "user_join_from_invitation"
     resources "/organizations", OrganizationController, except: [:new, :edit]
+    resources "/net_ids", NetIdController, except: [:edit]
     resources "/invitations", InvitationController, only: [:create, :delete]
     resources "/memberships", MembershipController, only: [:update, :delete]
     resources "/api_keys", ApiKeyController, only: [:create, :delete]
