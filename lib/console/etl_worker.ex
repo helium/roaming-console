@@ -41,7 +41,7 @@ defmodule Console.EtlWorker do
 
                 if org.dc_balance - organization_updates_map[org.id]["dc_used"] <= 0 do
                   NetIds.get_all_for_organization(org.id) |> Enum.map(fn net_id ->
-                    ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", net_id.value)
+                    ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", %{ net_ids: [net_id.value]})
                   end)
                 end
 

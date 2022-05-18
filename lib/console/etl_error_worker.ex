@@ -33,7 +33,7 @@ defmodule Console.EtlErrorWorker do
             ConsoleWeb.Monitor.remove_from_packets_error_state()
             if org.dc_balance - parsed_packet.dc_used <= 0 do
               NetIds.get_all_for_organization(org.id) |> Enum.map(fn net_id ->
-                ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", net_id.value)
+                ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:stop_purchasing", %{ net_ids: [net_id.value]})
               end)
             end
             ConsoleWeb.DataCreditController.check_org_dc_balance(updated_org, org.dc_balance)
