@@ -431,8 +431,9 @@ defmodule ConsoleWeb.DataCreditController do
 
   def broadcast_packet_purchaser_refill_dc_balance(%Organization{} = organization) do
     if organization.dc_balance > 0 do
-      net_id_values = NetIds.get_all_for_organization(organization.id) |> Enum.map(fn n -> n.value end)
-      ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:keep_purchasing", %{ net_ids: net_id_values })
+      NetIds.get_all_for_organization(organization.id) |> Enum.map(fn net_id ->
+        ConsoleWeb.Endpoint.broadcast("net_id:all", "net_id:all:keep_purchasing", %{ net_ids: [net_id.value]})
+      end)
     end
   end
 end
