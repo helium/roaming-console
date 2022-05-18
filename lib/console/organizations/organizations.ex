@@ -310,27 +310,34 @@ defmodule Console.Organizations do
     all_orgs
     |> Enum.map(fn org ->
       Enum.map(org.net_ids, fn net_id ->
-        joins =
-          case org.join_credentials do
-            nil -> nil
-            _ ->
-              case Poison.decode(org.join_credentials) do
-                {:ok, joins} -> joins
-                {:error, _} -> "Invalid Join Credential Format"
-              end
-          end
-
-        %{
-          id: org.id,
-          name: org.name,
-          net_id: net_id.value,
-          address: org.address,
-          port: org.port,
-          joins: joins,
-          multi_buy: org.multi_buy,
-          active: org.active,
-          disable_pull_data: org.disable_pull_data
-        }
+        case net_id.config["protocol"] do
+          "udp" ->
+            %{
+              organization_id: org.id,
+              name: org.name,
+              net_id: net_id.value,
+              active: org.active,
+              protocol: net_id.config["protocol"],
+              address: net_id.config["address"],
+              port: net_id.config["port"],
+              disable_pull_data: net_id.config["disable_pull_data"],
+              joins: net_id.config["join_credentials"],
+              multi_buy: net_id.config["multi_buy"],
+            }
+          "http" ->
+            %{
+              organization_id: org.id,
+              name: org.name,
+              net_id: net_id.value,
+              active: org.active,
+              protocol: net_id.config["protocol"],
+              http_endpoint: net_id.config["http_endpoint"],
+              http_flow_type: net_id.config["http_flow_type"],
+              http_dedupe_timeout: net_id.config["http_dedupe_timeout"],
+              joins: net_id.config["join_credentials"],
+              multi_buy: net_id.config["multi_buy"],
+            }
+        end
       end)
     end)
     |> List.flatten()
