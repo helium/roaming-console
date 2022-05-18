@@ -13,16 +13,16 @@ export const ORGANIZATION_SHOW = gql`
   query OrganizationShowSettingsQuery($id: ID!) {
     organization(id: $id) {
       id
-      address
-      port
-      join_credentials
-      multi_buy
       dc_balance
       total_dc
       total_packets
       packets_last_30d
       dc_last_30d
-      disable_pull_data
+      net_ids {
+        id
+        value
+        config
+      }
     }
   }
 `;
@@ -40,7 +40,9 @@ export const ORGANIZATION_SHOW_DC = gql`
       dc_balance_nonce
       received_free_dc
       net_ids {
+        id
         value
+        config
       }
     }
   }

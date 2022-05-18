@@ -11,7 +11,8 @@ import { logOut } from "../../actions/auth";
 import analyticsLogger from "../../util/analyticsLogger";
 import { ORGANIZATION_SHOW_DC } from "../../graphql/organizations";
 import { redForTablesDeleteText } from "../../util/colors";
-import { Menu, Dropdown, Typography, Tooltip, Space, Tag } from "antd";
+import { decimalToHex } from "../../util/constants";
+import { Menu, Dropdown, Typography, Tooltip, Space, Tag, Divider } from "antd";
 import MenuFoldOutlined from "@ant-design/icons/MenuFoldOutlined";
 import MenuUnfoldOutlined from "@ant-design/icons/MenuUnfoldOutlined";
 const { Text } = Typography;
@@ -19,6 +20,7 @@ import Logo from "../../../img/logo-horizontalwhite-symbol.svg";
 import ProfileActive from "../../../img/topbar-pf-active.png";
 import ProfileInactive from "../../../img/topbar-pf-inactive.svg";
 import QuestionIcon from "../../../img/topbar-question.svg";
+import sortBy from "lodash/sortBy";
 
 class TopBar extends Component {
   state = {
@@ -88,6 +90,20 @@ class TopBar extends Component {
         </div>
 
         <Space>
+          <Text style={{ color: "white", fontWeight: 600 }}>Net IDs: </Text>
+          {sortBy(organization?.net_ids, ["value"]).map((net_id) => (
+            <Tag
+              key={`badge-${net_id}`}
+              color="#393F45"
+              style={{ color: "#8C8C8C", margin: 0 }}
+            >
+              {decimalToHex(net_id.value)}
+            </Tag>
+          ))}
+          <Divider
+            type="vertical"
+            style={{ height: 25, backgroundColor: "white" }}
+          />
           <MediaQuery minWidth={769}>
             <Tooltip title="See Roaming Console Docs">
               <a
@@ -107,15 +123,6 @@ class TopBar extends Component {
               </a>
             </Tooltip>
           </MediaQuery>
-          <Text style={{ color: "white", fontWeight: 600 }}>Net IDs: </Text>
-          {organization?.net_ids.map((net_id) => (
-            <Tag key={`badge-${net_id}`} color="#1890ff">
-              {parseInt(net_id.value, 10)
-                .toString(16) // to hex
-                .padStart(6, 0)
-                .toUpperCase()}
-            </Tag>
-          ))}
         </Space>
 
         <div

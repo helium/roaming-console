@@ -30,7 +30,9 @@ defmodule ConsoleWeb.Schema do
   end
 
   object :net_id do
+    field :id, :id
     field :value, :integer
+    field :config, :json
   end
 
   paginated object :organization do
@@ -45,16 +47,11 @@ defmodule ConsoleWeb.Schema do
     field :automatic_charge_amount, :integer
     field :active, :boolean
     field :received_free_dc, :boolean
-    field :address, :string
-    field :port, :integer
-    field :join_credentials, :string
-    field :multi_buy, :integer
     field :total_dc, :integer
     field :total_packets, :integer
     field :packets_last_30d, :integer
     field :dc_last_30d, :integer
     field :net_ids, list_of(:net_id)
-    field :disable_pull_data, :boolean
   end
 
   object :api_key do
