@@ -26,7 +26,6 @@ import {
 import { decimalToHex } from "../../util/constants";
 
 export default ({ data, submit, otherNetIds }) => {
-  console.log(data);
   const [form] = Form.useForm();
   const [showJoinCredsModal, setShowJoinCredsModal] = useState(false);
   const currentRole = useSelector((state) => state.organization.currentRole);

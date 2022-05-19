@@ -94,7 +94,7 @@ export default (props) => {
             );
           })}
           {netIds.length === 0 && (
-            <>No Net ID has been linked to your Organization.</>
+            <div>No Net ID has been linked to your Organization.</div>
           )}
         </Tabs>
       </div>

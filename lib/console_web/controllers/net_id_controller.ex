@@ -44,7 +44,7 @@ defmodule ConsoleWeb.NetIdController do
     end
   end
 
-  def update(conn, attrs = %{"id" => id, "active" => active}) do
+  def update(conn, %{"id" => id, "active" => active}) do
     net_id = NetIds.get_net_id!(conn.assigns.current_user, id)
     organization = Organizations.get_organization!(conn.assigns.current_user, net_id.organization_id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
