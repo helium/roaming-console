@@ -9,6 +9,7 @@ defmodule Console.NetIds.NetId do
   schema "net_ids" do
     field :value, :integer
     field :config, :map
+    field :active, :boolean
 
     belongs_to :organization, Organization
     timestamps()
@@ -25,7 +26,8 @@ defmodule Console.NetIds.NetId do
   def update_changeset(net_id, attrs) do
     net_id
     |> cast(attrs, [
-      :config
+      :config,
+      :active
     ])
     |> check_address_update()
     |> check_port_update()

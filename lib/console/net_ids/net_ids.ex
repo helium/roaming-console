@@ -32,7 +32,7 @@ defmodule Console.NetIds do
 
   def get_all_for_organization(organization_id) do
     query = from n in NetId,
-      select: %{value: n.value, config: n.config},
+      select: %{value: n.value, config: n.config, active: n.active},
       where: n.organization_id == ^organization_id
     Repo.all(query)
   end

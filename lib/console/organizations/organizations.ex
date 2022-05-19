@@ -323,6 +323,7 @@ defmodule Console.Organizations do
               disable_pull_data: net_id.config["disable_pull_data"],
               joins: net_id.config["join_credentials"],
               multi_buy: net_id.config["multi_buy"],
+              active: net_id.active
             }
           "http" ->
             %{
@@ -336,6 +337,7 @@ defmodule Console.Organizations do
               http_dedupe_timeout: net_id.config["http_dedupe_timeout"],
               joins: net_id.config["join_credentials"],
               multi_buy: net_id.config["multi_buy"],
+              active: net_id.active
             }
         end
       end)

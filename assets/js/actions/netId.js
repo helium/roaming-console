@@ -18,3 +18,9 @@ export const updateNetIdConfig = (id, config) => {
     multi_buy: config.multi_buy,
   });
 };
+
+export const updateNetIdActive = (id, active) => {
+  return rest.put(`/api/net_ids/${id}`, {
+    active,
+  });
+};

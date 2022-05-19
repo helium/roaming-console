@@ -26,6 +26,7 @@ import {
 import { decimalToHex } from "../../util/constants";
 
 export default ({ data, submit, otherNetIds }) => {
+  console.log(data);
   const [form] = Form.useForm();
   const [showJoinCredsModal, setShowJoinCredsModal] = useState(false);
   const currentRole = useSelector((state) => state.organization.currentRole);
@@ -275,6 +276,7 @@ export default ({ data, submit, otherNetIds }) => {
                   <InputNumber
                     style={{ width: "100%" }}
                     disabled={!userCan({ role: currentRole })}
+                    defaultValue={200}
                   />
                 </Form.Item>
               </>

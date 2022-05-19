@@ -22,6 +22,7 @@ export const ORGANIZATION_SHOW = gql`
         id
         value
         config
+        active
       }
     }
   }
