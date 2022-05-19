@@ -33,6 +33,7 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :value, :integer
     field :config, :json
+    field :active, :boolean
   end
 
   paginated object :organization do

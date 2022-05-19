@@ -1,14 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { ORGANIZATION_SHOW } from "../../graphql/organizations";
-import { updateNetIdConfig } from "../../actions/netId";
-import { Tabs } from "antd";
+import { updateNetIdConfig, updateNetIdActive } from "../../actions/netId";
+import { Switch, Tabs, Typography, Divider } from "antd";
+const { Text } = Typography;
 const { TabPane } = Tabs;
 import DashboardLayout from "../common/DashboardLayout";
 import { decimalToHex } from "../../util/constants";
 import ConfigForm from "./ConfigForm";
 import sortBy from "lodash/sortBy";
+import UserCan from "../common/UserCan";
 
 export default (props) => {
   const socket = useSelector((state) => state.apollo.socket);
@@ -46,6 +48,12 @@ export default (props) => {
     updateNetIdConfig(id, values);
   };
 
+  const netIds =
+    (orgData &&
+      orgData.organization &&
+      sortBy(orgData.organization.net_ids, ["value"])) ||
+    [];
+
   return (
     <DashboardLayout title="Configuration" user={props.user}>
       <div
@@ -59,23 +67,35 @@ export default (props) => {
           boxShadow: "0px 20px 20px -7px rgba(17, 24, 31, 0.19)",
         }}
       >
-        <Tabs defaultActiveKey="1" onChange={() => {}}>
-          {orgData &&
-            orgData.organization &&
-            sortBy(orgData.organization.net_ids, ["value"]).map((n) => {
-              return (
-                <TabPane tab={`Net ID ${decimalToHex(n.value)}`} key={n.value}>
-                  <ConfigForm
-                    data={n}
-                    key={n.value}
-                    submit={submit}
-                    otherNetIds={orgData.organization.net_ids.filter(
-                      (ni) => ni.id !== n.id
-                    )}
-                  />
-                </TabPane>
-              );
-            })}
+        <Tabs defaultActiveKey={(netIds[0] && netIds[0].value) || null}>
+          {netIds.map((n) => {
+            return (
+              <TabPane tab={`Net ID ${decimalToHex(n.value)}`} key={n.value}>
+                <div style={{ justifyContent: "flex-end", display: "flex" }}>
+                  <UserCan noManager>
+                    <Text className="config-label">Active:</Text>
+                    <Switch
+                      checked={n.active}
+                      onChange={(active) => updateNetIdActive(n.id, active)}
+                      style={{ marginLeft: 10 }}
+                    />
+                  </UserCan>
+                </div>
+                <Divider />
+                <ConfigForm
+                  data={n}
+                  key={n.value}
+                  submit={submit}
+                  otherNetIds={orgData.organization.net_ids.filter(
+                    (ni) => ni.id !== n.id
+                  )}
+                />
+              </TabPane>
+            );
+          })}
+          {netIds.length === 0 && (
+            <div>No Net ID has been linked to your Organization.</div>
+          )}
         </Tabs>
       </div>
     </DashboardLayout>

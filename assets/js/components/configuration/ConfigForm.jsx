@@ -275,6 +275,7 @@ export default ({ data, submit, otherNetIds }) => {
                   <InputNumber
                     style={{ width: "100%" }}
                     disabled={!userCan({ role: currentRole })}
+                    defaultValue={200}
                   />
                 </Form.Item>
               </>
