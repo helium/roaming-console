@@ -7,6 +7,7 @@ defmodule Console.Application do
     # Define workers and child supervisors to be supervised
     children = [
       {Task.Supervisor, name: ConsoleWeb.TaskSupervisor},
+      Console.Vault,
       {Console.Repo, []},
       {ConsoleWeb.Endpoint, []},
       {Phoenix.PubSub, name: Console.PubSub},

@@ -23,6 +23,9 @@ export const ORGANIZATION_SHOW = gql`
         value
         config
         active
+        http_headers {
+          auth
+        }
       }
     }
   }
@@ -44,6 +47,9 @@ export const ORGANIZATION_SHOW_DC = gql`
         id
         value
         config
+        http_headers {
+          auth
+        }
       }
     }
   }

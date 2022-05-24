@@ -1,6 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
-const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = function (env) {
   const production = process.env.NODE_ENV === "production";
@@ -50,12 +50,10 @@ module.exports = function (env) {
     plugins: [
       new webpack.EnvironmentPlugin([
         "STRIPE_PUBLIC_KEY",
-        "MAPBOX_PRIVATE_KEY",
-        "MAPBOX_STYLE_URL",
         "MAGIC_PUBLIC_KEY",
-        "USER_INVITE_ONLY"
+        "USER_INVITE_ONLY",
       ]),
-      new NodePolyfillPlugin()
+      new NodePolyfillPlugin(),
     ],
   };
 };
