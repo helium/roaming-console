@@ -74,7 +74,6 @@ defmodule ConsoleWeb.NetIdController do
 
   def broadcast_packet_purchaser_all_org_config() do
     results = Organizations.get_all_org_config
-    IO.inspect results
     ConsoleWeb.Endpoint.broadcast("organization:all", "organization:all:config:list", %{ org_config_list: results })
   end
 end
