@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
-import { ORGANIZATION_SHOW } from "../../graphql/organizations";
+import { ALL_NET_IDS } from "../../graphql/netIds";
 import { updateNetIdConfig, updateNetIdActive } from "../../actions/netId";
 import { Switch, Tabs, Typography, Divider } from "antd";
 const { Text } = Typography;
@@ -18,14 +18,8 @@ export default (props) => {
     (state) => state.organization.currentOrganizationId
   );
 
-  const {
-    loading: orgLoading,
-    error: orgError,
-    data: orgData,
-    refetch: orgRefetch,
-  } = useQuery(ORGANIZATION_SHOW, {
+  const { data, refetch: orgRefetch } = useQuery(ALL_NET_IDS, {
     fetchPolicy: "cache-first",
-    variables: { id: currentOrganizationId },
   });
 
   const channel = socket.channel("graphql:configuration_index", {});
@@ -49,10 +43,7 @@ export default (props) => {
   };
 
   const netIds =
-    (orgData &&
-      orgData.organization &&
-      sortBy(orgData.organization.net_ids, ["value"])) ||
-    [];
+    (data && data.allNetIds && sortBy(data.allNetIds, ["value"])) || [];
 
   return (
     <DashboardLayout title="Configuration" user={props.user}>
@@ -86,9 +77,7 @@ export default (props) => {
                   data={n}
                   key={n.value}
                   submit={submit}
-                  otherNetIds={orgData.organization.net_ids.filter(
-                    (ni) => ni.id !== n.id
-                  )}
+                  otherNetIds={netIds.filter((ni) => ni.id !== n.id)}
                 />
               </TabPane>
             );

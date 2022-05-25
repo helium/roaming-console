@@ -13,6 +13,9 @@
     },
     "SECRET_KEY_BASE": {
       "required": true
+    },
+    "CLOAK_SECRET_KEY": {
+      "required": true
     }
   },
   "formation": {

@@ -10,6 +10,7 @@ defmodule Console.NetIds.NetId do
     field :value, :integer
     field :config, :map
     field :active, :boolean
+    field :http_headers, Console.Encrypted.Map
 
     belongs_to :organization, Organization
     timestamps()
@@ -27,7 +28,8 @@ defmodule Console.NetIds.NetId do
     net_id
     |> cast(attrs, [
       :config,
-      :active
+      :active,
+      :http_headers
     ])
     |> check_address_update()
     |> check_port_update()

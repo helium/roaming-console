@@ -18,12 +18,6 @@ export const ORGANIZATION_SHOW = gql`
       total_packets
       packets_last_30d
       dc_last_30d
-      net_ids {
-        id
-        value
-        config
-        active
-      }
     }
   }
 `;
@@ -44,6 +38,9 @@ export const ORGANIZATION_SHOW_DC = gql`
         id
         value
         config
+        http_headers {
+          auth
+        }
       }
     }
   }

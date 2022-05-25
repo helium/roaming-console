@@ -18,10 +18,6 @@
       window.flashInfo = "<%= get_flash(@conn, :info) %>"
       window.flashError = "<%= get_flash(@conn, :error) %>"
     </script>
-    <script>
-      window.mapbox_pk = "<%= Application.get_env(:console, :mapbox_pk) %>"
-      window.mapbox_style_url = "<%= Application.get_env(:console, :mapbox_style_url) %>"
-    </script>
     <div class="mainContainer">
       <main role="main">
         <%= @inner_content %>

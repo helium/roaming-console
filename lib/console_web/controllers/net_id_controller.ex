@@ -16,7 +16,7 @@ defmodule ConsoleWeb.NetIdController do
     if membership.role != "admin" do
       {:error, :forbidden, "You don't have access to do this"}
     else
-      update_attrs = 
+      config_attrs = 
         case protocol do
           "udp" ->
             Map.take(attrs, ["protocol", "address", "port", "disable_pull_data", "join_credentials", "multi_buy"])
@@ -24,7 +24,7 @@ defmodule ConsoleWeb.NetIdController do
             Map.take(attrs, ["protocol", "http_endpoint", "http_flow_type", "http_dedupe_timeout", "join_credentials", "multi_buy"])
         end
 
-      with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => update_attrs}) do
+      with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => config_attrs, "http_headers" => attrs["http_headers"]}) do
         ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
         broadcast_packet_purchaser_all_org_config()
 
