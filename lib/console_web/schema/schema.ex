@@ -29,7 +29,7 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
   end
 
-  object :headers do
+  object :http_headers do
     field :auth, :string
   end
 
@@ -38,7 +38,8 @@ defmodule ConsoleWeb.Schema do
     field :value, :integer
     field :config, :json
     field :active, :boolean
-    field :http_headers, type: :headers
+    field :http_auth_header, :string
+    field :http_headers, type: :http_headers
   end
 
   paginated object :organization do
@@ -128,6 +129,10 @@ defmodule ConsoleWeb.Schema do
 
     field :packets, :packets_per_hour do
       resolve &Console.Packets.PacketResolver.get_packets/2
+    end
+
+    field :all_net_ids, list_of(:net_id) do
+      resolve &Console.NetIds.NetIdResolver.all/2
     end
   end
 end

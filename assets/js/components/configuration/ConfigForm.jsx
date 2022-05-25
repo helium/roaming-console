@@ -31,7 +31,6 @@ export default ({ data, submit, otherNetIds }) => {
   const currentRole = useSelector((state) => state.organization.currentRole);
 
   const config = JSON.parse(data.config);
-  const httpHeaders = data.http_headers;
   const [protocol, setProtocol] = useState(config.protocol || "udp");
 
   const isValidPositiveInteger = (input) => {
@@ -81,7 +80,7 @@ export default ({ data, submit, otherNetIds }) => {
                 http_endpoint: config.http_endpoint,
                 http_flow_type: config.http_flow_type,
                 http_dedupe_timeout: config.http_dedupe_timeout,
-                http_auth_header: httpHeaders && httpHeaders.auth,
+                http_auth_header: data.http_auth_header,
               }
         }
         onFinish={onFinish}

@@ -333,6 +333,7 @@ defmodule Console.Organizations do
               http_endpoint: net_id.config["http_endpoint"],
               http_flow_type: net_id.config["http_flow_type"],
               http_dedupe_timeout: net_id.config["http_dedupe_timeout"],
+              http_auth_header: net_id.http_headers["auth"],
               joins: net_id.config["join_credentials"],
               multi_buy: net_id.config["multi_buy"],
               active: net_id.active
