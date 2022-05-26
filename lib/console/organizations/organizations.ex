@@ -343,7 +343,7 @@ defmodule Console.Organizations do
               organization_id: org.id,
               name: org.name,
               net_id: net_id.value,
-              joins: net_id.config["join_credentials"],
+              joins: net_id.config["join_credentials"] || [],
               multi_buy: net_id.config["multi_buy"],
               active: net_id.active
             }
