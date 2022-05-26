@@ -53,6 +53,10 @@ export default ({ data, submit, otherNetIds }) => {
     if (fieldName === "protocol") {
       const value = changedValues[fieldName];
       setProtocol(value);
+
+      if (value === "http" && config.protocol === "udp") {
+        form.setFieldsValue({ http_dedupe_timeout: 200 });
+      }
     }
   };
 
@@ -284,7 +288,6 @@ export default ({ data, submit, otherNetIds }) => {
                   <InputNumber
                     style={{ width: "100%" }}
                     disabled={!userCan({ role: currentRole })}
-                    defaultValue={200}
                   />
                 </Form.Item>
               </>
