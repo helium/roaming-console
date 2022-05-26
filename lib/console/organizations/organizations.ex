@@ -338,6 +338,15 @@ defmodule Console.Organizations do
               multi_buy: net_id.config["multi_buy"],
               active: net_id.active
             }
+          nil -> # no protocol config has been set yet
+            {
+              organization_id: org.id,
+              name: org.name,
+              net_id: net_id.value,
+              joins: net_id.config["join_credentials"],
+              multi_buy: net_id.config["multi_buy"],
+              active: net_id.active
+            }
         end
       end)
     end)
