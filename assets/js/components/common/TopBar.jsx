@@ -93,7 +93,7 @@ class TopBar extends Component {
           <Text style={{ color: "white", fontWeight: 600 }}>Net IDs: </Text>
           {sortBy(organization?.net_ids, ["value"]).map((net_id) => (
             <Tag
-              key={`badge-${net_id}`}
+              key={`badge-${net_id.value}`}
               color="#393F45"
               style={{ color: "#8C8C8C", margin: 0 }}
             >
