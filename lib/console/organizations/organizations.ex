@@ -339,7 +339,7 @@ defmodule Console.Organizations do
               active: net_id.active
             }
           nil -> # no protocol config has been set yet
-            {
+            %{
               organization_id: org.id,
               name: org.name,
               net_id: net_id.value,
