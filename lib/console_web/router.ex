@@ -73,7 +73,7 @@ defmodule ConsoleWeb.Router do
   end
 
   scope "/api/packet_purchaser", ConsoleWeb.PacketPurchaser do
-    # pipe_through ConsoleWeb.PacketPurchaserApiPipeline
+    pipe_through ConsoleWeb.PacketPurchaserApiPipeline
 
     resources "/organizations", OrganizationController, only: [:index, :show]
     post "/organizations/burned", OrganizationController, :burned_dc
