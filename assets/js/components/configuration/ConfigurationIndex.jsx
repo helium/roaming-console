@@ -10,13 +10,14 @@ import DashboardLayout from "../common/DashboardLayout";
 import { decimalToHex } from "../../util/constants";
 import ConfigForm from "./ConfigForm";
 import sortBy from "lodash/sortBy";
-import UserCan from "../common/UserCan";
+import UserCan, { userCan } from "../common/UserCan";
 
 export default (props) => {
   const socket = useSelector((state) => state.apollo.socket);
   const currentOrganizationId = useSelector(
     (state) => state.organization.currentOrganizationId
   );
+  const currentRole = useSelector((state) => state.organization.currentRole);
 
   const { data, refetch } = useQuery(ALL_NET_IDS, {
     fetchPolicy: "cache-first",
@@ -64,14 +65,13 @@ export default (props) => {
               return (
                 <TabPane tab={`Net ID ${decimalToHex(n.value)}`} key={n.value}>
                   <div style={{ justifyContent: "flex-end", display: "flex" }}>
-                    <UserCan noManager>
-                      <Text className="config-label">Active:</Text>
-                      <Switch
-                        checked={n.active}
-                        onChange={(active) => updateNetIdActive(n.id, active)}
-                        style={{ marginLeft: 10 }}
-                      />
-                    </UserCan>
+                    <Text className="config-label">Active:</Text>
+                    <Switch
+                      checked={n.active}
+                      onChange={(active) => updateNetIdActive(n.id, active)}
+                      style={{ marginLeft: 10 }}
+                      disabled={!userCan({ role: currentRole })}
+                    />
                   </div>
                   <Divider />
                   <ConfigForm

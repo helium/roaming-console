@@ -13,34 +13,30 @@ defmodule ConsoleWeb.NetIdController do
     organization = Organizations.get_organization!(conn.assigns.current_user, net_id.organization_id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
 
-    if membership.role != "admin" do
-      {:error, :forbidden, "You don't have access to do this"}
-    else
-      config_attrs = 
-        case protocol do
-          "udp" ->
-            Map.take(attrs, ["protocol", "address", "port", "disable_pull_data", "join_credentials", "multi_buy"])
-          "http" ->
-            Map.take(attrs, ["protocol", "http_endpoint", "http_flow_type", "http_dedupe_timeout", "join_credentials", "multi_buy"])
-        end
-
-      with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => config_attrs, "http_headers" => attrs["http_headers"]}) do
-        ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
-        broadcast_packet_purchaser_all_org_config()
-
-        current_organization = conn.assigns.current_organization
-        current_email = conn.assigns.current_user.email
-        AuditActions.create_audit_action(
-          current_organization.id,
-          current_email,
-          "net_id_controller_update",
-          attrs
-        )
-
-        conn
-        |> put_resp_header("message", "Settings for Net ID #{Integer.to_string(net_id.value, 16)} updated successfully")
-        |> send_resp(:no_content, "")
+    config_attrs = 
+      case protocol do
+        "udp" ->
+          Map.take(attrs, ["protocol", "address", "port", "disable_pull_data", "join_credentials", "multi_buy"])
+        "http" ->
+          Map.take(attrs, ["protocol", "http_endpoint", "http_flow_type", "http_dedupe_timeout", "join_credentials", "multi_buy"])
       end
+
+    with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => config_attrs, "http_headers" => attrs["http_headers"]}) do
+      ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
+      broadcast_packet_purchaser_all_org_config()
+
+      current_organization = conn.assigns.current_organization
+      current_email = conn.assigns.current_user.email
+      AuditActions.create_audit_action(
+        current_organization.id,
+        current_email,
+        "net_id_controller_update",
+        attrs
+      )
+
+      conn
+      |> put_resp_header("message", "Settings for Net ID #{Integer.to_string(net_id.value, 16)} updated successfully")
+      |> send_resp(:no_content, "")
     end
   end
 
@@ -49,26 +45,22 @@ defmodule ConsoleWeb.NetIdController do
     organization = Organizations.get_organization!(conn.assigns.current_user, net_id.organization_id)
     membership = Organizations.get_membership!(conn.assigns.current_user, organization)
 
-    if membership.role != "admin" do
-      {:error, :forbidden, "You don't have access to do this"}
-    else
-      with {:ok, _} <- NetIds.update_net_id(net_id, %{"active" => active}) do
-        ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
-        broadcast_packet_purchaser_all_org_config()
+    with {:ok, _} <- NetIds.update_net_id(net_id, %{"active" => active}) do
+      ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
+      broadcast_packet_purchaser_all_org_config()
 
-        current_organization = conn.assigns.current_organization
-        current_email = conn.assigns.current_user.email
-        AuditActions.create_audit_action(
-          current_organization.id,
-          current_email,
-          "net_id_controller_update",
-          %{ "active" => active }
-        )
+      current_organization = conn.assigns.current_organization
+      current_email = conn.assigns.current_user.email
+      AuditActions.create_audit_action(
+        current_organization.id,
+        current_email,
+        "net_id_controller_update",
+        %{ "active" => active }
+      )
 
-        conn
-        |> put_resp_header("message", "Net ID #{Integer.to_string(net_id.value, 16)} updated successfully")
-        |> send_resp(:no_content, "")
-      end
+      conn
+      |> put_resp_header("message", "Net ID #{Integer.to_string(net_id.value, 16)} updated successfully")
+      |> send_resp(:no_content, "")
     end
   end
 
