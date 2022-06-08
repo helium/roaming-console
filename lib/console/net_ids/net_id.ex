@@ -45,14 +45,19 @@ defmodule Console.NetIds.NetId do
           |> String.replace("'", "\"")
           |> Poison.decode!
         
-        invalid = Enum.any?(join_credentials_map, fn cred ->
-          cond do
-            String.contains?(cred["dev_eui"], "*") and String.length(cred["dev_eui"]) > 1 ->
-              true
-            String.contains?(cred["app_eui"], "*") -> true
-            true -> false
+        invalid =
+          case is_nil(join_credentials_map) do 
+            false ->
+              Enum.any?(join_credentials_map, fn cred ->
+                cond do
+                  String.contains?(cred["dev_eui"], "*") and String.length(cred["dev_eui"]) > 1 ->
+                    true
+                  String.contains?(cred["app_eui"], "*") -> true
+                  true -> false
+                end
+              end)
+            _ -> false
           end
-        end)
 
         if invalid do
           add_error(changeset, :message, "Join credentials are invalid")
