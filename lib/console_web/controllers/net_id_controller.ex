@@ -11,7 +11,6 @@ defmodule ConsoleWeb.NetIdController do
   def update(conn, attrs = %{"id" => id, "protocol" => protocol}) do
     net_id = NetIds.get_net_id!(conn.assigns.current_user, id)
     organization = Organizations.get_organization!(conn.assigns.current_user, net_id.organization_id)
-    membership = Organizations.get_membership!(conn.assigns.current_user, organization)
 
     config_attrs = 
       case protocol do
@@ -54,12 +53,14 @@ defmodule ConsoleWeb.NetIdController do
     end
   end
 
-  def update(conn, %{"id" => id, "active" => active}) do
+  def update(conn, %{"id" => id, "config_id" => config_id, "active" => active}) do
     net_id = NetIds.get_net_id!(conn.assigns.current_user, id)
     organization = Organizations.get_organization!(conn.assigns.current_user, net_id.organization_id)
-    membership = Organizations.get_membership!(conn.assigns.current_user, organization)
 
-    with {:ok, _} <- NetIds.update_net_id(net_id, %{"active" => active}) do
+    updated_config = Enum.find(net_id.config, fn c -> c["config_id"] == config_id end) |> Map.put("active", active)
+    config = [ updated_config | Enum.filter(net_id.config, fn c -> c["config_id"] != config_id end)]
+
+    with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => config}) do
       ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
       broadcast_packet_purchaser_all_org_config()
 
@@ -69,7 +70,7 @@ defmodule ConsoleWeb.NetIdController do
         current_organization.id,
         current_email,
         "net_id_controller_update",
-        %{ "active" => active }
+        %{ "config_id" => config_id, "id" => id, "active" => active }
       )
 
       conn

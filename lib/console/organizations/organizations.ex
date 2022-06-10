@@ -323,7 +323,7 @@ defmodule Console.Organizations do
                 disable_pull_data: config["disable_pull_data"],
                 joins: config["join_credentials"],
                 multi_buy: config["multi_buy"],
-                active: net_id.active,
+                active: config["active"],
                 devaddrs: config["devaddrs"]
               }
             "http" ->
@@ -338,7 +338,7 @@ defmodule Console.Organizations do
                 # http_auth_header: net_id.http_headers["auth"], # TODO grab from appropriate mapping
                 joins: config["join_credentials"],
                 multi_buy: config["multi_buy"],
-                active: net_id.active,
+                active: config["active"],
                 devaddrs: config["devaddrs"]
               }
             nil -> # no protocol config has been set yet
@@ -348,7 +348,7 @@ defmodule Console.Organizations do
                 net_id: net_id.value,
                 joins: config["join_credentials"] || [],
                 multi_buy: config["multi_buy"],
-                active: net_id.active,
+                active: false,
                 devaddrs: config["devaddrs"] || []
               }
           end

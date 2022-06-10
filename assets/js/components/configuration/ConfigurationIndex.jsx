@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { ALL_NET_IDS } from "../../graphql/netIds";
-import { updateNetIdConfig, updateNetIdActive } from "../../actions/netId";
+import {
+  updateNetIdConfig,
+  updateNetIdConfigActive,
+} from "../../actions/netId";
 import { Switch, Tabs, Typography, Collapse, Button } from "antd";
 const { Text } = Typography;
 const { TabPane } = Tabs;
@@ -16,6 +19,8 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
 export default (props) => {
   const [newConfigs, setNewConfigs] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState([]);
+
   const socket = useSelector((state) => state.apollo.socket);
   const currentOrganizationId = useSelector(
     (state) => state.organization.currentOrganizationId
@@ -112,15 +117,19 @@ export default (props) => {
                                       Active:
                                     </Text>
                                     <Switch
-                                      checked={netId.active}
+                                      checked={config.active}
                                       onChange={(active, event) => {
                                         event.stopPropagation();
-                                        updateNetIdActive(netId.id, active);
+                                        updateNetIdConfigActive(
+                                          netId.id,
+                                          config.config_id,
+                                          active
+                                        );
                                       }}
                                       style={{ marginLeft: 10 }}
                                       disabled={
                                         !userCan({ role: currentRole }) ||
-                                        config.new === true
+                                        !config.protocol
                                       }
                                     />
                                   </>
@@ -137,7 +146,8 @@ export default (props) => {
                                     if (config.new) {
                                       setNewConfigs([]);
                                     } else {
-                                      // show modal to confirm
+                                      // setConfigToDelete();
+                                      setShowConfirmModal(true);
                                     }
                                   }}
                                 />
@@ -167,7 +177,7 @@ export default (props) => {
                       <Button
                         icon={<PlusOutlined />}
                         onClick={() => {
-                          setNewConfigs([{ active: false, new: true }]);
+                          setNewConfigs([{ new: true }]);
                         }}
                       >
                         Add Configuration

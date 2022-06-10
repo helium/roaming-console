@@ -24,8 +24,9 @@ export const updateNetIdConfig = (id, config) => {
   });
 };
 
-export const updateNetIdActive = (id, active) => {
+export const updateNetIdConfigActive = (id, config_id, active) => {
   return rest.put(`/api/net_ids/${id}`, {
+    config_id,
     active,
   });
 };

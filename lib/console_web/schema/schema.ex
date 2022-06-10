@@ -37,7 +37,6 @@ defmodule ConsoleWeb.Schema do
     field :id, :id
     field :value, :integer
     field :config, :json
-    field :active, :boolean
     field :http_auth_header, :string
     field :http_headers, type: :http_headers
   end

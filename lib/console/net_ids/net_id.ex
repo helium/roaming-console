@@ -9,7 +9,6 @@ defmodule Console.NetIds.NetId do
   schema "net_ids" do
     field :value, :integer
     field :config, {:array, :map}
-    field :active, :boolean
     field :http_headers, Console.Encrypted.Map
 
     belongs_to :organization, Organization
@@ -28,9 +27,9 @@ defmodule Console.NetIds.NetId do
     net_id
     |> cast(attrs, [
       :config,
-      :active,
       :http_headers
     ])
+    |> check_active_before_config_set()
     |> check_address_update()
     |> check_port_update()
     |> check_credentials_update()
@@ -67,6 +66,21 @@ defmodule Console.NetIds.NetId do
         end
       _ -> changeset
     end
+  end
+
+  defp check_active_before_config_set(changeset) do
+     case changeset do
+        %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
+          if Enum.any?(config, fn net_id_config ->
+            Map.has_key?(net_id_config, "active") and is_nil(net_id_config["protocol"])
+          end) do
+            add_error(changeset, :message, "Configuration that has not been set cannot be activated.")
+          else
+            changeset
+          end
+        _ ->
+          changeset
+      end
   end
 
   defp check_address_update(changeset) do
