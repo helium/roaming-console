@@ -335,7 +335,7 @@ defmodule Console.Organizations do
                 http_endpoint: config["http_endpoint"],
                 http_flow_type: config["http_flow_type"],
                 http_dedupe_timeout: config["http_dedupe_timeout"],
-                http_auth_header: config.http_headers["auth"],
+                # http_auth_header: net_id.http_headers["auth"], # TODO grab from appropriate mapping
                 joins: config["join_credentials"],
                 multi_buy: config["multi_buy"],
                 active: net_id.active,

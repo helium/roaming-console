@@ -27,9 +27,10 @@ defmodule ConsoleWeb.NetIdController do
     end
     
     new_config = case net_id.config do
-      [%{}] -> [config_attrs]
+      [] ->
+        [config_attrs]
       _ ->
-        [Enum.filter(net_id.config, fn c -> c["config_id"] != attrs["config_id"] end), config_attrs]
+        [config_attrs | Enum.filter(net_id.config, fn c -> c["config_id"] != config_attrs["config_id"] end)]
     end
 
     # TODO map http_headers
