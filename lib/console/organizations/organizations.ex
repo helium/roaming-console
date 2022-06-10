@@ -310,44 +310,49 @@ defmodule Console.Organizations do
     all_orgs
     |> Enum.map(fn org ->
       Enum.map(org.net_ids, fn net_id ->
-        case net_id.config["protocol"] do
-          "udp" ->
-            %{
-              organization_id: org.id,
-              name: org.name,
-              net_id: net_id.value,
-              protocol: net_id.config["protocol"],
-              address: net_id.config["address"],
-              port: net_id.config["port"],
-              disable_pull_data: net_id.config["disable_pull_data"],
-              joins: net_id.config["join_credentials"],
-              multi_buy: net_id.config["multi_buy"],
-              active: net_id.active
-            }
-          "http" ->
-            %{
-              organization_id: org.id,
-              name: org.name,
-              net_id: net_id.value,
-              protocol: net_id.config["protocol"],
-              http_endpoint: net_id.config["http_endpoint"],
-              http_flow_type: net_id.config["http_flow_type"],
-              http_dedupe_timeout: net_id.config["http_dedupe_timeout"],
-              http_auth_header: net_id.http_headers["auth"],
-              joins: net_id.config["join_credentials"],
-              multi_buy: net_id.config["multi_buy"],
-              active: net_id.active
-            }
-          nil -> # no protocol config has been set yet
-            %{
-              organization_id: org.id,
-              name: org.name,
-              net_id: net_id.value,
-              joins: net_id.config["join_credentials"] || [],
-              multi_buy: net_id.config["multi_buy"],
-              active: net_id.active
-            }
-        end
+        Enum.map(net_id.config, fn config ->
+          case config["protocol"] do
+            "udp" ->
+              %{
+                organization_id: org.id,
+                name: org.name,
+                net_id: net_id.value,
+                protocol: config["protocol"],
+                address: config["address"],
+                port: config["port"],
+                disable_pull_data: config["disable_pull_data"],
+                joins: config["join_credentials"],
+                multi_buy: config["multi_buy"],
+                active: net_id.active,
+                devaddrs: config["devaddrs"]
+              }
+            "http" ->
+              %{
+                organization_id: org.id,
+                name: org.name,
+                net_id: net_id.value,
+                protocol: config["protocol"],
+                http_endpoint: config["http_endpoint"],
+                http_flow_type: config["http_flow_type"],
+                http_dedupe_timeout: config["http_dedupe_timeout"],
+                http_auth_header: config.http_headers["auth"],
+                joins: config["join_credentials"],
+                multi_buy: config["multi_buy"],
+                active: net_id.active,
+                devaddrs: config["devaddrs"]
+              }
+            nil -> # no protocol config has been set yet
+              %{
+                organization_id: org.id,
+                name: org.name,
+                net_id: net_id.value,
+                joins: config["join_credentials"] || [],
+                multi_buy: config["multi_buy"],
+                active: net_id.active,
+                devaddrs: config["devaddrs"] || []
+              }
+          end
+        end)
       end)
     end)
     |> List.flatten()

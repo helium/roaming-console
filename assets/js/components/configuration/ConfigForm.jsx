@@ -25,13 +25,12 @@ import {
 } from "@ant-design/icons";
 import { decimalToHex } from "../../util/constants";
 
-export default ({ data, submit, otherNetIds }) => {
+export default ({ data, submit, netId }) => {
   const [form] = Form.useForm();
   const [showJoinCredsModal, setShowJoinCredsModal] = useState(false);
   const currentRole = useSelector((state) => state.organization.currentRole);
 
-  const config = JSON.parse(data.config);
-  const [protocol, setProtocol] = useState(config.protocol || "udp");
+  const [protocol, setProtocol] = useState(data.protocol || "udp");
 
   const isValidPositiveInteger = (input) => {
     const num = Number(input);
@@ -54,17 +53,20 @@ export default ({ data, submit, otherNetIds }) => {
       const value = changedValues[fieldName];
       setProtocol(value);
 
-      if (value === "http" && config.protocol === "udp") {
+      if (value === "http" && data.protocol === "udp") {
         form.setFieldsValue({ http_dedupe_timeout: 200 });
       }
     }
   };
 
   const onFinish = (values) => {
-    submit(data.id, values);
+    submit(netId, {
+      ...values,
+      ...(data.config_id && { config_id: data.config_id }),
+    });
   };
 
-  const otherNetIdsWithConfig = otherNetIds.filter((ni) => ni.config !== "{}");
+  // const otherNetIdsWithdata = otherNetIds.filter((ni) => ni.data !== "{}");
 
   return (
     <>
@@ -72,19 +74,20 @@ export default ({ data, submit, otherNetIds }) => {
         form={form}
         layout="vertical"
         initialValues={
-          Object.keys(config).length === 0
+          Object.keys(data).length === 0
             ? { protocol: "udp" }
             : {
-                protocol: config.protocol,
-                address: config.address,
-                port: config.port,
-                multi_buy: config.multi_buy,
-                join_credentials: config.join_credentials,
-                disable_pull_data: config.disable_pull_data,
-                http_endpoint: config.http_endpoint,
-                http_flow_type: config.http_flow_type,
-                http_dedupe_timeout: config.http_dedupe_timeout,
+                protocol: data.protocol,
+                address: data.address,
+                port: data.port,
+                multi_buy: data.multi_buy,
+                join_credentials: data.join_credentials,
+                disable_pull_data: data.disable_pull_data,
+                http_endpoint: data.http_endpoint,
+                http_flow_type: data.http_flow_type,
+                http_dedupe_timeout: data.http_dedupe_timeout,
                 http_auth_header: data.http_auth_header,
+                devaddrs: data.devaddrs,
               }
         }
         onFinish={onFinish}
@@ -93,38 +96,38 @@ export default ({ data, submit, otherNetIds }) => {
       >
         <Row gutter={50}>
           <Col span={12}>
-            {otherNetIdsWithConfig.length > 0 && (
+            {/* {otherNetIdsWithdata.length > 0 && (
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button
                   icon={<CopyOutlined />}
                   type="primary"
                   onClick={() => {
-                    const otherConfig = JSON.parse(
-                      otherNetIdsWithConfig[0].config
+                    const otherdata = JSON.parse(
+                      otherNetIdsWithdata[0].data
                     );
-                    // explicitly setting them here to avoid stale fields when they're not in otherConfig
+                    // explicitly setting them here to avoid stale fields when they're not in otherdata
                     form.setFieldsValue({
-                      protocol: otherConfig.protocol,
-                      address: otherConfig.address,
-                      port: otherConfig.port,
-                      multi_buy: otherConfig.multi_buy,
-                      join_credentials: otherConfig.join_credentials,
-                      disable_pull_data: otherConfig.disable_pull_data,
-                      http_endpoint: otherConfig.http_endpoint,
-                      http_flow_type: otherConfig.http_flow_type,
-                      http_dedupe_timeout: otherConfig.http_dedupe_timeout,
+                      protocol: otherdata.protocol,
+                      address: otherdata.address,
+                      port: otherdata.port,
+                      multi_buy: otherdata.multi_buy,
+                      join_credentials: otherdata.join_credentials,
+                      disable_pull_data: otherdata.disable_pull_data,
+                      http_endpoint: otherdata.http_endpoint,
+                      http_flow_type: otherdata.http_flow_type,
+                      http_dedupe_timeout: otherdata.http_dedupe_timeout,
                     });
-                    setProtocol(otherConfig.protocol);
+                    setProtocol(otherdata.protocol);
                   }}
                 >
                   Pull from Net ID{" "}
-                  {decimalToHex(otherNetIdsWithConfig[0].value)}
+                  {decimalToHex(otherNetIdsWithdata[0].value)}
                 </Button>
               </div>
-            )}
+            )} */}
             <Form.Item
               name="protocol"
-              label={<Text className="config-label">Protocol</Text>}
+              label={<Text className="data-label">Protocol</Text>}
               rules={[
                 {
                   required: true,
@@ -142,7 +145,7 @@ export default ({ data, submit, otherNetIds }) => {
               <>
                 <Form.Item
                   name="address"
-                  label={<Text className="config-label">Address</Text>}
+                  label={<Text className="data-label">Address</Text>}
                   rules={[
                     {
                       required: true,
@@ -167,7 +170,7 @@ export default ({ data, submit, otherNetIds }) => {
                 </Form.Item>
                 <Form.Item
                   name="port"
-                  label={<Text className="config-label">Port</Text>}
+                  label={<Text className="data-label">Port</Text>}
                   rules={[
                     {
                       required: true,
@@ -197,9 +200,7 @@ export default ({ data, submit, otherNetIds }) => {
                   />
                 </Form.Item>
                 <Form.Item
-                  label={
-                    <Text className="config-label">Disable Pull Data</Text>
-                  }
+                  label={<Text className="data-label">Disable Pull Data</Text>}
                 >
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
@@ -231,7 +232,7 @@ export default ({ data, submit, otherNetIds }) => {
               <>
                 <Form.Item
                   name="http_endpoint"
-                  label={<Text className="config-label">Endpoint</Text>}
+                  label={<Text className="data-label">Endpoint</Text>}
                   rules={[
                     {
                       required: true,
@@ -257,14 +258,14 @@ export default ({ data, submit, otherNetIds }) => {
                 <Form.Item
                   name="http_auth_header"
                   label={
-                    <Text className="config-label">Authorization Header</Text>
+                    <Text className="data-label">Authorization Header</Text>
                   }
                 >
                   <Input disabled={!userCan({ role: currentRole })} />
                 </Form.Item>
                 <Form.Item
                   name="http_flow_type"
-                  label={<Text className="config-label">Flow Type</Text>}
+                  label={<Text className="data-label">Flow Type</Text>}
                   rules={[
                     {
                       required: true,
@@ -280,7 +281,7 @@ export default ({ data, submit, otherNetIds }) => {
                 <Form.Item
                   name="http_dedupe_timeout"
                   label={
-                    <Text className="config-label">
+                    <Text className="data-label">
                       Dedupe Timeout (in milliseconds)
                     </Text>
                   }
@@ -294,10 +295,119 @@ export default ({ data, submit, otherNetIds }) => {
             )}
           </Col>
           <Col span={12}>
+            <Form.List name="devaddrs">
+              {(fields, { add, remove }) => (
+                <>
+                  <div style={{ padding: "0 0 8px" }}>
+                    <Text
+                      className="data-label"
+                      style={{ color: "rgba(0,0,0,.85)" }}
+                    >
+                      DevAddr Ranges
+                    </Text>
+                  </div>
+                  <div style={{ maxHeight: "200px", overflow: "scroll" }}>
+                    {fields.map(({ key, name, ...restField }) => (
+                      <Space
+                        key={key}
+                        style={{ display: "flex" }}
+                        align="baseline"
+                        id="devaddr-range"
+                      >
+                        <Form.Item
+                          {...restField}
+                          name={[name, "lower"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Missing lower limit",
+                            },
+                            {
+                              validator: (_, value) => {
+                                const res = value.match(/^[0-9a-fA-F]{8}$/g);
+                                if (res === null) {
+                                  return Promise.reject(
+                                    "DevAddr limit must only contain characters 0-9 A-F."
+                                  );
+                                } else {
+                                  return Promise.resolve();
+                                }
+                              },
+                            },
+                          ]}
+                          hasFeedback
+                        >
+                          <Input disabled={!userCan({ role: currentRole })} />
+                        </Form.Item>
+                        <div
+                          style={{
+                            fontSize: 18,
+                            fontWeight: 500,
+                            textAlign: "center",
+                          }}
+                        >
+                          -
+                        </div>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "upper"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Missing upper limit",
+                            },
+                            {
+                              validator: (_, value) => {
+                                const res = value.match(/^[0-9a-fA-F]{8}$/g);
+                                if (res === null) {
+                                  return Promise.reject(
+                                    "DevAddr limit must only contain characters 0-9 A-F."
+                                  );
+                                } else {
+                                  return Promise.resolve();
+                                }
+                              },
+                            },
+                          ]}
+                          hasFeedback
+                        >
+                          <Input disabled={!userCan({ role: currentRole })} />
+                        </Form.Item>
+                        {userCan({ role: currentRole }) && (
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        )}
+                      </Space>
+                    ))}
+                  </div>
+                  <Form.Item>
+                    <div
+                      style={{
+                        display: "flex",
+                        paddingTop: 15,
+                        overflow: "scroll",
+                      }}
+                    >
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        icon={<PlusOutlined />}
+                        style={{
+                          flexGrow: 1,
+                          color: "#1890FF",
+                          borderColor: "#1890FF",
+                          background: "none",
+                        }}
+                        disabled={!userCan({ role: currentRole })}
+                      >
+                        Add DevAddr Range
+                      </Button>
+                    </div>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
             <Form.Item
-              label={
-                <Text className="config-label">Multi Packet Purchase</Text>
-              }
+              label={<Text className="data-label">Multi Packet Purchase</Text>}
             >
               <span style={{ fontWeight: 400, color: "#8C8C8C" }}>
                 Enter the number of desired packets (if available). Additional
@@ -336,7 +446,7 @@ export default ({ data, submit, otherNetIds }) => {
                 >
                   <div style={{ padding: "0 0 8px" }}>
                     <Text
-                      className="config-label"
+                      className="data-label"
                       style={{ color: "rgba(0,0,0,.85)" }}
                     >
                       Join Credentials
@@ -436,7 +546,14 @@ export default ({ data, submit, otherNetIds }) => {
                     ))}
                   </div>
                   <Form.Item>
-                    <div style={{ display: "flex", paddingTop: 15 }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        paddingTop: 15,
+                        overflow: "scroll",
+                        flexWrap: "wrap",
+                      }}
+                    >
                       <Button
                         type="dashed"
                         onClick={() => add()}

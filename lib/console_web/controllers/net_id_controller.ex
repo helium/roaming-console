@@ -16,12 +16,25 @@ defmodule ConsoleWeb.NetIdController do
     config_attrs = 
       case protocol do
         "udp" ->
-          Map.take(attrs, ["protocol", "address", "port", "disable_pull_data", "join_credentials", "multi_buy"])
+          Map.take(attrs, ["config_id", "protocol", "address", "port", "disable_pull_data", "join_credentials", "multi_buy", "devaddrs"])
         "http" ->
-          Map.take(attrs, ["protocol", "http_endpoint", "http_flow_type", "http_dedupe_timeout", "join_credentials", "multi_buy"])
+          Map.take(attrs, ["config_id", "protocol", "http_endpoint", "http_flow_type", "http_dedupe_timeout", "join_credentials", "multi_buy", "devaddrs"])
       end
 
-    with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => config_attrs, "http_headers" => attrs["http_headers"]}) do
+    config_attrs = case Map.get(config_attrs, "config_id") do
+      nil -> Map.put(config_attrs, "config_id", Ecto.UUID.generate())
+      _ -> config_attrs
+    end
+    
+    new_config = case net_id.config do
+      [%{}] -> [config_attrs]
+      _ ->
+        [Enum.filter(net_id.config, fn c -> c["config_id"] != attrs["config_id"] end), config_attrs]
+    end
+
+    # TODO map http_headers
+
+    with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => new_config, "http_headers" => attrs["http_headers"]}) do
       ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
       broadcast_packet_purchaser_all_org_config()
 

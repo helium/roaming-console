@@ -458,6 +458,10 @@ a.version-link {
   flex-grow: 1;
 }
 
+#devaddr-range .ant-space-item {
+  flex-grow: 1;
+}
+
 .config-label {
   font-size: 14px;
   font-weight: 600;

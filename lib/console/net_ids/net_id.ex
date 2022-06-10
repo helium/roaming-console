@@ -8,7 +8,7 @@ defmodule Console.NetIds.NetId do
   @foreign_key_type :binary_id
   schema "net_ids" do
     field :value, :integer
-    field :config, :map
+    field :config, {:array, :map}
     field :active, :boolean
     field :http_headers, Console.Encrypted.Map
 
@@ -40,12 +40,12 @@ defmodule Console.NetIds.NetId do
   defp check_credentials_update(changeset) do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
-        join_credentials_map =
-          Regex.replace(~r/([a-z0-9]+):/, Poison.encode!(config["join_credentials"]), "\"\\1\":")
-          |> String.replace("'", "\"")
-          |> Poison.decode!
-        
-        invalid =
+        invalid_credentials = Enum.any?(config, fn net_id_config ->
+          join_credentials_map =
+            Regex.replace(~r/([a-z0-9]+):/, Poison.encode!(net_id_config["join_credentials"]), "\"\\1\":")
+            |> String.replace("'", "\"")
+            |> Poison.decode!
+
           case is_nil(join_credentials_map) do 
             false ->
               Enum.any?(join_credentials_map, fn cred ->
@@ -58,10 +58,11 @@ defmodule Console.NetIds.NetId do
               end)
             _ -> false
           end
+        end)
 
-        if invalid do
+        if invalid_credentials do
           add_error(changeset, :message, "Join credentials are invalid")
-        else 
+        else
           changeset
         end
       _ -> changeset
@@ -72,9 +73,13 @@ defmodule Console.NetIds.NetId do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
         cond do
-          config["protocol"] == "udp" and String.contains?(config["address"], " ") ->
+          Enum.any?(config, fn net_id_config ->
+            net_id_config["protocol"] == "udp" and String.contains?(net_id_config["address"], " ")
+          end) ->
             add_error(changeset, :message, "Address cannot have spaces")
-          config["protocol"] == "udp" and !String.match?(config["address"], ~r/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/) ->
+          Enum.any?(config, fn net_id_config ->
+            net_id_config["protocol"] == "udp" and !String.match?(net_id_config["address"], ~r/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?|^((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/)
+          end) ->
             add_error(changeset, :message, "Address is invalid")
           true ->
             changeset
@@ -87,7 +92,9 @@ defmodule Console.NetIds.NetId do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
         cond do
-          config["protocol"] == "udp" and (config["port"] < 0 or config["port"] > 65535) ->
+          Enum.any?(config, fn net_id_config ->
+            net_id_config["protocol"] == "udp" and (net_id_config["port"] < 0 or net_id_config["port"] > 65535)
+          end) ->
             add_error(changeset, :message, "Port numbers range from 0 to 65535")
           true ->
             changeset
@@ -100,7 +107,9 @@ defmodule Console.NetIds.NetId do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
         cond do
-          config["multi_buy"] < 0 ->
+          Enum.any?(config, fn net_id_config ->
+            net_id_config["multi_buy"] < 0
+          end) ->
             add_error(changeset, :message, "Multi buy must be a positive integer")
           true ->
             changeset
