@@ -24,6 +24,7 @@ import {
   CopyOutlined,
 } from "@ant-design/icons";
 import { decimalToHex } from "../../util/constants";
+import ConfirmDeleteConfigModal from "./ConfirmDeleteConfigModal";
 
 export default ({ data, submit, netId }) => {
   const [form] = Form.useForm();

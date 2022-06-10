@@ -48,7 +48,7 @@ defmodule ConsoleWeb.NetIdController do
       )
 
       conn
-      |> put_resp_header("message", "Settings for Net ID #{Integer.to_string(net_id.value, 16)} updated successfully")
+      |> put_resp_header("message", "Settings for Net ID #{Integer.to_string(net_id.value, 16)} config updated successfully")
       |> send_resp(:no_content, "")
     end
   end
@@ -74,7 +74,31 @@ defmodule ConsoleWeb.NetIdController do
       )
 
       conn
-      |> put_resp_header("message", "Net ID #{Integer.to_string(net_id.value, 16)} updated successfully")
+      |> put_resp_header("message", "Net ID #{Integer.to_string(net_id.value, 16)} config updated successfully")
+      |> send_resp(:no_content, "")
+    end
+  end
+
+  def remove_config(conn, %{"id" => id, "config_id" => config_id}) do
+    net_id = NetIds.get_net_id!(conn.assigns.current_user, id)
+    organization = Organizations.get_organization!(conn.assigns.current_user, net_id.organization_id)
+
+    config = Enum.filter(net_id.config, fn c -> c["config_id"] != config_id end)
+    with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => config}) do
+      ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
+      broadcast_packet_purchaser_all_org_config()
+
+      current_organization = conn.assigns.current_organization
+      current_email = conn.assigns.current_user.email
+      AuditActions.create_audit_action(
+        current_organization.id,
+        current_email,
+        "net_id_controller_remove_config",
+        %{ "config_id" => config_id, "id" => id }
+      )
+
+      conn
+      |> put_resp_header("message", "Config removed from Net ID #{Integer.to_string(net_id.value, 16)} successfully")
       |> send_resp(:no_content, "")
     end
   end

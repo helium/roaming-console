@@ -5,6 +5,7 @@ import { ALL_NET_IDS } from "../../graphql/netIds";
 import {
   updateNetIdConfig,
   updateNetIdConfigActive,
+  removeNetIdConfig,
 } from "../../actions/netId";
 import { Switch, Tabs, Typography, Collapse, Button } from "antd";
 const { Text } = Typography;
@@ -16,10 +17,12 @@ import sortBy from "lodash/sortBy";
 import { userCan } from "../common/UserCan";
 const { Panel } = Collapse;
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import ConfirmDeleteConfigModal from "./ConfirmDeleteConfigModal";
 
 export default (props) => {
   const [newConfigs, setNewConfigs] = useState([]);
-  const [showConfirmModal, setShowConfirmModal] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [configToDelete, setConfigToDelete] = useState({});
 
   const socket = useSelector((state) => state.apollo.socket);
   const currentOrganizationId = useSelector(
@@ -47,8 +50,10 @@ export default (props) => {
     };
   }, []);
 
-  const submit = (id, values) => {
-    updateNetIdConfig(id, values);
+  const submit = (id, values, newConfig) => {
+    updateNetIdConfig(id, values).then(() => {
+      if (newConfig) setNewConfigs([]);
+    });
   };
 
   const netIds =
@@ -146,7 +151,11 @@ export default (props) => {
                                     if (config.new) {
                                       setNewConfigs([]);
                                     } else {
-                                      // setConfigToDelete();
+                                      setConfigToDelete({
+                                        netId: netId.id,
+                                        netIdValue: decimalToHex(netId.value),
+                                        configId: config.config_id,
+                                      });
                                       setShowConfirmModal(true);
                                     }
                                   }}
@@ -157,7 +166,9 @@ export default (props) => {
                             <ConfigForm
                               data={config}
                               key={config.config_id}
-                              submit={submit}
+                              submit={(id, values) => {
+                                submit(id, values, config.new);
+                              }}
                               netId={netId.id}
                             />
                           </Panel>
@@ -192,6 +203,22 @@ export default (props) => {
           <div>No Net ID has been linked to your Organization.</div>
         )}
       </div>
+      <ConfirmDeleteConfigModal
+        open={showConfirmModal}
+        close={() => {
+          setShowConfirmModal(false);
+          setConfigToDelete({});
+        }}
+        config={configToDelete}
+        handleSubmit={() => {
+          removeNetIdConfig(configToDelete.netId, configToDelete.configId).then(
+            () => {
+              setShowConfirmModal(false);
+              setConfigToDelete({});
+            }
+          );
+        }}
+      />
     </DashboardLayout>
   );
 };

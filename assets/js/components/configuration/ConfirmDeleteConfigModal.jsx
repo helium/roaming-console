@@ -3,7 +3,7 @@ import { Typography, Button } from "antd";
 const { Text } = Typography;
 import Modal from "antd/lib/modal/Modal";
 
-export default ({ open, close, handleSubmit }) => (
+export default ({ open, close, handleSubmit, config }) => (
   <Modal
     visible={open}
     centered
@@ -20,8 +20,8 @@ export default ({ open, close, handleSubmit }) => (
   >
     <div style={{ textAlign: "center" }}>
       <Text>
-        Are you sure you want to remove this Configuration? This action cannot
-        be undone.
+        Are you sure you want to remove this Configuration for Net ID{" "}
+        {config.netIdValue}? This action cannot be undone.
       </Text>
     </div>
   </Modal>

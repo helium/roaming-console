@@ -30,3 +30,7 @@ export const updateNetIdConfigActive = (id, config_id, active) => {
     active,
   });
 };
+
+export const removeNetIdConfig = (id, config_id) => {
+  return rest.destroy(`/api/net_ids/${id}/${config_id}`);
+};
