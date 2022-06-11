@@ -73,7 +73,12 @@ export default (props) => {
         }}
       >
         {netIds.length > 0 ? (
-          <Tabs defaultActiveKey={(netIds[0] && netIds[0].value) || null}>
+          <Tabs
+            defaultActiveKey={(netIds[0] && netIds[0].value) || null}
+            onChange={() => {
+              setNewConfigs([]);
+            }}
+          >
             {netIds.map((netId) => {
               return (
                 <TabPane

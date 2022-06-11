@@ -325,7 +325,7 @@ defmodule Console.Organizations do
                   disable_pull_data: config["disable_pull_data"],
                   joins: config["join_credentials"] || [],
                   multi_buy: config["multi_buy"],
-                  active: config["active"],
+                  active: config["active"] || false,
                   devaddrs: config["devaddrs"]
                 }
               "http" ->
@@ -343,7 +343,7 @@ defmodule Console.Organizations do
                   http_auth_header: http_auth_header,
                   joins: config["join_credentials"] || [],
                   multi_buy: config["multi_buy"],
-                  active: config["active"],
+                  active: config["active"] || false,
                   devaddrs: config["devaddrs"]
                 }
               nil -> # no protocol config has been set yet

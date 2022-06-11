@@ -263,30 +263,7 @@ export default ({ data, submit, netId }) => {
             )}
           </Col>
           <Col span={12}>
-            <Form.List
-              name="devaddrs"
-              rules={
-                [
-                  // {
-                  //   validator: async (_, devaddrs) => {
-                  //     if (
-                  //       devaddrs.some((pair) => {
-                  //         return (
-                  //           parseInt(pair.lower, 16) > parseInt(pair.upper, 16)
-                  //         );
-                  //       })
-                  //     ) {
-                  //       return Promise.reject(
-                  //         new Error(
-                  //           "DevAddr lower limits must be lower than their upper limits."
-                  //         )
-                  //       );
-                  //     }
-                  //   },
-                  // },
-                ]
-              }
-            >
+            <Form.List name="devaddrs">
               {(fields, { add, remove }, { errors }) => (
                 <>
                   <div style={{ padding: "0 0 8px" }}>
