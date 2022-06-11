@@ -65,7 +65,6 @@ export default ({ data, submit, netId }) => {
     });
   };
 
-  // const otherNetIdsWithdata = otherNetIds.filter((ni) => ni.data !== "{}");
   return (
     <>
       <Form
@@ -94,35 +93,6 @@ export default ({ data, submit, netId }) => {
       >
         <Row gutter={50}>
           <Col span={12}>
-            {/* {otherNetIdsWithdata.length > 0 && (
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <Button
-                  icon={<CopyOutlined />}
-                  type="primary"
-                  onClick={() => {
-                    const otherdata = JSON.parse(
-                      otherNetIdsWithdata[0].data
-                    );
-                    // explicitly setting them here to avoid stale fields when they're not in otherdata
-                    form.setFieldsValue({
-                      protocol: otherdata.protocol,
-                      address: otherdata.address,
-                      port: otherdata.port,
-                      multi_buy: otherdata.multi_buy,
-                      join_credentials: otherdata.join_credentials,
-                      disable_pull_data: otherdata.disable_pull_data,
-                      http_endpoint: otherdata.http_endpoint,
-                      http_flow_type: otherdata.http_flow_type,
-                      http_dedupe_timeout: otherdata.http_dedupe_timeout,
-                    });
-                    setProtocol(otherdata.protocol);
-                  }}
-                >
-                  Pull from Net ID{" "}
-                  {decimalToHex(otherNetIdsWithdata[0].value)}
-                </Button>
-              </div>
-            )} */}
             <Form.Item
               name="protocol"
               label={<Text className="data-label">Protocol</Text>}
@@ -293,8 +263,31 @@ export default ({ data, submit, netId }) => {
             )}
           </Col>
           <Col span={12}>
-            <Form.List name="devaddrs">
-              {(fields, { add, remove }) => (
+            <Form.List
+              name="devaddrs"
+              rules={
+                [
+                  // {
+                  //   validator: async (_, devaddrs) => {
+                  //     if (
+                  //       devaddrs.some((pair) => {
+                  //         return (
+                  //           parseInt(pair.lower, 16) > parseInt(pair.upper, 16)
+                  //         );
+                  //       })
+                  //     ) {
+                  //       return Promise.reject(
+                  //         new Error(
+                  //           "DevAddr lower limits must be lower than their upper limits."
+                  //         )
+                  //       );
+                  //     }
+                  //   },
+                  // },
+                ]
+              }
+            >
+              {(fields, { add, remove }, { errors }) => (
                 <>
                   <div style={{ padding: "0 0 8px" }}>
                     <Text
@@ -325,7 +318,7 @@ export default ({ data, submit, netId }) => {
                                 const res = value.match(/^[0-9a-fA-F]{8}$/g);
                                 if (res === null) {
                                   return Promise.reject(
-                                    "DevAddr limit must only contain characters 0-9 A-F."
+                                    "DevAddr lower limit must be 4 bytes long and only contain characters 0-9 A-F."
                                   );
                                 } else {
                                   return Promise.resolve();
@@ -359,10 +352,28 @@ export default ({ data, submit, netId }) => {
                                 const res = value.match(/^[0-9a-fA-F]{8}$/g);
                                 if (res === null) {
                                   return Promise.reject(
-                                    "DevAddr limit must only contain characters 0-9 A-F."
+                                    "DevAddr upper limit must be 4 bytes long and only contain characters 0-9 A-F."
                                   );
                                 } else {
                                   return Promise.resolve();
+                                }
+                              },
+                            },
+                            {
+                              validator: async (fieldInfo, value) => {
+                                const index = fieldInfo.field.split(".")[1];
+                                const correspondingLowerValue =
+                                  form.getFieldValue("devaddrs")[index].lower;
+
+                                if (
+                                  parseInt(correspondingLowerValue, 16) >
+                                  parseInt(value, 16)
+                                ) {
+                                  return Promise.reject(
+                                    new Error(
+                                      "DevAddr upper limit must be higher than the lower limit."
+                                    )
+                                  );
                                 }
                               },
                             },
@@ -378,6 +389,7 @@ export default ({ data, submit, netId }) => {
                     ))}
                   </div>
                   <Form.Item>
+                    <Form.ErrorList errors={errors} />
                     <div
                       style={{
                         display: "flex",
@@ -515,18 +527,19 @@ export default ({ data, submit, netId }) => {
                             },
                             {
                               validator: (_, value) => {
-                                const res = value.match(/^[0-9a-fA-F]{16}$/g);
-                                if (value.indexOf("*") !== -1) {
-                                  return Promise.reject(
-                                    "AppEUI may not be or contain the wildcard character (*)."
-                                  );
-                                } else if (res === null) {
-                                  return Promise.reject(
-                                    "AppEUI must be exactly 8 bytes long, and only contain characters 0-9 A-F."
-                                  );
-                                } else {
-                                  return Promise.resolve();
-                                }
+                                return Promise.resolve();
+                                // const res = value.match(/^[0-9a-fA-F]{16}$/g);
+                                // if (value.indexOf("*") !== -1) {
+                                //   return Promise.reject(
+                                //     "AppEUI may not be or contain the wildcard character (*)."
+                                //   );
+                                // } else if (res === null) {
+                                //   return Promise.reject(
+                                //     "AppEUI must be exactly 8 bytes long, and only contain characters 0-9 A-F."
+                                //   );
+                                // } else {
+                                //   return Promise.resolve();
+                                // }
                               },
                             },
                           ]}

@@ -454,10 +454,7 @@ a.version-link {
   width: 100%;
 }
 
-#join-creds-pair .ant-space-item {
-  flex-grow: 1;
-}
-
+#join-creds-pair .ant-space-item,
 #devaddr-range .ant-space-item {
   flex-grow: 1;
 }
