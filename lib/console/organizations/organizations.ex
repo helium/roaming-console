@@ -326,7 +326,8 @@ defmodule Console.Organizations do
                   joins: config["join_credentials"] || [],
                   multi_buy: config["multi_buy"],
                   active: config["active"] || false,
-                  devaddrs: config["devaddrs"]
+                  devaddrs: config["devaddrs"],
+                  protocol_version: config["protocol_version"]
                 }
               "http" ->
                 http_auth_header = case net_id.http_headers[config["config_id"]] do
@@ -344,7 +345,8 @@ defmodule Console.Organizations do
                   joins: config["join_credentials"] || [],
                   multi_buy: config["multi_buy"],
                   active: config["active"] || false,
-                  devaddrs: config["devaddrs"]
+                  devaddrs: config["devaddrs"],
+                  protocol_version: config["protocol_version"]
                 }
               nil -> # no protocol config has been set yet
                 %{
@@ -354,7 +356,7 @@ defmodule Console.Organizations do
                   joins: config["join_credentials"] || [],
                   multi_buy: config["multi_buy"],
                   active: false,
-                  devaddrs: config["devaddrs"] || []
+                  devaddrs: config["devaddrs"] || [],
                 }
             end
           end)
