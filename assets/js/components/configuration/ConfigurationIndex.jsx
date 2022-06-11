@@ -109,7 +109,6 @@ export default (props) => {
                               config.new ? "new" : config.config_id
                             }`}
                             extra={
-                              // TODO change active default to FALSE.
                               <div
                                 style={{
                                   display: "flex",
@@ -164,7 +163,18 @@ export default (props) => {
                             }
                           >
                             <ConfigForm
-                              data={config}
+                              data={{
+                                ...config,
+                                ...(netId.http_headers &&
+                                netId.http_headers.length > 0 &&
+                                JSON.parse(netId.http_headers)[config.config_id]
+                                  ? {
+                                      http_headers: JSON.parse(
+                                        netId.http_headers
+                                      )[config.config_id],
+                                    }
+                                  : null),
+                              }}
                               key={config.config_id}
                               submit={(id, values) => {
                                 submit(id, values, config.new);

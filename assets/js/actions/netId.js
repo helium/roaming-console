@@ -4,7 +4,7 @@ import { displayError } from "../util/messages";
 export const updateNetIdConfig = (id, config) => {
   return rest.put(`/api/net_ids/${id}`, {
     protocol: config.protocol,
-    ...(config.config_id && { config_id: config.config_id }),
+    config_id: config.config_id,
     ...(config.address && { address: config.address }),
     ...(config.port && { port: config.port }),
     ...(config.disable_pull_data && {
@@ -18,7 +18,7 @@ export const updateNetIdConfig = (id, config) => {
     join_credentials: config.join_credentials,
     multi_buy: config.multi_buy,
     ...(config.http_auth_header && {
-      http_headers: { auth: config.http_auth_header },
+      http_headers: { [config.config_id]: { auth: config.http_auth_header } },
     }),
     devaddrs: config.devaddrs,
   });

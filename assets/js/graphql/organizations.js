@@ -37,10 +37,6 @@ export const ORGANIZATION_SHOW_DC = gql`
       net_ids {
         id
         value
-        config
-        http_headers {
-          auth
-        }
       }
     }
   }

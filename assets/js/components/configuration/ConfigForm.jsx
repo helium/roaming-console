@@ -23,8 +23,6 @@ import {
   ClearOutlined,
   CopyOutlined,
 } from "@ant-design/icons";
-import { decimalToHex } from "../../util/constants";
-import ConfirmDeleteConfigModal from "./ConfirmDeleteConfigModal";
 
 export default ({ data, submit, netId }) => {
   const [form] = Form.useForm();
@@ -68,7 +66,6 @@ export default ({ data, submit, netId }) => {
   };
 
   // const otherNetIdsWithdata = otherNetIds.filter((ni) => ni.data !== "{}");
-
   return (
     <>
       <Form
@@ -87,7 +84,7 @@ export default ({ data, submit, netId }) => {
                 http_endpoint: data.http_endpoint,
                 http_flow_type: data.http_flow_type,
                 http_dedupe_timeout: data.http_dedupe_timeout,
-                http_auth_header: data.http_auth_header,
+                http_auth_header: data.http_headers?.auth,
                 devaddrs: data.devaddrs,
               }
         }

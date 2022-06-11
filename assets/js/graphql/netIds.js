@@ -6,7 +6,7 @@ export const ALL_NET_IDS = gql`
       id
       value
       config
-      http_auth_header
+      http_headers
     }
   }
 `;

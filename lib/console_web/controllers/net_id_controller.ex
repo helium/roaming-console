@@ -32,8 +32,6 @@ defmodule ConsoleWeb.NetIdController do
         [config_attrs | Enum.filter(net_id.config, fn c -> c["config_id"] != config_attrs["config_id"] end)]
     end
 
-    # TODO map http_headers
-
     with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => new_config, "http_headers" => attrs["http_headers"]}) do
       ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
       broadcast_packet_purchaser_all_org_config()
