@@ -6,6 +6,7 @@ defmodule Console.Factory do
   alias Console.Organizations.Organization
   alias Console.ApiKeys.ApiKey
   alias Console.Organizations.Membership
+  alias Console.NetIds.NetId
 
   def authenticate_user(%{conn: conn}) do
     user = params_for(:user)
@@ -41,5 +42,9 @@ defmodule Console.Factory do
 
   def membership_factory do
     %Membership{}
+  end
+
+  def net_id_factory do
+    %NetId{}
   end
 end
