@@ -322,11 +322,11 @@ defmodule Console.Organizations do
                   protocol: config["protocol"],
                   address: config["address"],
                   port: config["port"],
-                  disable_pull_data: config["disable_pull_data"],
+                  disable_pull_data: config["disable_pull_data"] || false,
                   joins: config["join_credentials"] || [],
                   multi_buy: config["multi_buy"],
                   active: config["active"] || false,
-                  devaddrs: config["devaddrs"],
+                  devaddrs: config["devaddrs"] || [],
                   protocol_version: config["protocol_version"]
                 }
               "http" ->
@@ -345,7 +345,7 @@ defmodule Console.Organizations do
                   joins: config["join_credentials"] || [],
                   multi_buy: config["multi_buy"],
                   active: config["active"] || false,
-                  devaddrs: config["devaddrs"],
+                  devaddrs: config["devaddrs"] || [],
                   protocol_version: config["protocol_version"]
                 }
               nil -> # no protocol config has been set yet
