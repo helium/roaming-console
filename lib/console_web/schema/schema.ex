@@ -29,10 +29,6 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
   end
 
-  # object :http_headers do
-  #   field :auth, :string
-  # end
-
   object :net_id do
     field :id, :id
     field :value, :integer
