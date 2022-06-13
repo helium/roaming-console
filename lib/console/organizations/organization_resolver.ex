@@ -2,6 +2,7 @@ defmodule Console.Organizations.OrganizationResolver do
   import Ecto.Query, warn: false
   alias Console.Repo
   alias Console.Organizations
+  alias Console.Organizations.Organization
   alias Console.Packets
 
   def paginate(%{page: page, page_size: page_size}, %{context: %{current_user: current_user}}) do
