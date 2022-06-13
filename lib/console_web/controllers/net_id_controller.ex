@@ -32,7 +32,14 @@ defmodule ConsoleWeb.NetIdController do
         [config_attrs | Enum.filter(net_id.config, fn c -> c["config_id"] != config_attrs["config_id"] end)]
     end
 
-    with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => new_config, "http_headers" => attrs["http_headers"]}) do
+    http_headers = case net_id.http_headers do
+      nil ->
+        %{ config_attrs["config_id"] => attrs["http_headers"] }
+      _ ->
+        Map.put(net_id.http_headers, config_attrs["config_id"], attrs["http_headers"])
+    end
+
+    with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => new_config, "http_headers" => http_headers}) do
       ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
       broadcast_packet_purchaser_all_org_config()
 
@@ -82,7 +89,9 @@ defmodule ConsoleWeb.NetIdController do
     _organization = Organizations.get_organization!(conn.assigns.current_user, net_id.organization_id)
 
     config = Enum.filter(net_id.config, fn c -> c["config_id"] != config_id end)
-    with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => config}) do
+    http_headers = Enum.filter(net_id.http_headers, fn c -> elem(c, 0) != config_id end) |> Map.new()
+    
+    with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => config, "http_headers" => http_headers}) do
       ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
       broadcast_packet_purchaser_all_org_config()
 

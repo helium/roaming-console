@@ -18,7 +18,7 @@ export const updateNetIdConfig = (id, config) => {
     join_credentials: config.join_credentials,
     multi_buy: config.multi_buy,
     ...(config.http_auth_header && {
-      http_headers: { [config.config_id]: { auth: config.http_auth_header } },
+      http_headers: { auth: config.http_auth_header },
     }),
     devaddrs: config.devaddrs,
   });
