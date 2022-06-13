@@ -90,7 +90,11 @@ defmodule ConsoleWeb.NetIdController do
 
     config = Enum.filter(net_id.config, fn c -> c["config_id"] != config_id end)
     http_headers = Enum.filter(net_id.http_headers, fn c -> elem(c, 0) != config_id end) |> Map.new()
-    
+    http_headers = case length(Map.keys(%{})) do
+      0 -> nil
+      _ -> http_headers
+    end
+
     with {:ok, _} <- NetIds.update_net_id(net_id, %{"config" => config, "http_headers" => http_headers}) do
       ConsoleWeb.Endpoint.broadcast("graphql:configuration_index", "graphql:configuration_index:#{net_id.organization_id}:settings_update", %{})
       broadcast_packet_purchaser_all_org_config()
