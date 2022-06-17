@@ -327,7 +327,7 @@ defmodule Console.Organizations do
                   multi_buy: config["multi_buy"],
                   active: config["active"] || false,
                   devaddrs: config["devaddrs"] || [],
-                  protocol_version: config["protocol_version"]
+                  protocol_version: config["protocol_version"] || "1.1"
                 }
               "http" ->
                 http_auth_header = case net_id.http_headers[config["config_id"]] do
@@ -346,7 +346,7 @@ defmodule Console.Organizations do
                   multi_buy: config["multi_buy"],
                   active: config["active"] || false,
                   devaddrs: config["devaddrs"] || [],
-                  protocol_version: config["protocol_version"]
+                  protocol_version: config["protocol_version"] || "1.1"
                 }
               nil -> # no protocol config has been set yet
                 %{
