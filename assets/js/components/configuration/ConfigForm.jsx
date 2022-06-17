@@ -504,19 +504,18 @@ export default ({ data, submit, netId }) => {
                             },
                             {
                               validator: (_, value) => {
-                                return Promise.resolve();
-                                // const res = value.match(/^[0-9a-fA-F]{16}$/g);
-                                // if (value.indexOf("*") !== -1) {
-                                //   return Promise.reject(
-                                //     "AppEUI may not be or contain the wildcard character (*)."
-                                //   );
-                                // } else if (res === null) {
-                                //   return Promise.reject(
-                                //     "AppEUI must be exactly 8 bytes long, and only contain characters 0-9 A-F."
-                                //   );
-                                // } else {
-                                //   return Promise.resolve();
-                                // }
+                                const res = value.match(/^[0-9a-fA-F]{16}$/g);
+                                if (value.indexOf("*") !== -1) {
+                                  return Promise.reject(
+                                    "AppEUI may not be or contain the wildcard character (*)."
+                                  );
+                                } else if (res === null) {
+                                  return Promise.reject(
+                                    "AppEUI must be exactly 8 bytes long, and only contain characters 0-9 A-F."
+                                  );
+                                } else {
+                                  return Promise.resolve();
+                                }
                               },
                             },
                           ]}
@@ -610,7 +609,12 @@ export default ({ data, submit, netId }) => {
           setShowJoinCredsModal(false);
         }}
         updateCredentials={(creds) => {
-          form.setFieldsValue({ join_credentials: creds });
+          form.setFieldsValue({
+            join_credentials: [
+              ...form.getFieldValue("join_credentials"),
+              ...creds,
+            ],
+          });
         }}
       />
     </>
