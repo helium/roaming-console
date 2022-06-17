@@ -29,17 +29,11 @@ defmodule ConsoleWeb.Schema do
     field :inserted_at, :naive_datetime
   end
 
-  object :http_headers do
-    field :auth, :string
-  end
-
   object :net_id do
     field :id, :id
     field :value, :integer
     field :config, :json
-    field :active, :boolean
-    field :http_auth_header, :string
-    field :http_headers, type: :http_headers
+    field :http_headers, type: :string
   end
 
   paginated object :organization do

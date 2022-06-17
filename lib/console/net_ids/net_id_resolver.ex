@@ -6,7 +6,12 @@ defmodule Console.NetIds.NetIdResolver do
       Ecto.assoc(current_organization, :net_ids)
       |> Repo.all()
       |> Enum.map(fn ni ->
-        Map.put(ni, :http_auth_header, ni.http_headers["auth"])
+        http_headers = case ni.http_headers do
+          nil -> ""
+          _ ->
+            Jason.encode!(ni.http_headers)
+        end
+        Map.put(ni, :http_headers, http_headers)
       end)
 
     {:ok, net_ids}

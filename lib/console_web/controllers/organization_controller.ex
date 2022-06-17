@@ -6,7 +6,6 @@ defmodule ConsoleWeb.OrganizationController do
   alias Console.DcPurchases
   alias Console.Email
   alias Console.Mailer
-  alias Console.AuditActions
 
   plug ConsoleWeb.Plug.AuthorizeAction when action in [:delete]
 
