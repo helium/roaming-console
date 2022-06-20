@@ -45,6 +45,9 @@ defmodule ConsoleWeb.NetIdControllerTest do
       assert response(resp_conn, 422) # invalid http_flow_type, should not update
 
       resp_conn = put conn, net_id_path(conn, :update, net_id.id), %{ "config_id" => "id_1", "protocol" => "http", "http_endpoint" => "hello.com", "http_flow_type" => "async" }
+      assert response(resp_conn, 422) # missing http_dedupe_timeout, should not update
+      
+      resp_conn = put conn, net_id_path(conn, :update, net_id.id), %{ "config_id" => "id_1", "protocol" => "http", "http_endpoint" => "hello.com", "http_flow_type" => "async", "http_dedupe_timeout" => 200}
       assert response(resp_conn, 204) # valid http config, should update
 
       net_id = NetIds.get_net_id(123)

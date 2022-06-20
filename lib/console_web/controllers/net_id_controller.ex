@@ -89,7 +89,7 @@ defmodule ConsoleWeb.NetIdController do
     _organization = Organizations.get_organization!(conn.assigns.current_user, net_id.organization_id)
 
     config = Enum.filter(net_id.config, fn c -> c["config_id"] != config_id end)
-    http_headers = Enum.filter(net_id.http_headers, fn c -> elem(c, 0) != config_id end) |> Map.new()
+    http_headers = Enum.filter(net_id.http_headers || %{}, fn c -> elem(c, 0) != config_id end) |> Map.new()
     http_headers = case length(Map.keys(%{})) do
       0 -> nil
       _ -> http_headers
