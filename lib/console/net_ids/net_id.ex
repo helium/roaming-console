@@ -36,6 +36,7 @@ defmodule Console.NetIds.NetId do
     |> check_credentials_update()
     |> check_multi_buy_update()
     |> check_flow_type_update()
+    |> check_dedupe_timeout_update()
   end
 
   defp check_credentials_update(changeset) do
@@ -177,6 +178,25 @@ defmodule Console.NetIds.NetId do
             net_id_config["protocol"] == "http" and net_id_config["http_flow_type"] not in ["async", "sync"]
           end) ->
             add_error(changeset, :message, "Flow type must be sync or async")
+          true ->
+            changeset
+        end
+      _ -> changeset
+    end
+  end
+
+  defp check_dedupe_timeout_update(changeset) do
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{config: config}} ->
+        cond do
+          Enum.any?(config, fn net_id_config ->
+            net_id_config["protocol"] == "http" and is_nil(net_id_config["http_dedupe_timeout"])
+          end) ->
+            add_error(changeset, :message, "Config of HTTP Protocol must contain dedupe timeout")
+          Enum.any?(config, fn net_id_config ->
+            net_id_config["protocol"] == "http" and net_id_config["http_dedupe_timeout"] < 0
+          end) ->
+            add_error(changeset, :message, "Dedupe Timeout must be positive")
           true ->
             changeset
         end

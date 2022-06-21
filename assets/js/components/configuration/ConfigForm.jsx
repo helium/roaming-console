@@ -21,7 +21,6 @@ import {
   UploadOutlined,
   SaveOutlined,
   ClearOutlined,
-  CopyOutlined,
 } from "@ant-design/icons";
 
 export default ({ data, submit, netId }) => {
@@ -253,6 +252,20 @@ export default ({ data, submit, netId }) => {
                       Dedupe Timeout (in milliseconds)
                     </Text>
                   }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Dedupe Timeout is required.",
+                    },
+                    {
+                      validator: (_, value) =>
+                        Number.isInteger(value) && value >= 0
+                          ? Promise.resolve()
+                          : Promise.reject(
+                              "Dedupe Timeout must be a positive whole number."
+                            ),
+                    },
+                  ]}
                 >
                   <InputNumber
                     style={{ width: "100%" }}
