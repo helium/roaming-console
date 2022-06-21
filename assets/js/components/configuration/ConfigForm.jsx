@@ -259,10 +259,10 @@ export default ({ data, submit, netId }) => {
                     },
                     {
                       validator: (_, value) =>
-                        parseInt(value) >= 0 && Number.isInteger(value)
+                        Number.isInteger(value) && value >= 0
                           ? Promise.resolve()
                           : Promise.reject(
-                              "Dedupe timeout must be a positive whole number."
+                              "Dedupe Timeout must be a positive whole number."
                             ),
                     },
                   ]}
