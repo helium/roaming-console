@@ -146,48 +146,42 @@ defmodule ConsoleWeb.DataCreditController do
   end
 
   def remove_payment_method(conn, %{ "paymentId" => paymentId, "latestAddedCardId" => latestAddedCardId }) do
-    ip_restricted = ConsoleWeb.IPFilter.check_ip_restriction(ConsoleWeb.IPFilter.get_ip(conn))
+    current_organization = conn.assigns.current_organization
 
-    if ip_restricted do
-      {:error, :forbidden, "Our payment processor doesn't currently support transactions in your area."}
-    else
-      current_organization = conn.assigns.current_organization
+    request_body = URI.encode_query(%{})
 
-      request_body = URI.encode_query(%{})
+    with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_methods/#{paymentId}/detach", request_body, @headers) do
+      with 200 <- stripe_response.status_code do
+        msg =
+          if current_organization.automatic_payment_method == paymentId do
+            attrs = %{
+              "automatic_charge_amount" => nil,
+              "automatic_payment_method" => nil
+            }
+            Organizations.update_organization(current_organization, attrs)
 
-      with {:ok, stripe_response} <- HTTPoison.post("#{@stripe_api_url}/v1/payment_methods/#{paymentId}/detach", request_body, @headers) do
-        with 200 <- stripe_response.status_code do
-          msg =
-            if current_organization.automatic_payment_method == paymentId do
-              attrs = %{
-                "automatic_charge_amount" => nil,
-                "automatic_payment_method" => nil
-              }
-              Organizations.update_organization(current_organization, attrs)
-
-              "This payment method was used for Automatic Renewal, you will need to set up Automatic Renewals again with a new card."
-            else
-              "Payment method removed successfully"
-            end
-
-          if latestAddedCardId != nil do
-            Organizations.update_organization(current_organization, %{ "default_payment_id" => latestAddedCardId })
+            "This payment method was used for Automatic Renewal, you will need to set up Automatic Renewals again with a new card."
+          else
+            "Payment method removed successfully"
           end
 
-          # send alert email (if applicable)
-          current_organization = Organizations.get_organization!(current_organization.id)
-          alert = Alerts.get_alert(current_organization)
-          if alert != nil and alert.config["payments_updated"]["email"]["active"] do
-            recipient_emails = Alerts.get_alert_recipient_emails(current_organization, alert.config["payments_updated"]["email"]["recipient"])
-            Email.payments_removed_email(conn.assigns.current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
-          end
-
-          ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
-
-          conn
-          |> put_resp_header("message", msg)
-          |> send_resp(:no_content, "")
+        if latestAddedCardId != nil do
+          Organizations.update_organization(current_organization, %{ "default_payment_id" => latestAddedCardId })
         end
+
+        # send alert email (if applicable)
+        current_organization = Organizations.get_organization!(current_organization.id)
+        alert = Alerts.get_alert(current_organization)
+        if alert != nil and alert.config["payments_updated"]["email"]["active"] do
+          recipient_emails = Alerts.get_alert_recipient_emails(current_organization, alert.config["payments_updated"]["email"]["recipient"])
+          Email.payments_removed_email(conn.assigns.current_user, current_organization, recipient_emails) |> Mailer.deliver_later()
+        end
+
+        ConsoleWeb.Endpoint.broadcast("graphql:dc_index", "graphql:dc_index:#{current_organization.id}:update_dc", %{})
+
+        conn
+        |> put_resp_header("message", msg)
+        |> send_resp(:no_content, "")
       end
     end
   end
