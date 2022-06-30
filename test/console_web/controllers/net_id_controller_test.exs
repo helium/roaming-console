@@ -52,6 +52,14 @@ defmodule ConsoleWeb.NetIdControllerTest do
 
       net_id = NetIds.get_net_id(123)
       assert length(net_id.config) == 2 # can add multiple configs
+
+      resp_conn = put conn, net_id_path(conn, :update, net_id.id), %{ "config_id" => "id_1", "active" => true}
+      assert response(resp_conn, 204) # valid active update, should update
+
+      resp_conn = put conn, net_id_path(conn, :update, net_id.id), %{ "config_id" => "id_1", "protocol" => "http", "http_endpoint" => "hello2.com", "http_flow_type" => "async", "http_dedupe_timeout" => 200}
+      assert response(resp_conn, 204)
+      net_id_config = Enum.find(NetIds.get_net_id(net_id.value).config, fn n -> n["config_id"] == "id_1" end)
+      assert net_id_config["active"] == true # test for bug where any update would make config invalid
     end
 
     test "remove net id config properly", %{conn: conn} do

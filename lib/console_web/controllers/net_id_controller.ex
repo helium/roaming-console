@@ -29,7 +29,13 @@ defmodule ConsoleWeb.NetIdController do
       [] ->
         [config_attrs]
       _ ->
-        [config_attrs | Enum.filter(net_id.config, fn c -> c["config_id"] != config_attrs["config_id"] end)]
+        existing_config = Enum.find(net_id.config, fn c -> c["config_id"] == config_attrs["config_id"] end)
+        active_status =
+          case existing_config do
+            nil -> false
+            _ -> existing_config["active"]
+          end
+        [config_attrs |> Map.put("active", active_status) | Enum.filter(net_id.config, fn c -> c["config_id"] != config_attrs["config_id"] end)]
     end
 
     http_headers = case net_id.http_headers do
