@@ -12,7 +12,7 @@ export const updateNetIdConfig = (id, config) => {
     }),
     ...(config.http_endpoint && { http_endpoint: config.http_endpoint }),
     ...(config.http_flow_type && { http_flow_type: config.http_flow_type }),
-    ...(config.http_dedupe_timeout && {
+    ...((config.http_dedupe_timeout || config.http_dedupe_timeout === 0) && {
       http_dedupe_timeout: config.http_dedupe_timeout,
     }),
     join_credentials: config.join_credentials,
